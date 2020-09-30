@@ -8,7 +8,7 @@ import RNBootSplash from 'react-native-bootsplash';
 
 import IntroScrean from './src/Intro_Screen';
 import SearchScrean from './src/Search_Screen';
-
+import TongQuanUser from './src/TongQuan/TongQuanThongKeUser';
 console.disableYellowBox = true; // Hide Warning
 const Stack = createStackNavigator();
 const App = () => {
@@ -31,6 +31,7 @@ const App = () => {
         }}>
         <Stack.Screen name="searchscrean" component={SearchScrean} />
         <Stack.Screen name="introscrean" component={IntroScrean} />
+        <Stack.Screen name="tongQuanUser" component={TongQuanUser} />
       </Stack.Navigator>
     </NavigationContainer>
   );
