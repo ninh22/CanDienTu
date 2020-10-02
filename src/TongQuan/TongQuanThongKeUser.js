@@ -142,7 +142,6 @@ class TongQuanThongKeUser extends Component {
                         Math.random() * 100,
                         Math.random() * 100,
                         Math.random() * 100,
-                        Math.random() * 100,
                       ],
                     },
                   ],
