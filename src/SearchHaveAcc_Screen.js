@@ -7,12 +7,13 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {Card, Button, Input} from 'react-native-elements';
-import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
+import {Card, Button, Input, Header} from 'react-native-elements';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
-const SearchScreen = ({navigation}) => {
+const SearchHaveAcc_Screen = ({navigation}) => {
   const [IsFocused, setIsFocused] = useState(true);
 
   const handleFocus = () => {
@@ -24,6 +25,24 @@ const SearchScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
+      <Header
+        leftComponent={
+          <TouchableOpacity
+            style={{borderRadius: 50}}
+            onPress={() => {
+              navigation.goBack();
+            }}>
+            <Icon name="chevron-back-outline" size={35} color="#fff" />
+          </TouchableOpacity>
+        }
+        centerComponent={{
+          text: 'Tra cứu phiếu',
+          style: {color: '#fff', fontSize: 20},
+        }}
+        // rightComponent={{icon: 'home', color: '#fff'}}
+        backgroundColor="#309045"
+        containerStyle={{elevation: 7}}
+      />
       <ScrollView
         contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}>
         <View style={styles.parent}>
@@ -57,14 +76,6 @@ const SearchScreen = ({navigation}) => {
                 navigation.navigate('resultscreen');
               }}
             />
-            <View style={{alignItems: 'center', marginTop: 10}}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('loginscreen');
-                }}>
-                <Text style={styles.txt}>Đăng nhập</Text>
-              </TouchableOpacity>
-            </View>
           </Card>
         </View>
       </ScrollView>
@@ -112,4 +123,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SearchScreen;
+export default SearchHaveAcc_Screen;
