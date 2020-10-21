@@ -144,11 +144,12 @@ const Result_Screen = ({navigation}) => {
           backgroundColor="#309045"
           containerStyle={{elevation: 7}}
         />
-        <View style={{flex: 1, padding: 15}}>
+        <View style={{flex: 1, paddingHorizontal: 10}}>
           <FlatList
             data={DATA}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
+            ListHeaderComponent={<View style={{height: 10}}></View>}
           />
         </View>
       </View>

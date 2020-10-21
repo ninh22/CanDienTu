@@ -27,33 +27,11 @@ const HomeAdmin_Screen = ({navigation, route}) => {
               style={{
                 position: 'absolute',
                 top: 0,
-                left: 0,
-                margin: 10,
-              }}
-              onPress={() => {
-                navigation.navigate('searchhaveaccscreen');
-              }}>
-              <View
-                style={{
-                  borderRadius: 50,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <Icon name="search" size={35} color="#fff" />
-                <Text style={{color: '#fff', marginLeft: 5, fontSize: 15}}>
-                  Tra cứu phiếu
-                </Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                position: 'absolute',
-                top: 0,
                 right: 0,
                 margin: 10,
               }}
               onPress={() => {
-                navigation.navigate('searchhaveaccscreen');
+                alert('123');
               }}>
               <View
                 style={{

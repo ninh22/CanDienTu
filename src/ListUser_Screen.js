@@ -158,11 +158,12 @@ const ListUser_Screen = ({navigation}) => {
           backgroundColor="#309045"
           containerStyle={{elevation: 7}}
         />
-        <View style={{flex: 1, paddingVertical: 15}}>
+        <View style={{flex: 1}}>
           <FlatList
             data={DATA}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
+            ListHeaderComponent={<View style={{height: 10}}></View>}
             numColumns={2}
             columnWrapperStyle={styles.row}
           />
@@ -179,7 +180,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   parent_item: {
-    width: '47%',
+    width: '49%',
     height: 140,
     padding: 10,
     backgroundColor: 'white',

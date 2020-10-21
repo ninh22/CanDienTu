@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {Card, Button, Input} from 'react-native-elements';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 
-const SearchScreen = ({navigation}) => {
+const Search_Screen = ({navigation}) => {
   const [IsFocused, setIsFocused] = useState(true);
 
   const handleFocus = () => {
@@ -57,14 +57,6 @@ const SearchScreen = ({navigation}) => {
                 navigation.navigate('resultscreen');
               }}
             />
-            <View style={{alignItems: 'center', marginTop: 10}}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('loginscreen');
-                }}>
-                <Text style={styles.txt}>Đăng nhập</Text>
-              </TouchableOpacity>
-            </View>
           </Card>
         </View>
       </ScrollView>
@@ -112,4 +104,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SearchScreen;
+export default Search_Screen;

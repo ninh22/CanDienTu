@@ -13,7 +13,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {Card, Button, Input, CheckBox, Header} from 'react-native-elements';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
-const LoginScreen = ({navigation}) => {
+const Login_Screen = ({navigation}) => {
   const [IsFocused, setIsFocused] = useState(true);
   const [IsFocused2, setIsFocused2] = useState(true);
 
@@ -36,24 +36,6 @@ const LoginScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <Header
-        leftComponent={
-          <TouchableOpacity
-            style={{borderRadius: 50}}
-            onPress={() => {
-              navigation.goBack();
-            }}>
-            <Icon name="chevron-back-outline" size={35} color="#fff" />
-          </TouchableOpacity>
-        }
-        centerComponent={{
-          text: 'Đăng nhập',
-          style: {color: '#fff', fontSize: 20},
-        }}
-        // rightComponent={{icon: 'home', color: '#fff'}}
-        backgroundColor="#309045"
-        containerStyle={{elevation: 7}}
-      />
       <ScrollView
         contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}>
         <View style={styles.parent}>
@@ -196,4 +178,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default Login_Screen;
