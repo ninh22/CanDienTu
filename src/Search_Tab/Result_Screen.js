@@ -1,23 +1,19 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Button,
   View,
-  Text,
   FlatList,
   TouchableOpacity,
-  SafeAreaView,
 } from 'react-native';
-import {Header, Card, Image} from 'react-native-elements';
+import {Card, Image} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Loading_Screen from '../ScriptFile/Loading_Screen';
+import Response_Size from '../ScriptFile/ResponsiveSize_Script';
+import HeaderCustom from '../Components/Header_Custom';
+import TextS from '../Components/TextS';
 
-const wait = (timeout) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, timeout);
-  });
-};
-
-const Result_Screen = ({navigation}) => {
+const Components = ({navigationComponents}) => {
   const DATA = [
     {
       id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -98,7 +94,7 @@ const Result_Screen = ({navigation}) => {
     <TouchableOpacity
       style={styles.parent_item}
       onPress={() => {
-        navigation.navigate('resultdetailscreen', {
+        navigationComponents.navigate('resultdetailscreen', {
           item: item,
         });
       }}>
@@ -106,54 +102,51 @@ const Result_Screen = ({navigation}) => {
         <Image source={{uri: item.img}} style={styles.img} />
       </View>
       <View style={styles.view_content}>
-        <Text numberOfLines={1}>{item.title}</Text>
-        <Text style={{color: 'gray'}} numberOfLines={1}>
-          {item.seri_car}
-        </Text>
-        <Text style={{color: 'gray'}} numberOfLines={1}>
-          {item.stuff}
-        </Text>
-        <Text style={{color: 'red'}} numberOfLines={1}>
-          {item.money} Đồng
-        </Text>
-        <View style={{width: '100%', alignItems: 'flex-end'}} numberOfLines={1}>
-          <Text style={{color: 'gray'}}>3 giờ trước</Text>
+        <TextS text={item.title} />
+        <TextS text={item.seri_car} style={{color: 'gray'}} />
+        <TextS text={item.stuff} style={{color: 'gray'}} />
+        <TextS text={item.money + ' đồng'} style={{color: 'red'}} />
+        <View
+          style={{
+            width: '100%',
+            alignItems: 'flex-end',
+          }}>
+          <TextS text="3 giờ trước" style={{color: 'gray'}} />
         </View>
       </View>
     </TouchableOpacity>
   );
+  return (
+    <View style={styles.parent}>
+      <HeaderCustom
+        navigationHeader={navigationComponents}
+        title="Danh sách phiếu"
+      />
+      <View style={{flex: 1, paddingHorizontal: '1.5%'}}>
+        <FlatList
+          data={DATA}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
+      </View>
+    </View>
+  );
+};
+
+const Result_Screen = ({navigation}) => {
+  const [visible, setVisible] = useState(true);
+  useEffect(() => {
+    setTimeout(() => {
+      setVisible(false);
+    }, 500);
+  });
 
   return (
-    <SafeAreaView>
-      <View style={styles.parent}>
-        <Header
-          leftComponent={
-            <TouchableOpacity
-              style={{borderRadius: 50}}
-              onPress={() => {
-                navigation.goBack();
-              }}>
-              <Icon name="chevron-back-outline" size={35} color="#fff" />
-            </TouchableOpacity>
-          }
-          centerComponent={{
-            text: 'Danh sách phiếu',
-            style: {color: '#fff', fontSize: 20},
-          }}
-          // rightComponent={{icon: 'home', color: '#fff'}}
-          backgroundColor="#309045"
-          containerStyle={{elevation: 7}}
-        />
-        <View style={{flex: 1, paddingHorizontal: 10}}>
-          <FlatList
-            data={DATA}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            ListHeaderComponent={<View style={{height: 10}}></View>}
-          />
-        </View>
-      </View>
-    </SafeAreaView>
+    <Loading_Screen
+      edgesTop={false}
+      visible={visible}
+      code={<Components navigationComponents={navigation} />}
+    />
   );
 };
 
@@ -165,13 +158,13 @@ const styles = StyleSheet.create({
   },
   parent_item: {
     width: '100%',
-    height: 110,
+    height: Response_Size('hg', 0, 16), //110
     flexDirection: 'row',
     backgroundColor: 'white',
     borderRadius: 10,
     borderColor: '#C9CFD3',
     borderWidth: 1,
-    marginBottom: 10,
+    marginVertical: '1%',
     elevation: 5,
   },
   view_img: {
@@ -187,7 +180,7 @@ const styles = StyleSheet.create({
   view_content: {
     width: '70%',
     height: '100%',
-    padding: 10,
+    padding: '2%', //10
   },
 });
 

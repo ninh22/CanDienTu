@@ -20,23 +20,24 @@ const wait = (timeout) => {
   });
 };
 
-const ResultDetail_Screen = ({navigation, route}) => {
-  const [item, setItem] = useState(route.params.item);
+const ProductDetail_Screen = ({navigation, route}) => {
+  // const [item, setItem] = useState(route.params.item);
   const [number, setNumber] = useState(1);
-  const [isShow, setisShow] = useState(true);
+  const [isShow, setisShow] = useState(false);
   let listData = [
     {
-      img: item.img,
+      img:
+        'https://candientuquochung.com/wp-content/uploads/2020/09/candongho-qhs.gif',
     },
-    {
-      img: item.img,
-    },
-    {
-      img: item.img,
-    },
-    {
-      img: item.img,
-    },
+    // {
+    //   img: item.img,
+    // },
+    // {
+    //   img: item.img,
+    // },
+    // {
+    //   img: item.img,
+    // },
   ];
 
   useEffect(() => {
@@ -55,7 +56,7 @@ const ResultDetail_Screen = ({navigation, route}) => {
             height: 300,
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: 'blue',
+            backgroundColor: '#fff',
           }}
           key={idx}>
           <Image source={{uri: item.img}} style={styles.img} />
@@ -100,7 +101,7 @@ const ResultDetail_Screen = ({navigation, route}) => {
                   <Icon name="chevron-back-outline" size={35} color="#fff" />
                 </View>
               </TouchableOpacity>
-              <View
+              {/* <View
                 style={{
                   position: 'absolute',
                   bottom: 0,
@@ -113,23 +114,15 @@ const ResultDetail_Screen = ({navigation, route}) => {
                 <Text style={{color: 'black'}}>
                   {number}/{listData.length}
                 </Text>
-              </View>
+              </View> */}
             </View>
             <View style={{padding: 10}}>
-              <Text style={{fontSize: 20}}>Số phiếu: 1</Text>
-              <Text style={{fontSize: 20}}>Xe số: 92C-04610</Text>
-              <Text style={{fontSize: 20}}>Khách hàng: Bê tông Đại Đường</Text>
-              <Text style={{fontSize: 20}}>Hàng hoá: Xi măng</Text>
-              <Text style={{fontSize: 20}}>
-                Trọng lượng toàn bộ: 50,870 (65000 Đồng)
+              <Text style={{fontSize: 23, fontWeight: 'bold'}}>
+                Cân đồng hồ 60kg
               </Text>
-              <Text style={{fontSize: 20}}>
-                Trọng lượng xe: 19,140 (0 Đồng)
-              </Text>
-              <Text style={{fontSize: 20}}>
-                Trọng lượng hàng hoá: 31,730 (65000 Đồng)
-              </Text>
-              <Text style={{fontSize: 20}}>Ngày giờ cân: 01/09/2018 08:49</Text>
+              <Text style={{fontSize: 20}}>Kích thước: 310 x 380</Text>
+              <Text style={{fontSize: 20}}>Tải trọng: 60kg</Text>
+              <Text style={{fontSize: 20}}>Phân độ: 10g</Text>
             </View>
           </View>
         </ScrollView>
@@ -153,7 +146,7 @@ const ResultDetail_Screen = ({navigation, route}) => {
               height: 70,
               tintColor: '#309045',
             }}
-            source={require('./Images/loading/login.gif')}
+            source={require('../Images/loading/login.gif')}
           />
         </View>
       ) : null}
@@ -198,4 +191,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ResultDetail_Screen;
+export default ProductDetail_Screen;

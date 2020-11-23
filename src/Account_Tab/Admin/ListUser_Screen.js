@@ -1,28 +1,26 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Button,
   View,
-  Text,
   FlatList,
   TouchableOpacity,
-  SafeAreaView,
 } from 'react-native';
 import {Header, Card, Image, Avatar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
+import TextS from '../../Components/TextS';
+import Loading_Screen from '../../ScriptFile/Loading_Screen';
+import HeaderCustom from '../../Components/Header_Custom';
 
-const wait = (timeout) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, timeout);
-  });
-};
-
-const ListUser_Screen = ({navigation}) => {
+const Components = ({navigationComponents}) => {
+  const [search, setSearch] = useState('');
+  // const [test, setTest] = useState(false);
   const DATA = [
     {
       id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
       name:
-        'Nguyen Van ANguyen Van ANguyen Van ANguyen Van ANguyen Van ANguyen Van A',
+        'Nguyen Van ANguyen Van ANguyen Van ANguyen Van ANguyen Van ANguyen Van AANguyen Van ANguyen Van A',
       acc:
         'NguyenvanaNguyenvanaNguyenvanaNguyenvanaNguyenvanaNguyenvanaNguyenvanaNguyenvanaNguyenvana',
       pass: '123',
@@ -117,8 +115,9 @@ const ListUser_Screen = ({navigation}) => {
     <TouchableOpacity
       style={styles.parent_item}
       onPress={() => {
-        navigation.navigate('userdetailscreen', {
+        navigationComponents.navigate('detailuserscreen', {
           item: item,
+          // test: test,
         });
       }}>
       <Avatar
@@ -128,48 +127,51 @@ const ListUser_Screen = ({navigation}) => {
           uri: item.img,
         }}
       />
-      <Text numberOfLines={1} style={{fontWeight: 'bold', fontSize: 17}}>
-        {item.name}
-      </Text>
-      <Text style={{color: 'gray', fontSize: 15}} numberOfLines={1}>
-        {item.acc}
-      </Text>
+      <TextS text={item.name} style={{fontWeight: 'bold', fontSize: 15}} />
+      <TextS text={item.acc} style={{color: 'gray', fontSize: 13}} />
     </TouchableOpacity>
   );
 
+  // useEffect(() => {
+  //   test ? alert(123) : null;
+  // });
+
   return (
-    <SafeAreaView>
-      <View style={styles.parent}>
-        <Header
-          leftComponent={
-            <TouchableOpacity
-              style={{borderRadius: 50}}
-              onPress={() => {
-                navigation.goBack();
-              }}>
-              <Icon name="chevron-back-outline" size={35} color="#fff" />
-            </TouchableOpacity>
-          }
-          centerComponent={{
-            text: 'Danh sách Khách hàng',
-            style: {color: '#fff', fontSize: 20},
-          }}
-          // rightComponent={{icon: 'home', color: '#fff'}}
-          backgroundColor="#309045"
-          containerStyle={{elevation: 7}}
+    <View style={styles.parent}>
+      <HeaderCustom
+        navigationHeader={navigationComponents}
+        title="Danh sách Khách hàng"
+        visibleSearch={true}
+        searchPlaceHolder="Tìm tên khách hàng"
+        value={search}
+        onChangeText={setSearch}
+      />
+      <View style={{flex: 1}}>
+        <FlatList
+          data={DATA}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
         />
-        <View style={{flex: 1}}>
-          <FlatList
-            data={DATA}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            ListHeaderComponent={<View style={{height: 10}}></View>}
-            numColumns={2}
-            columnWrapperStyle={styles.row}
-          />
-        </View>
       </View>
-    </SafeAreaView>
+    </View>
+  );
+};
+
+const ListUser_Screen = ({navigation}) => {
+  const [visible, setVisible] = useState(true);
+  useEffect(() => {
+    setTimeout(() => {
+      setVisible(false);
+    }, 500);
+  });
+  return (
+    <Loading_Screen
+      edgesTop={false}
+      visible={visible}
+      code={<Components navigationComponents={navigation} />}
+    />
   );
 };
 
@@ -181,15 +183,15 @@ const styles = StyleSheet.create({
   },
   parent_item: {
     width: '49%',
-    height: 140,
-    padding: 10,
+    height: Response_Size('hg', 0, 21), //140
+    padding: '3%', //10
     backgroundColor: 'white',
     borderRadius: 10,
     borderColor: '#C9CFD3',
     borderWidth: 1,
-    marginBottom: 10,
+    marginVertical: '1%', //10
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     elevation: 5,
   },
   row: {
