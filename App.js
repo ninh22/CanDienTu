@@ -2,6 +2,8 @@
 import 'react-native-gesture-handler';
 
 import React, {useEffect} from 'react';
+import {Provider} from 'react-redux';
+import store from './src/Redux/store';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -67,32 +69,37 @@ const LoginStack = createStackNavigator();
 
 function LoginStackScreen() {
   return (
-    <LoginStack.Navigator headerMode="none">
-      <LoginStack.Screen name="loginscreen" component={Login_Screen} />
-      <LoginStack.Screen
-        name="userchangepasswordscreen"
-        component={UserChangePassword_Screen}
-      />
-      {/* Admin */}
-      <LoginStack.Screen name="homeadminscreen" component={HomeAdmin_Screen} />
-      <LoginStack.Screen name="listuserscreen" component={ListUser_Screen} />
-      <LoginStack.Screen
-        name="detailuserscreen"
-        component={DetailUser_Screen}
-      />
-      <LoginStack.Screen name="edituserscreen" component={EditUser_Screen} />
-      <LoginStack.Screen name="adduserscreen" component={AddUser_Screen} />
-      {/* User */}
-      <LoginStack.Screen name="homeuserscreen" component={HomeUser_Screen} />
-      <LoginStack.Screen name="tongQuanUser" component={TongQuanUser} />
-      <LoginStack.Screen name="userinfoscreen" component={UserInfo_Screen} />
-      {/* Phiếu */}
-      <SearchStack.Screen name="resultscreen" component={Result_Screen} />
-      <SearchStack.Screen
-        name="resultdetailscreen"
-        component={ResultDetail_Screen}
-      />
-    </LoginStack.Navigator>
+    <Provider store={store}>
+      <LoginStack.Navigator headerMode="none">
+        <LoginStack.Screen name="loginscreen" component={Login_Screen} />
+        <LoginStack.Screen
+          name="userchangepasswordscreen"
+          component={UserChangePassword_Screen}
+        />
+        {/* Admin */}
+        <LoginStack.Screen
+          name="homeadminscreen"
+          component={HomeAdmin_Screen}
+        />
+        <LoginStack.Screen name="listuserscreen" component={ListUser_Screen} />
+        <LoginStack.Screen
+          name="detailuserscreen"
+          component={DetailUser_Screen}
+        />
+        <LoginStack.Screen name="edituserscreen" component={EditUser_Screen} />
+        <LoginStack.Screen name="adduserscreen" component={AddUser_Screen} />
+        {/* User */}
+        <LoginStack.Screen name="homeuserscreen" component={HomeUser_Screen} />
+        <LoginStack.Screen name="tongQuanUser" component={TongQuanUser} />
+        <LoginStack.Screen name="userinfoscreen" component={UserInfo_Screen} />
+        {/* Phiếu */}
+        <SearchStack.Screen name="resultscreen" component={Result_Screen} />
+        <SearchStack.Screen
+          name="resultdetailscreen"
+          component={ResultDetail_Screen}
+        />
+      </LoginStack.Navigator>
+    </Provider>
   );
 }
 

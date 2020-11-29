@@ -1,4 +1,7 @@
+/* eslint-disable prettier/prettier */
 import React, {useState, useEffect} from 'react';
+import {useSelector} from 'react-redux';
+
 import {StyleSheet, ScrollView, View} from 'react-native';
 import {Avatar, ListItem} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -25,7 +28,6 @@ const Components = ({
   navigationComponents,
   dataRoute,
   onBackRefresh,
-  checkScreen,
 }) => {
   const [showDelete, setShowDelete] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -68,42 +70,55 @@ const Components = ({
       },
     },
   ];
-  const returnData = (dataUser, dataAdmin) => {
-    return checkScreen ? dataUser : dataAdmin;
+  // const returnData = (dataUser, dataAdmin) => {
+  //   return checkScreen ? dataUser : dataAdmin;
+  // };
+  const image_Null = (uri) => {
+    if (uri == '' || uri == undefined || uri == null) {
+      return require('../../Images/icons8_person_96.png');
+    } else {
+      return {
+        uri: uri,
+      };
+    }
   };
   const listItem = [
     {
       title: 'Họ và tên',
-      content: returnData(dataRoute.name, 'Van A Admin'),
+      content: dataRoute.name,
+      // content: returnData(dataRoute.name, 'Van A Admin'),
     },
-    {
-      title: 'Ngày sinh',
-      content: '1990-10-20',
-    },
-    {
-      title: 'Giới tính',
-      content: 'Nam',
-    },
+    // {
+    //   title: 'Ngày sinh',
+    //   content: '1990-10-20',
+    // },
+    // {
+    //   title: 'Giới tính',
+    //   content: 'Nam',
+    // },
     {
       title: 'Số điện thoại',
-      content: returnData(dataRoute.number, '092584687'),
+      content: dataRoute.phonenumber,
+      // content: returnData(dataRoute.number, '092584687'),
     },
     {
       title: 'Địa chỉ',
-      content: 'Tp. Buôn Ma Thuật',
+      content: dataRoute.address,
     },
     {
-      title: 'Email',
-      content: 'VanA@gmail.com',
+      title: 'Websites',
+      content: dataRoute.websites,
     },
+    // {
+    //   title: 'Email',
+    //   content: 'VanA@gmail.com',
+    // },
   ];
   const onPress = (props) => {
-    return checkScreen
-      ? () =>
-          navigationComponents.navigate('edituserscreen', {
-            data: {title: props.title, content: props.content},
-          })
-      : null;
+    return () =>
+      navigationComponents.navigate('edituserscreen', {
+        data: {title: props.title, content: props.content},
+      });
   };
   const List = ({lists}) => {
     return (
@@ -111,7 +126,7 @@ const Components = ({
         {lists.map((l, i) => (
           <ListItem
             key={i}
-            onPress={onPress(l)}
+            // onPress={onPress(l)}
             bottomDivider
             title={l.title}
             titleStyle={{fontWeight: 'bold'}}
@@ -120,7 +135,7 @@ const Components = ({
                 {l.content}
               </ScalableText>
             }>
-            {checkScreen ? (
+            {false ? (
               <ListItem.Chevron color="#309045" size={25} />
             ) : null}
           </ListItem>
@@ -135,7 +150,7 @@ const Components = ({
           title="Thông tin tài khoản"
           navigationHeader={navigationComponents}
           rightComponent={
-            checkScreen ? (
+            false ? (
               <Icon
                 name="ellipsis-vertical"
                 size={30}
@@ -151,23 +166,18 @@ const Components = ({
             <Avatar
               rounded
               size="xlarge"
-              showAccessory={checkScreen}
+              showAccessory={false}
               onAccessoryPress={() => _PickImage()}
-              source={{
-                uri: returnData(
-                  userImg,
-                  'https://cdn.now.howstuffworks.com/media-content/0b7f4e9b-f59c-4024-9f06-b3dc12850ab7-1920-1080.jpg',
-                ),
-              }}
+              source={image_Null(userImg)}
             />
-            <TextS
+            {/* <TextS
               text={returnData(dataRoute.acc, 'Admin')}
               style={{
                 color: '#fff',
                 fontSize: 15,
                 marginTop: '3%', //10
               }}
-            />
+            /> */}
           </View>
           <List lists={listItem} />
         </View>
@@ -201,22 +211,17 @@ const Components = ({
 };
 
 const DetailUser_Screen = ({navigation, route}) => {
-  const [visible, setVisible] = useState(true);
-  const [item, setItem] = useState('');
-  const check_Sreen = () => {
-    if (route.params === undefined) {
-      return false;
-    } else {
-      return true;
-    }
-  };
+  const [visible, setVisible] = useState(false);
+  let index = route.params.index;
+  let item = useSelector((state)=>state[index]);
+
   useEffect(() => {
-    setTimeout(() => {
-      if (check_Sreen() === true) {
-        setItem(route.params.item);
-      }
-      setVisible(false);
-    }, 500);
+    // setTimeout(() => {
+    //   if (check_Sreen() === true) {
+    //     setItem(route.params.item);
+    //   }
+    //   setVisible(false);
+    // }, 500);
   });
   return (
     <Loading_Screen
@@ -226,7 +231,6 @@ const DetailUser_Screen = ({navigation, route}) => {
         <Components
           navigationComponents={navigation}
           dataRoute={item}
-          checkScreen={check_Sreen()}
         />
       }
     />

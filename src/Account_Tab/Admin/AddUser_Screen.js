@@ -1,5 +1,12 @@
+/* eslint-disable prettier/prettier */
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, ScrollView, View, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  ScrollView,
+  View,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import ScalableText from 'react-native-text';
 import Input from '../../Components/Input';
 import HeaderCustom from '../../Components/Header_Custom';
@@ -7,6 +14,7 @@ import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
 import {RNToasty} from 'react-native-toasty';
 import {Avatar, ListItem, Button} from 'react-native-elements';
 import ImagePicker from 'react-native-image-picker';
+import host from '../../Server/host';
 
 const options = {
   title: 'Chọn hình',
@@ -31,6 +39,7 @@ const AddUser_Screen = ({navigation}) => {
   const [userSex, setUserSex] = useState('Nam');
   const [userNumber, setUserNumber] = useState('');
   const [userAddress, setUserAddress] = useState('');
+  const [userWebsites, setUserWebsites] = useState('');
 
   const [userAcc, setUserAcc] = useState('');
   const [userPass, setUserPass] = useState('');
@@ -60,6 +69,9 @@ const AddUser_Screen = ({navigation}) => {
 
   const [checkEmail, setCheckEmail] = useState(true);
   const [statusEmail, setStatusEmail] = useState(false);
+
+  const [checkWebsites, setCheckWebsites] = useState(true);
+  const [statusWebsites, setStatusWebsites] = useState(false);
 
   const listItemDropDown = [
     {
@@ -201,20 +213,81 @@ const AddUser_Screen = ({navigation}) => {
           setStatusEmail(true);
         }
         break;
+      case 'Websites':
+        if (content == '') {
+          RNToasty.Error({
+            title: 'Websites không được để trống',
+          });
+          setCheckWebsites(false);
+          setStatusWebsites(false);
+        } else {
+          setCheckWebsites(true);
+          setStatusWebsites(true);
+        }
+        break;
     }
   };
 
   const visible_Button = () => {
     return statusName &&
-      statusDate &&
+      // statusDate &&
       statusNumber &&
       statusAddress &&
-      statusAcc &&
-      statusPass &&
-      statusCheckPass &&
-      statusEmail
-      ? false
+      statusWebsites
+      ? // statusAcc &&
+        // statusPass &&
+        // statusCheckPass &&
+        // statusEmail
+        false
       : true;
+  };
+
+  const _AddCustomer = () => {
+    return fetch(host.addCustomer, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: userName,
+        phonenumber: userNumber,
+        address: userAddress,
+        websites: userWebsites,
+      }),
+    })
+      .then((response) => response.text())
+      .then((responseJson) => {
+        if (responseJson == 'successed') {
+          RNToasty.Success({
+            title: 'Thêm khách hàng thành công',
+          });
+        }
+        // if (responseJson == 'successed') {
+        //   Alert.alert(
+        //     'Thông báo',
+        //     'Thêm thành công!'
+        //     [
+        //       {
+        //         text: 'Xác nhận',
+        //         style: 'cancel',
+        //       },
+        //     ],
+        //   );
+        // }
+      })
+      .catch((error) => {
+        console.error(error);
+        RNToasty.Error({
+          title: 'Thêm khách hàng thất bại',
+        });
+        // Alert.alert('Thông báo', 'Thêm thất bại!', [
+        //   {
+        //     text: 'Xác nhận',
+        //     style: 'cancel',
+        //   },
+        // ]);
+      });
   };
 
   return (
@@ -246,7 +319,7 @@ const AddUser_Screen = ({navigation}) => {
             >
               <View style={styles.card_title}>
                 <ScalableText style={styles.text_card}>
-                  THÔNG TIN NGƯỜI DÙNG
+                  THÔNG TIN KHÁCH HÀNG
                 </ScalableText>
               </View>
               <View
@@ -272,7 +345,7 @@ const AddUser_Screen = ({navigation}) => {
                     onChangeText={setUserName}
                   />
                 </View>
-                <View>
+                {/*<View>
                   <ScalableText style={styles.text_input}>
                     Ngày sinh
                   </ScalableText>
@@ -286,8 +359,8 @@ const AddUser_Screen = ({navigation}) => {
                     check={checkDate}
                     codeCheck={check_Content}
                   />
-                </View>
-                <View>
+                </View>*/}
+                {/*<View>
                   <ScalableText style={styles.text_input}>
                     Giới tính
                   </ScalableText>
@@ -299,7 +372,7 @@ const AddUser_Screen = ({navigation}) => {
                     setDropDown_TextSelected={setUserSex}
                     dropDown_List={listItemDropDown}
                   />
-                </View>
+                </View>*/}
                 <View>
                   <ScalableText style={styles.text_input}>
                     Số điện thoại
@@ -331,9 +404,25 @@ const AddUser_Screen = ({navigation}) => {
                     onChangeText={setUserAddress}
                   />
                 </View>
+                <View>
+                  <ScalableText style={styles.text_input}>
+                    Websites
+                  </ScalableText>
+                  <Input
+                    heightParent={40}
+                    heightI={18}
+                    placeHolder="Nhập websites"
+                    type={1}
+                    value={userWebsites}
+                    check={checkWebsites}
+                    keyCheck="Websites"
+                    codeCheck={check_Content}
+                    onChangeText={setUserWebsites}
+                  />
+                </View>
               </View>
             </View>
-            <View
+            {/*<View
             // style={styles.view_card}
             >
               <View style={styles.card_title}>
@@ -413,13 +502,14 @@ const AddUser_Screen = ({navigation}) => {
                 </View>
               </View>
             </View>
+            */}
             <View>
               <Button
                 buttonStyle={styles.btn}
                 title="Tạo tài khoản"
                 disabled={visible_Button()}
                 onPress={() => {
-                  alert(123);
+                  _AddCustomer();
                 }}
               />
             </View>
