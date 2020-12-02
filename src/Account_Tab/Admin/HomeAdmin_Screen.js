@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {
@@ -7,6 +8,9 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
+import {useSelector, useDispatch} from 'react-redux';
+import {getUserAction, loadMoreUserAction} from '../../Redux/index';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {Card, Button, Badge} from 'react-native-elements';
@@ -49,6 +53,8 @@ const Noti = (props) => {
 };
 
 const Components = ({navigationComponents}) => {
+  const dispatch = useDispatch();
+  const nullItem = (item) => dispatch(getUserAction(item));
   return (
     <ScrollView>
       <View style={styles.parent}>
@@ -76,16 +82,25 @@ const Components = ({navigationComponents}) => {
                 title="Quản lý khách hàng"
                 typeIcon={true}
                 nameIcon="users"
-                onPress={() => navigationComponents.navigate('listuserscreen')}
+                onPress={() => {
+                  nullItem(null);
+                  navigationComponents.navigate('listuserscreen');
+                }}
               />
-              <Item
+              {/* <Item
                 title="Thêm khách hàng"
                 typeIcon={true}
                 nameIcon="user-plus"
                 onPress={() => navigationComponents.navigate('adduserscreen')}
+              /> */}
+              <Item
+                title="Đăng xuất"
+                typeIcon={false}
+                nameIcon="log-out"
+                onPress={() => _removeData(navigationComponents)}
               />
             </View>
-            <View style={styles.view_item}>
+            {/* <View style={styles.view_item}>
               <Item
                 title="Tài khoản"
                 typeIcon={true}
@@ -98,14 +113,25 @@ const Components = ({navigationComponents}) => {
                 title="Đăng xuất"
                 typeIcon={false}
                 nameIcon="log-out"
-                onPress={() => alert(123)}
+                onPress={() => _removeData(navigationComponents)}
               />
-            </View>
+            </View> */}
           </View>
         </View>
       </View>
     </ScrollView>
   );
+};
+
+const _removeData = async (navigation) => {
+  try {
+    await AsyncStorage.removeItem('@Key');
+    navigation.replace('loginscreen');
+    // console.warn(value);
+  } catch (error) {
+    // Error retrieving data
+    // console.error(error);
+  }
 };
 
 const HomeAdmin_Screen = ({navigation, route}) => {

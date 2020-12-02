@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {
@@ -13,6 +14,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {Card, Button} from 'react-native-elements';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper-hooks';
+import CallButton from '../Components/CallButton';
 
 const wait = (timeout) => {
   return new Promise((resolve) => {
@@ -116,7 +118,7 @@ const ProductDetail_Screen = ({navigation, route}) => {
                 </Text>
               </View> */}
             </View>
-            <View style={{padding: 10}}>
+            <View style={{padding: 10, width: '100%', height: '100%'}}>
               <Text style={{fontSize: 23, fontWeight: 'bold'}}>
                 Cân đồng hồ 60kg
               </Text>
@@ -126,6 +128,7 @@ const ProductDetail_Screen = ({navigation, route}) => {
             </View>
           </View>
         </ScrollView>
+        {/* <CallButton /> */}
       </View>
 
       {isShow ? (

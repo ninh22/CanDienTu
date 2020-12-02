@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable no-unreachable */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
@@ -15,6 +16,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper-hooks';
 import ScalableText from 'react-native-text';
+import CallButton from '../Components/CallButton';
 
 const Home_Screen = ({navigation, route}) => {
   const DATA = [
@@ -359,6 +361,7 @@ const Home_Screen = ({navigation, route}) => {
           />
         </View>
       </ScrollView>
+      <CallButton />
     </SafeAreaView>
   );
 };
@@ -464,9 +467,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   ServiceView_Image: {
-    width: '30%',
-    height: '30%',
-    borderRadius: 50,
+    width: 50,
+    height: 50,
+    borderRadius: 30,
     padding: '5%',
     borderWidth: 1,
     borderColor: '#fff',

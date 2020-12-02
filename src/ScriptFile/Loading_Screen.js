@@ -13,14 +13,7 @@ import Response_Size from './ResponsiveSize_Script';
 //   });
 // };
 
-const Loading_Screen = ({
-  code,
-  visible,
-  edgesTop,
-  noData,
-  noDataContent,
-  navigation,
-}) => {
+const Loading_Screen = ({code, visible, edgesTop, navigation}) => {
   // useEffect(() => {
   //   // wait(2000).then(() => {
   //   //   // seta(false);
@@ -38,37 +31,6 @@ const Loading_Screen = ({
   //     console.log('Wrong');
   //   }
   // };
-  const checkNoDataScreen = () => {
-    return (
-      <View>
-        {false || noData ? (
-          <View
-            style={{
-              width: Dimensions.get('window').width,
-              height: Dimensions.get('window').height,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <ScalableText style={{fontSize: 17, marginBottom: '3%'}}>
-              {noDataContent}
-            </ScalableText>
-            <Button
-              buttonStyle={{
-                backgroundColor: '#309045',
-                borderRadius: 10,
-              }}
-              title="Quay về màn hình trước"
-              onPress={() => {
-                navigation.goBack(null);
-              }}
-            />
-          </View>
-        ) : (
-          code
-        )}
-      </View>
-    );
-  };
 
   return (
     <SafeAreaView
@@ -99,7 +61,7 @@ const Loading_Screen = ({
           />
         </View>
       ) : (
-        checkNoDataScreen()
+        code
       )}
     </SafeAreaView>
   );

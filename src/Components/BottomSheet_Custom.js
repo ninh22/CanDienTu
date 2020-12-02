@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import {ListItem, Divider, BottomSheet} from 'react-native-elements';

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {
@@ -52,32 +53,36 @@ const IconCustom = (icons) => {
 const Components = ({navigationComponents, dataRoute}) => {
   const [isModal, setIsModal] = useState(false);
   const [num, setnum] = useState(0);
-  let listData = [
-    {
-      img: dataRoute.img,
-    },
-    {
-      img: dataRoute.img,
-    },
-    {
-      img: dataRoute.img,
-    },
-    {
-      img: dataRoute.img,
-    },
-  ];
-  const imageUrls = listData.map((item, index) => {
-    return {
-      url: item.img,
-      width: Dimensions.get('window').width,
-      height: Response_Size('hg', 0, 40), //300
-    };
-  });
+  // let listData = [
+  //   {
+  //     img: dataRoute.img,
+  //   },
+  //   {
+  //     img: dataRoute.img,
+  //   },
+  //   {
+  //     img: dataRoute.img,
+  //   },
+  //   {
+  //     img: dataRoute.img,
+  //   },
+  // ];
+  // const imageUrls = listData.map((item, index) => {
+  //   return {
+  //     url: item.img,
+  //     width: Dimensions.get('window').width,
+  //     height: Response_Size('hg', 0, 40), //300
+  //   };
+  // });
   return (
     <ScrollView>
       <View style={styles.parent}>
-        <View style={styles.img}>
-          <ImageViewer
+        <View style={styles.imgView}>
+          <Image
+            style={styles.img}
+            source={require('../Images/logo_white.png')}
+          />
+          {/* <ImageViewer
             imageUrls={imageUrls}
             enableImageZoom={false}
             index={num}
@@ -106,8 +111,8 @@ const Components = ({navigationComponents, dataRoute}) => {
                 </View>
               );
             }}
-          />
-          <Modal visible={isModal} transparent={true}>
+          /> */}
+          {/* <Modal visible={isModal} transparent={true}>
             <IconCustom
               icon={false} // Custom type icon
               nameIcon={'arrow-collapse'}
@@ -123,30 +128,41 @@ const Components = ({navigationComponents, dataRoute}) => {
               index={num}
               onChange={(index) => setnum(index)}
             />
-          </Modal>
+          </Modal> */}
           <IconCustom
             icon={true} // Custom type icon
             nameIcon="chevron-back-outline"
             location={{left: 0}} // true is left
             onPress={() => navigationComponents.goBack()}
           />
-          <IconCustom
+          {/* <IconCustom
             icon={false} // Custom type icon
             nameIcon={'arrow-expand'}
             location={{right: 0}} // false is right
             onPress={() => setIsModal(true)}
-          />
+          /> */}
         </View>
         <View style={{padding: '1.5%'}}>
           <ScalableText style={{fontSize: 20}}>
-            Số phiếu: 1 {'\n'}
+            {/* Số phiếu: 1 {'\n'}
             Xe số: 92C-04610 {'\n'}
             Khách hàng: Bê tông Đại Đường {'\n'}
             Hàng hoá: Xi măng {'\n'}
             Trọng lượng toàn bộ: 50,870 (65000 Đồng) {'\n'}
             Trọng lượng xe: 19,140 (0 Đồng) {'\n'}
             Trọng lượng hàng hoá: 31,730 (65000 Đồng) {'\n'}
-            Ngày giờ cân: 01/09/2018 08:49
+            Ngày giờ cân: 01/09/2018 08:49 */}
+            {/* Số phiếu: 1 {'\n'} */}
+            Xe số: {dataRoute.truct_no} {'\n'}
+            Khách hàng: {dataRoute.customer_name} {'\n'}
+            Hàng hoá: {dataRoute.items_name} {'\n'}
+            Trọng lượng toàn bộ: {dataRoute.weight_2} ({dataRoute.price_total2}{' '}
+            Đồng) {'\n'}
+            Trọng lượng xe: {dataRoute.weight_1} ({dataRoute.price_total1} Đồng){' '}
+            {'\n'}
+            Trọng lượng hàng hoá: {dataRoute.net_weight} ({dataRoute.price_w}{' '}
+            Đồng) {'\n'}
+            Ngày giờ cân: {dataRoute.date_in}
           </ScalableText>
         </View>
       </View>
@@ -156,11 +172,11 @@ const Components = ({navigationComponents, dataRoute}) => {
 
 const ResultDetail_Screen = ({navigation, route}) => {
   const [item, setItem] = useState(route.params.item);
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
-    setTimeout(() => {
-      setVisible(false);
-    }, 500);
+    // setTimeout(() => {
+    //   setVisible(false);
+    // }, 500);
   });
   return (
     <Loading_Screen
@@ -176,9 +192,16 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  img: {
+  imgView: {
     width: '100%',
     height: Response_Size('hg', 0, 40), //300
+    backgroundColor: '#309045',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  img: {
+    width: Response_Size('wd', 0, 95), //350
+    height: Response_Size('hg', 1, 40, 35), //100
   },
   iconLeft: {
     position: 'absolute',

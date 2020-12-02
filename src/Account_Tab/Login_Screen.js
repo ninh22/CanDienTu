@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {
@@ -7,6 +8,8 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {SCLAlert, SCLAlertButton} from 'react-native-scl-alert';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Card, Button, CheckBox, Header} from 'react-native-elements';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
@@ -15,6 +18,7 @@ import Response_Size from '../ScriptFile/ResponsiveSize_Script';
 import CardView from '../Components/CardView_Custom';
 import {RNToasty} from 'react-native-toasty';
 import ScalableText from 'react-native-text';
+import host from '../Server/host';
 
 const CheckBoxScreen = (boxs) => {
   return (
@@ -44,6 +48,7 @@ const Login_Screen = ({navigation}) => {
   const [save, setSave] = useState(false);
   const [hide, setHide] = useState(true);
   const [boxhide, setBoxhide] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
   const check_Acc = (content) => {
     if (content == '') {
@@ -71,6 +76,57 @@ const Login_Screen = ({navigation}) => {
   };
   const visible_Button = () => {
     return statusAcc && statusPass ? false : true;
+  };
+  const _Login = () => {
+    return fetch(host.Login, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: account,
+        password: password,
+      }),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        // console.log(responseJson);
+        // console.log(responseJson[0]);
+        if (responseJson == '') {
+          setShowAlert(true);
+        } else if (responseJson !== '' && save == false) {
+          navigation.replace('homeadminscreen');
+        } else if (responseJson !== '' && save == true) {
+          _storeData('@Key', JSON.stringify(responseJson[0]));
+          navigation.replace('homeadminscreen');
+        }
+        RNToasty.Success({
+          title: 'Đăng nhập thành công',
+        });
+        // if (responseJson.check == 'notfull') {
+        //   getUser(responseJson.data);
+        // }
+      })
+      .catch((error) => {
+        console.error(error);
+        RNToasty.Error({
+          title: 'Lỗi',
+        });
+        // Alert.alert('Thông báo', 'Lỗi', [
+        //   {
+        //     text: 'Xác nhận',
+        //     style: 'cancel',
+        //   },
+        // ]);
+      });
+  };
+  const _storeData = async (key, data) => {
+    try {
+      await AsyncStorage.setItem(key, data);
+    } catch (error) {
+      // Error saving data
+    }
   };
   const Content = () => {
     return (
@@ -116,12 +172,12 @@ const Login_Screen = ({navigation}) => {
         <Button
           buttonStyle={styles.btn}
           title="Đăng nhập"
-          // disabled={visible_Button()}
+          disabled={visible_Button()}
           onPress={() => {
-            navigation.navigate('homeadminscreen');
+            _Login();
           }}
         />
-        <View
+        {/* <View
           style={{
             alignItems: 'center',
             justifyContent: 'center',
@@ -129,11 +185,28 @@ const Login_Screen = ({navigation}) => {
           }}>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('homeuserscreen');
+              navigation.navigation('homeuserscreen');
             }}>
             <ScalableText style={styles.txt}>Quên mật khẩu?</ScalableText>
           </TouchableOpacity>
-        </View>
+        </View> */}
+        <SCLAlert
+          theme="danger"
+          show={showAlert}
+          title="Đăng nhập thất bại"
+          headerIconComponent={
+            <Icon name="close-circle" size={35} color="#fff" />
+          }
+          cancellable={false}
+          subtitle="Vui lòng kiểm tra lại thông tin đăng nhập">
+          <SCLAlertButton
+            theme="danger"
+            onPress={() => {
+              setShowAlert(false);
+            }}>
+            Ok
+          </SCLAlertButton>
+        </SCLAlert>
       </View>
     );
   };

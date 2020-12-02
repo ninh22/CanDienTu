@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, FlatList, TouchableOpacity} from 'react-native';
 import {Image, Button} from 'react-native-elements';
@@ -6,6 +7,7 @@ import Response_Size from '../ScriptFile/ResponsiveSize_Script';
 import Loading_Screen from '../ScriptFile/Loading_Screen';
 import ScalableText from 'react-native-text';
 import HeaderCustom from '../Components/Header_Custom';
+import CallButton from '../Components/CallButton';
 
 const Components = ({navigationComponents, dataRoute}) => {
   const DATA = [
@@ -281,6 +283,7 @@ const Components = ({navigationComponents, dataRoute}) => {
           keyExtractor={(item) => item.id}
         />
       </View>
+      <CallButton />
     </View>
   );
 };

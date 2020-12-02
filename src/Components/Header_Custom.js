@@ -18,6 +18,7 @@ const HeaderCustom = ({
   rightComponent,
   visibleSearch,
   searchPlaceHolder,
+  searchCode,
   value,
   onChangeText,
   onBackRefresh,
@@ -67,6 +68,7 @@ const HeaderCustom = ({
                 borderWidth: 0,
                 padding: 0,
               }}
+              onEndEditing={searchCode}
               underlineColorAndroid="transparent"
               onChangeText={(text) => onChangeText(text)}
               value={value}
@@ -101,7 +103,7 @@ const styles = StyleSheet.create({
   view_input: {
     backgroundColor: 'white',
     width: Response_Size('wd', 0, 85),
-    height: Response_Size('hg', 0, 6),
+    height: Response_Size('hg', 0, 5.5),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',

@@ -24,11 +24,7 @@ const options = {
   },
 };
 
-const Components = ({
-  navigationComponents,
-  dataRoute,
-  onBackRefresh,
-}) => {
+const Components = ({navigationComponents, dataRoute, onBackRefresh}) => {
   const [showDelete, setShowDelete] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -135,9 +131,7 @@ const Components = ({
                 {l.content}
               </ScalableText>
             }>
-            {false ? (
-              <ListItem.Chevron color="#309045" size={25} />
-            ) : null}
+            {false ? <ListItem.Chevron color="#309045" size={25} /> : null}
           </ListItem>
         ))}
       </View>
@@ -168,7 +162,8 @@ const Components = ({
               size="xlarge"
               showAccessory={false}
               onAccessoryPress={() => _PickImage()}
-              source={image_Null(userImg)}
+              // source={image_Null(userImg)}
+              source={require('../../Images/icons8_person_96.png')}
             />
             {/* <TextS
               text={returnData(dataRoute.acc, 'Admin')}
@@ -213,7 +208,7 @@ const Components = ({
 const DetailUser_Screen = ({navigation, route}) => {
   const [visible, setVisible] = useState(false);
   let index = route.params.index;
-  let item = useSelector((state)=>state[index]);
+  let item = useSelector((state) => state[index]);
 
   useEffect(() => {
     // setTimeout(() => {
@@ -227,12 +222,7 @@ const DetailUser_Screen = ({navigation, route}) => {
     <Loading_Screen
       edgesTop={false}
       visible={visible}
-      code={
-        <Components
-          navigationComponents={navigation}
-          dataRoute={item}
-        />
-      }
+      code={<Components navigationComponents={navigation} dataRoute={item} />}
     />
   );
 };

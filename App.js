@@ -1,7 +1,9 @@
 /* eslint-disable prettier/prettier */
 import 'react-native-gesture-handler';
 
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {Provider} from 'react-redux';
 import store from './src/Redux/store';
 
@@ -70,7 +72,7 @@ const LoginStack = createStackNavigator();
 function LoginStackScreen() {
   return (
     <Provider store={store}>
-      <LoginStack.Navigator headerMode="none">
+      <LoginStack.Navigator headerMode="none" initialRouteName="loginscreen">
         <LoginStack.Screen name="loginscreen" component={Login_Screen} />
         <LoginStack.Screen
           name="userchangepasswordscreen"
@@ -103,18 +105,90 @@ function LoginStackScreen() {
   );
 }
 
+const HomePersonStack = createStackNavigator();
+
+function HomePersonStackScreen() {
+  return (
+    <Provider store={store}>
+      <HomePersonStack.Navigator
+        headerMode="none"
+        initialRouteName="homeadminscreen">
+        <HomePersonStack.Screen name="loginscreen" component={Login_Screen} />
+        <HomePersonStack.Screen
+          name="userchangepasswordscreen"
+          component={UserChangePassword_Screen}
+        />
+        {/* Admin */}
+        <HomePersonStack.Screen
+          name="homeadminscreen"
+          component={HomeAdmin_Screen}
+        />
+        <HomePersonStack.Screen
+          name="listuserscreen"
+          component={ListUser_Screen}
+        />
+        <HomePersonStack.Screen
+          name="detailuserscreen"
+          component={DetailUser_Screen}
+        />
+        <HomePersonStack.Screen
+          name="edituserscreen"
+          component={EditUser_Screen}
+        />
+        <HomePersonStack.Screen
+          name="adduserscreen"
+          component={AddUser_Screen}
+        />
+        {/* User */}
+        <HomePersonStack.Screen
+          name="homeuserscreen"
+          component={HomeUser_Screen}
+        />
+        <HomePersonStack.Screen name="tongQuanUser" component={TongQuanUser} />
+        <HomePersonStack.Screen
+          name="userinfoscreen"
+          component={UserInfo_Screen}
+        />
+        {/* Phiếu */}
+        <HomePersonStack.Screen name="resultscreen" component={Result_Screen} />
+        <HomePersonStack.Screen
+          name="resultdetailscreen"
+          component={ResultDetail_Screen}
+        />
+      </HomePersonStack.Navigator>
+    </Provider>
+  );
+}
+
 const Tab = createBottomTabNavigator();
 
 const App = () => {
+  const [checkLogin, setCheckLogin] = useState(null);
+  const _retrieveData = async () => {
+    try {
+      let value = await AsyncStorage.getItem('@Key');
+      value = await JSON.parse(value);
+      // console.warn(value);
+      if (value !== null) {
+        // We have data!!
+        // console.log(value);
+        setCheckLogin(false);
+      } else {
+        setCheckLogin(true);
+      }
+    } catch (error) {
+      // Error retrieving data
+    }
+  };
   let init = async () => {
     // …do multiple async tasks
+    _retrieveData();
   };
-
   useEffect(() => {
     init().finally(() => {
       RNBootSplash.hide({duration: 1000});
     });
-  }, []);
+  });
 
   return (
     <SafeAreaProvider>
@@ -146,7 +220,11 @@ const App = () => {
           }}>
           <Tab.Screen name="Trang chủ" component={HomeStackScreen} />
           <Tab.Screen name="Tra cứu" component={SearchStackScreen} />
-          <Tab.Screen name="Tài khoản" component={LoginStackScreen} />
+          {checkLogin ? (
+            <Tab.Screen name="Tài khoản" component={LoginStackScreen} />
+          ) : (
+            <Tab.Screen name="Tài khoản" component={HomePersonStackScreen} />
+          )}
         </Tab.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

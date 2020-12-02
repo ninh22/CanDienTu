@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
@@ -42,7 +43,9 @@ const Search_Screen = ({navigation}) => {
           disabled={isButton}
           onPress={() => {
             // checkText(text);
-            navigation.navigate('resultscreen');
+            navigation.navigate('resultscreen', {
+              value: text,
+            });
           }}
         />
       </View>

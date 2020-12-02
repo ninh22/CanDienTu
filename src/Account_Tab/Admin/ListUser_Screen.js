@@ -7,6 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  TextInput,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {getUserAction, loadMoreUserAction} from '../../Redux/index';
@@ -16,6 +17,7 @@ import {RNToasty} from 'react-native-toasty';
 import {Header, Card, Image, Avatar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
+import ScalableText from 'react-native-text';
 import TextS from '../../Components/TextS';
 import Loading_Screen from '../../ScriptFile/Loading_Screen';
 import HeaderCustom from '../../Components/Header_Custom';
@@ -57,9 +59,11 @@ const ListUser_Screen = ({navigation}) => {
   const [noData, setNoData] = useState(false);
   const [noDataContent, setNoDataContent] = useState(null);
   let list = useSelector((state) => state);
-  let [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(3);
+  const [page, setPage] = useState(1);
+  const [limitItem, setLimitItem] = useState(10);
+  const [pageSearch, setPageSearch] = useState(1);
   const [search, setSearch] = useState('');
+  const [searchCheck, setSearchCheck] = useState(false);
   const dispatch = useDispatch();
   const getUser = (item) => dispatch(getUserAction(item));
   const loadMoreUser = (item) => dispatch(loadMoreUserAction(item));
@@ -72,12 +76,12 @@ const ListUser_Screen = ({navigation}) => {
       },
       body: JSON.stringify({
         page: page,
-        limit: limit,
+        limit: limitItem,
       }),
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log(responseJson.check);
+        // console.log(responseJson.check);
         switch (responseJson.check) {
           case 'notfull':
             if (list == null) {
@@ -85,7 +89,7 @@ const ListUser_Screen = ({navigation}) => {
             } else {
               loadMoreUser(responseJson.data);
             }
-            setPage((page += 1));
+            setPage(page + 1);
             setVisibleLoadMore(true);
             break;
           case 'full':
@@ -99,8 +103,7 @@ const ListUser_Screen = ({navigation}) => {
           case 'maxfull':
             setVisibleLoadMore(false);
             setNoData(true);
-            setNoDataContent('Quay về màn hình trước');
-            console.log('No data');
+            setNoDataContent('Không có dữ liệu');
             break;
         }
         // if (responseJson.check == 'notfull') {
@@ -108,12 +111,71 @@ const ListUser_Screen = ({navigation}) => {
         // }
       })
       .catch((error) => {
-        console.error(error);
+        // console.error(error);
         setNoData(true);
         setNoDataContent('Lỗi');
-        // RNToasty.Error({
-        //   title: 'Lỗi',
-        // });
+        RNToasty.Warn({
+          title: 'Lỗi',
+        });
+        // Alert.alert('Thông báo', 'Lỗi', [
+        //   {
+        //     text: 'Xác nhận',
+        //     style: 'cancel',
+        //   },
+        // ]);
+      });
+  };
+  const _searchUserFromAPI = () => {
+    return fetch(host.searchCustomer, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: search,
+        page: pageSearch,
+        limit: limitItem,
+      }),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        // console.log(responseJson.check);
+        switch (responseJson.check) {
+          case 'notfull':
+            if (list == null) {
+              getUser(responseJson.data);
+            } else {
+              loadMoreUser(responseJson.data);
+            }
+            setPageSearch(pageSearch + 1);
+            setVisibleLoadMore(true);
+            break;
+          case 'full':
+            if (list == null) {
+              getUser(responseJson.data);
+            } else {
+              loadMoreUser(responseJson.data);
+            }
+            setVisibleLoadMore(false);
+            break;
+          case 'maxfull':
+            setVisibleLoadMore(false);
+            setNoData(true);
+            setNoDataContent('Không có dữ liệu');
+            break;
+        }
+        // if (responseJson.check == 'notfull') {
+        //   getUser(responseJson.data);
+        // }
+      })
+      .catch((error) => {
+        // console.error(error);
+        setNoData(true);
+        setNoDataContent('Lỗi');
+        RNToasty.Warn({
+          title: 'Lỗi',
+        });
         // Alert.alert('Thông báo', 'Lỗi', [
         //   {
         //     text: 'Xác nhận',
@@ -147,15 +209,15 @@ const ListUser_Screen = ({navigation}) => {
   //     });
   // };
   const _retrieveData = async () => {
-    if (list == null) {
+    if (list == null && searchCheck == false) {
       await _getUserFromAPI();
+    } else if (list == null && searchCheck == true) {
+      await _searchUserFromAPI();
     }
     setVisible(false);
   };
   useEffect(() => {
     _retrieveData();
-    console.log(list);
-    console.log(page);
   });
 
   const image_Null = (uri) => {
@@ -177,7 +239,12 @@ const ListUser_Screen = ({navigation}) => {
           index: index,
         });
       }}>
-      <Avatar rounded size="large" source={image_Null(item.img)} />
+      <Avatar
+        rounded
+        size="large"
+        //  source={image_Null(item.img)}
+        source={require('../../Images/icons8_person_96.png')}
+      />
       <TextS text={item.name} style={{fontWeight: 'bold', fontSize: 15}} />
     </TouchableOpacity>
   );
@@ -185,8 +252,6 @@ const ListUser_Screen = ({navigation}) => {
     <Loading_Screen
       edgesTop={false}
       visible={visible}
-      noData={noData}
-      noDataContent={noDataContent}
       navigation={navigation}
       code={
         <View style={styles.parent}>
@@ -197,20 +262,64 @@ const ListUser_Screen = ({navigation}) => {
             searchPlaceHolder="Tìm tên khách hàng"
             value={search}
             onChangeText={setSearch}
+            searchCode={() => {
+              if (search == null) {
+                setPage(1);
+                setSearchCheck(false);
+                getUser(null);
+              } else {
+                setPageSearch(1);
+                setSearchCheck(true);
+                getUser(null);
+              }
+            }}
           />
           <View
             style={{
               flex: 1,
               justifyContent: 'flex-start',
             }}>
+            {/* <Button
+              style={{width: '100%', height: 50}}
+              title="123"
+              onPress={() => {
+                setPageSearch(1);
+                setSearchCheck(true);
+                getUser(null);
+                // _searchUserFromAPI();
+              }}
+            />
+            <Button
+              style={{width: '100%', height: 50}}
+              title="234"
+              onPress={() => {
+                setPage(1);
+                setSearchCheck(false);
+                getUser(null);
+                // _searchUserFromAPI();
+              }}
+            /> */}
             <FlatList
               data={list}
               renderItem={renderItem}
               keyExtractor={(item) => item.id}
               numColumns={2}
               extraData={list}
+              ListEmptyComponent={
+                <View
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <ScalableText style={{fontSize: 17, marginBottom: '3%'}}>
+                    {noDataContent}
+                  </ScalableText>
+                </View>
+              }
               // onEndReached={() => {
-              //   loadMoreUser(DATA);
+              //   searchCheck ? _searchUserFromAPI() : _getUserFromAPI();
               //   // setListItems(list);
               // }}
               // onEndReachedThreshold={0}
@@ -231,21 +340,33 @@ const ListUser_Screen = ({navigation}) => {
                 //     source={require('../../Images/loading/Spin-1s-200px.gif')}
                 //   />
                 // </View>
-                <View
-                  style={{
-                    width: '100%',
-                    height: 40,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
+                <View>
                   {visibleLoadMore ? (
-                    <Button
-                      title="123"
-                      onPress={() => {
-                        _getUserFromAPI();
-                        // loadMoreUser(DATA);
-                      }}
-                    />
+                    <View
+                      style={{
+                        width: '100%',
+                        height: Response_Size('hg', 0, 5),
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          searchCheck
+                            ? _searchUserFromAPI()
+                            : _getUserFromAPI();
+                          // _getUserFromAPI();
+                          // loadMoreUser(DATA);
+                        }}>
+                        <ScalableText
+                          style={{
+                            color: '#309045',
+                            fontWeight: 'bold',
+                            fontSize: 17,
+                          }}>
+                          Xem thêm
+                        </ScalableText>
+                      </TouchableOpacity>
+                    </View>
                   ) : null}
                 </View>
               }
