@@ -17,7 +17,7 @@ const CallButton = () => {
         setNumber(json[0].value);
       })
       .catch((error) => {
-        RNToasty.Success({
+        RNToasty.Warn({
           title: 'Lỗi',
         });
       });
@@ -35,6 +35,7 @@ const CallButton = () => {
         zIndex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        padding: '1%',
       }}
       buttonStyle={{
         width: 50,

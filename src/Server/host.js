@@ -1,4 +1,4 @@
-const http = 'http://canquochungdlk.com/';
+const http = 'https://canquochungdlk.com/';
 const host = {
   SearchPhieuCan: http + 'SearchPhieuCan',
   Login: http + 'Login',
