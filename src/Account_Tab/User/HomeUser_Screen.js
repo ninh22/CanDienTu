@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {
@@ -9,44 +10,92 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {Card, Button, Badge} from 'react-native-elements';
+import {Card, Button, Badge, Divider} from 'react-native-elements';
 import Loading_Screen from '../../ScriptFile/Loading_Screen';
 import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
 import ScalableText from 'react-native-text';
+import Input from '../../Components/Input';
+import {RNToasty} from 'react-native-toasty';
+import {
+  LineChart,
+  BarChart,
+  PieChart,
+  ProgressChart,
+  ContributionGraph,
+  StackedBarChart,
+} from 'react-native-chart-kit';
 
-const Item = ({onPress, title, nameIcon, typeIcon}) => {
+const Item = ({items}) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.item}>
-      {typeIcon ? (
-        <FontAwesome5Icon name={nameIcon} size={40} color="#309045" />
-      ) : (
-        <Icon name={nameIcon} size={40} color="#309045" />
-      )}
-      <ScalableText style={styles.item_txt} numberOfLines={2}>
-        {title}
-      </ScalableText>
-    </TouchableOpacity>
+    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+      {items.map((l, i) => (
+        <TouchableOpacity
+          key={i}
+          // onPress={onPress}
+          style={{
+            width: '48.5%',
+            height: Response_Size('hg', 1, 40, 35),
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 10,
+            padding: '3%',
+            backgroundColor: false || l.color ? '#bc4749' : '#6a994e',
+          }}>
+          <Icon name={l.nameIcon} size={30} color="#fff" />
+          <ScalableText style={styles.item_txt}>{l.title}</ScalableText>
+        </TouchableOpacity>
+      ))}
+    </View>
   );
 };
 
-const ItemView = ({title, number, navigationComponents, key}) => {
+const ItemView = ({items}) => {
   return (
-    <TouchableOpacity
-      onPress={() =>
-        navigationComponents.navigate('resultscreen', {
-          key: key,
-        })
-      }
-      style={[styles.item, {width: '98%'}]}>
-      <ScalableText
-        style={[styles.item_txt, {fontSize: 30, color: '#309045'}]}
-        numberOfLines={1}>
-        {number}
-      </ScalableText>
-      <ScalableText style={styles.item_txt} numberOfLines={1}>
-        Phiếu / {title}
-      </ScalableText>
-    </TouchableOpacity>
+    <View>
+      {items.map((l, i) => (
+        <TouchableOpacity
+          key={i}
+          // onPress={() =>
+          //   navigationComponents.navigate('resultscreen', {
+          //     key: key,
+          //   })
+          // }
+          style={{
+            width: '100%',
+            height: Response_Size('hg', 1, 40, 35),
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1%',
+            backgroundColor: '#a7c957',
+            marginBottom: false || l.end ? null : '3%',
+            borderRadius: 10,
+          }}>
+          <ScalableText style={styles.item_txt}>{l.title}</ScalableText>
+          <ScalableText style={styles.item_txt}>{l.number}</ScalableText>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+};
+
+const ItemViews = ({code, title}) => {
+  return (
+    <View>
+      <View style={styles.card_title}>
+        <ScalableText style={styles.text_card}>{title}</ScalableText>
+      </View>
+      <View
+        style={[
+          styles.item,
+          {
+            width: Response_Size('wd', 0, 91), //98%
+            height: 'auto',
+            justifyContent: 'flex-start',
+          },
+        ]}>
+        {code}
+      </View>
+    </View>
   );
 };
 
@@ -70,56 +119,131 @@ const Noti = (props) => {
 };
 
 const Components = ({navigationComponents}) => {
+  const [keyWords, setKeyWords] = useState('Hôm nay');
+  const listItem = [
+    {
+      title: 'Doanh thu',
+      number: '1.000.000' + ' VNĐ',
+    },
+    {
+      title: 'Tổng phiếu',
+      number: 15,
+      end: true,
+    },
+  ];
+  const listOption1 = [
+    {
+      nameIcon: 'reader',
+      title: 'Phiếu',
+    },
+    {
+      nameIcon: 'trending-up',
+      title: 'Hoạt động gần đây',
+    },
+  ];
+  const listOption2 = [
+    {
+      nameIcon: 'person',
+      title: 'Tài khoản',
+    },
+    {
+      nameIcon: 'log-out',
+      title: 'Đăng xuất',
+      color: true,
+    },
+  ];
+  const listItemDropDown = [
+    {
+      dropDown_Item: 'Hôm nay',
+    },
+    {
+      dropDown_Item: 'Trong tháng',
+    },
+    {
+      dropDown_Item: 'Trong năm',
+    },
+  ];
+  const data = {
+    labels: ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'],
+    datasets: [
+      {
+        data: [20, 45, 28, 80, 99, 43, 43],
+        color: () => '#bc4749', // optional //#6a994e //#bc4749
+      },
+    ],
+  };
+  const chartConfig = {
+    backgroundGradientFrom: '#f2e8cf',
+    backgroundGradientTo: '#f2e8cf',
+    decimalPlaces: 2, // optional, defaults to 2dp
+    color: () => '#000',
+    labelColor: () => '#000',
+    propsForDots: {
+      r: '5',
+      strokeWidth: '2',
+      stroke: '#000',
+    },
+  };
   return (
     <ScrollView>
       <View style={styles.parent}>
-        <View style={styles.view_img} backgroundColor="#309045">
-          <Image
-            source={require('../../Images/logo_white.png')}
-            style={styles.img}
-          />
-          {/* <Noti value="99+" /> */}
-        </View>
-        <View
-          style={{
-            marginTop: '3%',
-            width: '100%',
-            height: '100%', //300
-          }}>
-          <View style={styles.card_title}>
-            <ScalableText style={styles.text_card}>THỐNG KÊ PHIẾU</ScalableText>
-          </View>
-          <View style={styles.parent_item}>
+        <ItemViews
+          title="Thống Kê"
+          code={
             <View
-              style={[
-                styles.view_item,
-                {
-                  marginBottom: '2%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  flexDirection: 'column',
-                },
-              ]}>
-              <ItemView
-                title="Ngày"
-                number={5}
-                navigationComponents={navigationComponents}
-                key={'Ngày'}
+              style={{
+                width: '100%',
+                height: 'auto',
+              }}>
+              <Input
+                heightParent={40}
+                heightI={18}
+                type={2}
+                dropDown_TextSelected={keyWords}
+                setDropDown_TextSelected={setKeyWords}
+                dropDown_List={listItemDropDown}
               />
-              <ItemView
-                title="Tháng"
-                number={100}
-                navigationComponents={navigationComponents}
-                key={'Tháng'}
-              />
-              <ItemView
-                title="Năm"
-                number={1500}
-                navigationComponents={navigationComponents}
-                key={'Năm'}
-              />
+              <ItemView items={listItem} />
             </View>
-            <View style={styles.view_item}>
+          }
+        />
+        <ItemViews
+          title="Biểu đồ doanh thu 7 ngày qua"
+          code={
+            <LineChart
+              data={data}
+              width={Response_Size('wd', 1, 91, 93)}
+              height={300}
+              chartConfig={chartConfig}
+              yAxisSuffix="tr"
+              bezier
+              getDotColor={() => '#fff'}
+              style={{
+                borderRadius: 10,
+              }}
+              onDataPointClick={({value}) => {
+                RNToasty.Info({
+                  title: '' + value + ' tr',
+                });
+              }}
+            />
+          }
+        />
+        <ItemViews
+          title="Tùy chọn"
+          code={
+            <View
+              style={{
+                width: '100%',
+                height: 'auto',
+              }}>
+              <Item items={listOption1} />
+              <View style={{height: '5%'}} />
+              <Item items={listOption2} />
+            </View>
+          }
+        />
+        {/* <View style={styles.view_item}>
               <Item
                 title="Tài khoản"
                 typeIcon={true}
@@ -132,9 +256,7 @@ const Components = ({navigationComponents}) => {
                 nameIcon="log-out"
                 onPress={() => alert(123)}
               />
-            </View>
-          </View>
-        </View>
+            </View> */}
       </View>
     </ScrollView>
   );
@@ -160,6 +282,8 @@ const styles = StyleSheet.create({
   parent: {
     width: '100%',
     height: '100%',
+    padding: '3%',
+    alignItems: 'center',
   },
   view_img: {
     width: '100%',
@@ -171,11 +295,6 @@ const styles = StyleSheet.create({
   img: {
     width: Response_Size('wd', 0, 90), //350
     height: Response_Size('hg', 1, 37, 40), //100
-  },
-  parent_item: {
-    width: '100%',
-    height: '100%',
-    paddingHorizontal: '3%',
   },
   view_item: {
     flexDirection: 'row',
@@ -212,8 +331,9 @@ const styles = StyleSheet.create({
   },
   item_txt: {
     fontWeight: 'bold',
-    fontSize: 15,
-    marginTop: '3%', //5
+    fontSize: 17,
+    color: '#fff',
+    textAlign: 'center',
   },
   view_card: {
     width: '100%',
@@ -229,13 +349,17 @@ const styles = StyleSheet.create({
   card_title: {
     justifyContent: 'center',
     alignItems: 'flex-start',
-    paddingVertical: '1%',
-    paddingHorizontal: '5%',
+    padding: '1%',
     // borderTopLeftRadius: 15,
     // borderTopRightRadius: 15,
     // backgroundColor: '#309045',
   },
-  text_card: {fontSize: 20, color: '#309045', fontWeight: 'bold'},
+  text_card: {
+    fontSize: 23,
+    color: '#386641',
+    fontWeight: 'bold',
+    textAlign: 'justify',
+  },
 });
 
 export default HomeUser_Screen;

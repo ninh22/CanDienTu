@@ -105,57 +105,130 @@ function LoginStackScreen() {
   );
 }
 
-const HomePersonStack = createStackNavigator();
+const AdminHomePersonStack = createStackNavigator();
 
-function HomePersonStackScreen() {
+function AdminHomePersonStackScreen() {
   return (
     <Provider store={store}>
-      <HomePersonStack.Navigator
+      <AdminHomePersonStack.Navigator
         headerMode="none"
         initialRouteName="homeadminscreen">
-        <HomePersonStack.Screen name="loginscreen" component={Login_Screen} />
-        <HomePersonStack.Screen
+        <AdminHomePersonStack.Screen
+          name="loginscreen"
+          component={Login_Screen}
+        />
+        <AdminHomePersonStack.Screen
           name="userchangepasswordscreen"
           component={UserChangePassword_Screen}
         />
         {/* Admin */}
-        <HomePersonStack.Screen
+        <AdminHomePersonStack.Screen
           name="homeadminscreen"
           component={HomeAdmin_Screen}
         />
-        <HomePersonStack.Screen
+        <AdminHomePersonStack.Screen
           name="listuserscreen"
           component={ListUser_Screen}
         />
-        <HomePersonStack.Screen
+        <AdminHomePersonStack.Screen
           name="detailuserscreen"
           component={DetailUser_Screen}
         />
-        <HomePersonStack.Screen
+        <AdminHomePersonStack.Screen
           name="edituserscreen"
           component={EditUser_Screen}
         />
-        <HomePersonStack.Screen
+        <AdminHomePersonStack.Screen
           name="adduserscreen"
           component={AddUser_Screen}
         />
         {/* User */}
-        <HomePersonStack.Screen
+        <AdminHomePersonStack.Screen
           name="homeuserscreen"
           component={HomeUser_Screen}
         />
-        <HomePersonStack.Screen name="tongQuanUser" component={TongQuanUser} />
-        <HomePersonStack.Screen
+        <AdminHomePersonStack.Screen
+          name="tongQuanUser"
+          component={TongQuanUser}
+        />
+        <AdminHomePersonStack.Screen
           name="userinfoscreen"
           component={UserInfo_Screen}
         />
         {/* Phiếu */}
-        <HomePersonStack.Screen name="resultscreen" component={Result_Screen} />
-        <HomePersonStack.Screen
+        <AdminHomePersonStack.Screen
+          name="resultscreen"
+          component={Result_Screen}
+        />
+        <AdminHomePersonStack.Screen
           name="resultdetailscreen"
           component={ResultDetail_Screen}
         />
-      </HomePersonStack.Navigator>
+      </AdminHomePersonStack.Navigator>
+    </Provider>
+  );
+}
+
+const UserHomePersonStack = createStackNavigator();
+
+function UserHomePersonStackScreen() {
+  return (
+    <Provider store={store}>
+      <UserHomePersonStack.Navigator
+        headerMode="none"
+        initialRouteName="homeadminscreen">
+        <UserHomePersonStack.Screen
+          name="loginscreen"
+          component={Login_Screen}
+        />
+        <UserHomePersonStack.Screen
+          name="userchangepasswordscreen"
+          component={UserChangePassword_Screen}
+        />
+        {/* Admin */}
+        <UserHomePersonStack.Screen
+          name="homeadminscreen"
+          component={HomeAdmin_Screen}
+        />
+        <UserHomePersonStack.Screen
+          name="listuserscreen"
+          component={ListUser_Screen}
+        />
+        <UserHomePersonStack.Screen
+          name="detailuserscreen"
+          component={DetailUser_Screen}
+        />
+        <UserHomePersonStack.Screen
+          name="edituserscreen"
+          component={EditUser_Screen}
+        />
+        <UserHomePersonStack.Screen
+          name="adduserscreen"
+          component={AddUser_Screen}
+        />
+        {/* User */}
+        <UserHomePersonStack.Screen
+          name="homeuserscreen"
+          component={HomeUser_Screen}
+        />
+        <UserHomePersonStack.Screen
+          name="tongQuanUser"
+          component={TongQuanUser}
+        />
+        <UserHomePersonStack.Screen
+          name="userinfoscreen"
+          component={UserInfo_Screen}
+        />
+        {/* Phiếu */}
+        <UserHomePersonStack.Screen
+          name="resultscreen"
+          component={Result_Screen}
+        />
+        <UserHomePersonStack.Screen
+          name="resultdetailscreen"
+          component={ResultDetail_Screen}
+        />
+      </UserHomePersonStack.Navigator>
     </Provider>
   );
 }
@@ -164,6 +237,7 @@ const Tab = createBottomTabNavigator();
 
 const App = () => {
   const [checkLogin, setCheckLogin] = useState(null);
+  const [checkAdmin, setCheckAdmin] = useState(null);
   const _retrieveData = async () => {
     try {
       let value = await AsyncStorage.getItem('@Key');
@@ -173,6 +247,14 @@ const App = () => {
         // We have data!!
         // console.log(value);
         setCheckLogin(false);
+        // switch (value.admin) {
+        //   case '':
+            
+        //     break;
+        
+        //   default:
+        //     break;
+        // }
       } else {
         setCheckLogin(true);
       }
@@ -222,8 +304,16 @@ const App = () => {
           <Tab.Screen name="Tra cứu" component={SearchStackScreen} />
           {checkLogin ? (
             <Tab.Screen name="Tài khoản" component={LoginStackScreen} />
+          ) : checkAdmin ? (
+            <Tab.Screen
+              name="Tài khoản"
+              component={AdminHomePersonStackScreen}
+            />
           ) : (
-            <Tab.Screen name="Tài khoản" component={HomePersonStackScreen} />
+            <Tab.Screen
+              name="Tài khoản"
+              component={AdminHomePersonStackScreen}
+            />
           )}
         </Tab.Navigator>
       </NavigationContainer>

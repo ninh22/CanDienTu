@@ -112,7 +112,7 @@ const Home_Screen = ({navigation, route}) => {
     return (
       <View style={styles.view_card}>
         <View style={styles.card_title}>
-          <ScalableText style={{color: '#309045', fontSize: 20}}>
+          <ScalableText style={{color: '#386641', fontSize: 20}}>
             {items.title}
           </ScalableText>
           <TouchableOpacity

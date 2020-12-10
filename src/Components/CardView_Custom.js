@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {StyleSheet, View, Image, ScrollView} from 'react-native';
@@ -9,7 +10,10 @@ const CardView = ({title, content}) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <ScrollView
-        contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}>
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: 'center',
+        }}>
         <View style={styles.parent}>
           <View style={styles.img_view}>
             <Image source={require('../Images/logo1.png')} style={styles.img} />

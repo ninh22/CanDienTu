@@ -91,15 +91,14 @@ const Login_Screen = ({navigation}) => {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        // console.log(responseJson);
         // console.log(responseJson[0]);
         if (responseJson == '') {
           setShowAlert(true);
         } else if (responseJson !== '' && save == false) {
-          navigation.replace('homeadminscreen');
+          navigationProps(responseJson[0].admin);
         } else if (responseJson !== '' && save == true) {
           _storeData('@Key', JSON.stringify(responseJson[0]));
-          navigation.replace('homeadminscreen');
+          navigationProps(responseJson[0].admin);
         }
         RNToasty.Success({
           title: 'Đăng nhập thành công',
@@ -120,6 +119,13 @@ const Login_Screen = ({navigation}) => {
         //   },
         // ]);
       });
+  };
+  const navigationProps = (props) => {
+    if (props == 'admin') {
+      navigation.replace('homeadminscreen');
+    } else if (props == 'user') {
+      navigation.replace('homeuserscreen');
+    }
   };
   const _storeData = async (key, data) => {
     try {
@@ -172,12 +178,13 @@ const Login_Screen = ({navigation}) => {
         <Button
           buttonStyle={styles.btn}
           title="Đăng nhập"
-          disabled={visible_Button()}
+          // disabled={visible_Button()}
           onPress={() => {
-            _Login();
+            // _Login();
+            navigation.replace('homeadminscreen');
           }}
         />
-        {/* <View
+        <View
           style={{
             alignItems: 'center',
             justifyContent: 'center',
@@ -185,11 +192,11 @@ const Login_Screen = ({navigation}) => {
           }}>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigation('homeuserscreen');
+              navigation.navigate('homeuserscreen');
             }}>
             <ScalableText style={styles.txt}>Quên mật khẩu?</ScalableText>
           </TouchableOpacity>
-        </View> */}
+        </View>
         <SCLAlert
           theme="danger"
           show={showAlert}

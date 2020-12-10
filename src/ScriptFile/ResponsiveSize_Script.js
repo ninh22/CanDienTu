@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable no-unreachable */
 /* eslint-disable react-native/no-inline-styles */
 import {Dimensions} from 'react-native';
