@@ -29,6 +29,7 @@ import Login_Screen from './src/Account_Tab/Login_Screen';
 import UserChangePassword_Screen from './src/Account_Tab/UserChangePassword_Screen';
 // Admin
 import HomeAdmin_Screen from './src/Account_Tab/Admin/HomeAdmin_Screen';
+import ListUserGroup_Screen from './src/Account_Tab/Admin/ListUserGroup_Screen';
 import ListUser_Screen from './src/Account_Tab/Admin/ListUser_Screen';
 import DetailUser_Screen from './src/Account_Tab/Admin/DetailUser_Screen';
 import EditUser_Screen from './src/Account_Tab/Admin/EditUser_Screen';
@@ -83,6 +84,10 @@ function LoginStackScreen() {
           name="homeadminscreen"
           component={HomeAdmin_Screen}
         />
+        <LoginStack.Screen
+          name="listusergroupscreen"
+          component={ListUserGroup_Screen}
+        />
         <LoginStack.Screen name="listuserscreen" component={ListUser_Screen} />
         <LoginStack.Screen
           name="detailuserscreen"
@@ -125,6 +130,10 @@ function AdminHomePersonStackScreen() {
         <AdminHomePersonStack.Screen
           name="homeadminscreen"
           component={HomeAdmin_Screen}
+        />
+        <AdminHomePersonStack.Screen
+          name="listusergroupscreen"
+          component={ListUserGroup_Screen}
         />
         <AdminHomePersonStack.Screen
           name="listuserscreen"
@@ -176,7 +185,7 @@ function UserHomePersonStackScreen() {
     <Provider store={store}>
       <UserHomePersonStack.Navigator
         headerMode="none"
-        initialRouteName="homeadminscreen">
+        initialRouteName="homeuserscreen">
         <UserHomePersonStack.Screen
           name="loginscreen"
           component={Login_Screen}
@@ -189,6 +198,10 @@ function UserHomePersonStackScreen() {
         <UserHomePersonStack.Screen
           name="homeadminscreen"
           component={HomeAdmin_Screen}
+        />
+        <UserHomePersonStack.Screen
+          name="listusergroupscreen"
+          component={ListUserGroup_Screen}
         />
         <UserHomePersonStack.Screen
           name="listuserscreen"
@@ -246,17 +259,17 @@ const App = () => {
       if (value !== null) {
         // We have data!!
         // console.log(value);
-        setCheckLogin(false);
-        // switch (value.admin) {
-        //   case '':
-            
-        //     break;
-        
-        //   default:
-        //     break;
-        // }
-      } else {
         setCheckLogin(true);
+        switch (value.idGroup) {
+          case 1:
+            setCheckAdmin(true);
+            break;
+          default:
+            setCheckAdmin(false);
+            break;
+        }
+      } else {
+        setCheckLogin(false);
       }
     } catch (error) {
       // Error retrieving data
@@ -275,47 +288,77 @@ const App = () => {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <Tab.Navigator
-          initialRouteName="Trang chủ"
-          screenOptions={({route}) => ({
-            tabBarIcon: ({focused, color, size}) => {
-              let iconName;
+        {checkLogin ? (
+          <Tab.Navigator
+            initialRouteName="Tài khoản"
+            screenOptions={({route}) => ({
+              tabBarIcon: ({focused, color, size}) => {
+                let iconName;
 
-              if (route.name === 'Trang chủ') {
-                iconName = focused ? 'home' : 'home-outline';
-              } else if (route.name === 'Tra cứu') {
-                iconName = focused ? 'md-search-sharp' : 'md-search-outline';
-              } else if (route.name === 'Tài khoản') {
-                iconName = focused
-                  ? 'md-person-circle'
-                  : 'md-person-circle-outline';
-              }
+                if (route.name === 'Trang chủ') {
+                  iconName = focused ? 'home' : 'home-outline';
+                } else if (route.name === 'Tra cứu') {
+                  iconName = focused ? 'md-search-sharp' : 'md-search-outline';
+                } else if (route.name === 'Tài khoản') {
+                  iconName = focused
+                    ? 'md-person-circle'
+                    : 'md-person-circle-outline';
+                }
 
-              // You can return any component that you like here!
-              return <Icon name={iconName} size={size} color={color} />;
-            },
-          })}
-          tabBarOptions={{
-            activeTintColor: '#309045',
-            inactiveTintColor: 'gray',
-            keyboardHidesTabBar: true,
-          }}>
-          <Tab.Screen name="Trang chủ" component={HomeStackScreen} />
-          <Tab.Screen name="Tra cứu" component={SearchStackScreen} />
-          {checkLogin ? (
+                // You can return any component that you like here!
+                return <Icon name={iconName} size={size} color={color} />;
+              },
+            })}
+            tabBarOptions={{
+              activeTintColor: '#309045',
+              inactiveTintColor: 'gray',
+              keyboardHidesTabBar: true,
+            }}>
+            <Tab.Screen name="Trang chủ" component={HomeStackScreen} />
+            <Tab.Screen name="Tra cứu" component={SearchStackScreen} />
+            {checkAdmin ? (
+              <Tab.Screen
+                name="Tài khoản"
+                component={AdminHomePersonStackScreen}
+              />
+            ) : (
+              <Tab.Screen
+                name="Tài khoản"
+                component={UserHomePersonStackScreen}
+              />
+            )}
+          </Tab.Navigator>
+        ) : (
+          <Tab.Navigator
+            initialRouteName="Trang chủ"
+            screenOptions={({route}) => ({
+              tabBarIcon: ({focused, color, size}) => {
+                let iconName;
+
+                if (route.name === 'Trang chủ') {
+                  iconName = focused ? 'home' : 'home-outline';
+                } else if (route.name === 'Tra cứu') {
+                  iconName = focused ? 'md-search-sharp' : 'md-search-outline';
+                } else if (route.name === 'Tài khoản') {
+                  iconName = focused
+                    ? 'md-person-circle'
+                    : 'md-person-circle-outline';
+                }
+
+                // You can return any component that you like here!
+                return <Icon name={iconName} size={size} color={color} />;
+              },
+            })}
+            tabBarOptions={{
+              activeTintColor: '#309045',
+              inactiveTintColor: 'gray',
+              keyboardHidesTabBar: true,
+            }}>
+            <Tab.Screen name="Trang chủ" component={HomeStackScreen} />
+            <Tab.Screen name="Tra cứu" component={SearchStackScreen} />
             <Tab.Screen name="Tài khoản" component={LoginStackScreen} />
-          ) : checkAdmin ? (
-            <Tab.Screen
-              name="Tài khoản"
-              component={AdminHomePersonStackScreen}
-            />
-          ) : (
-            <Tab.Screen
-              name="Tài khoản"
-              component={AdminHomePersonStackScreen}
-            />
-          )}
-        </Tab.Navigator>
+          </Tab.Navigator>
+        )}
       </NavigationContainer>
     </SafeAreaProvider>
   );

@@ -95,14 +95,17 @@ const Login_Screen = ({navigation}) => {
         if (responseJson == '') {
           setShowAlert(true);
         } else if (responseJson !== '' && save == false) {
-          navigationProps(responseJson[0].admin);
+          navigationProps(responseJson[0].idusergroup);
         } else if (responseJson !== '' && save == true) {
-          _storeData('@Key', JSON.stringify(responseJson[0]));
-          navigationProps(responseJson[0].admin);
+          _storeData(
+            '@Key',
+            JSON.stringify({
+              name: responseJson[0].username,
+              idGroup: responseJson[0].idusergroup,
+            }),
+          );
+          navigationProps(responseJson[0].idusergroup);
         }
-        RNToasty.Success({
-          title: 'Đăng nhập thành công',
-        });
         // if (responseJson.check == 'notfull') {
         //   getUser(responseJson.data);
         // }
@@ -121,10 +124,16 @@ const Login_Screen = ({navigation}) => {
       });
   };
   const navigationProps = (props) => {
-    if (props == 'admin') {
-      navigation.replace('homeadminscreen');
-    } else if (props == 'user') {
-      navigation.replace('homeuserscreen');
+    RNToasty.Success({
+      title: 'Đăng nhập thành công',
+    });
+    switch (props) {
+      case 1:
+        navigation.replace('homeadminscreen');
+        break;
+      default:
+        navigation.replace('homeuserscreen');
+        break;
     }
   };
   const _storeData = async (key, data) => {
@@ -178,10 +187,9 @@ const Login_Screen = ({navigation}) => {
         <Button
           buttonStyle={styles.btn}
           title="Đăng nhập"
-          // disabled={visible_Button()}
+          disabled={visible_Button()}
           onPress={() => {
-            // _Login();
-            navigation.replace('homeadminscreen');
+            _Login();
           }}
         />
         <View

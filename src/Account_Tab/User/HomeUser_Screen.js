@@ -15,15 +15,9 @@ import Loading_Screen from '../../ScriptFile/Loading_Screen';
 import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
 import ScalableText from 'react-native-text';
 import Input from '../../Components/Input';
+import _removeData from '../../Components/LogOut';
 import {RNToasty} from 'react-native-toasty';
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart,
-} from 'react-native-chart-kit';
+import {LineChart, ProgressChart} from 'react-native-chart-kit';
 
 const Item = ({items}) => {
   return (
@@ -31,7 +25,7 @@ const Item = ({items}) => {
       {items.map((l, i) => (
         <TouchableOpacity
           key={i}
-          // onPress={onPress}
+          onPress={l.onPress}
           style={{
             width: '48.5%',
             height: Response_Size('hg', 1, 40, 35),
@@ -39,7 +33,7 @@ const Item = ({items}) => {
             justifyContent: 'center',
             borderRadius: 10,
             padding: '3%',
-            backgroundColor: false || l.color ? '#bc4749' : '#6a994e',
+            backgroundColor: false || l.color ? '#bc4749' : '#309045',
           }}>
           <Icon name={l.nameIcon} size={30} color="#fff" />
           <ScalableText style={styles.item_txt}>{l.title}</ScalableText>
@@ -66,7 +60,7 @@ const ItemView = ({items}) => {
             alignItems: 'center',
             justifyContent: 'center',
             padding: '1%',
-            backgroundColor: '#a7c957',
+            backgroundColor: '#309045',
             marginBottom: false || l.end ? null : '3%',
             borderRadius: 10,
           }}>
@@ -96,25 +90,6 @@ const ItemViews = ({code, title}) => {
         {code}
       </View>
     </View>
-  );
-};
-
-const Noti = (props) => {
-  return (
-    <TouchableOpacity
-      style={styles.style_touchOpacity_notiIcon}
-      onPress={() => {
-        alert('123');
-      }}>
-      <View style={styles.view_icon_noti}>
-        <Icon name="notifications" size={35} color="#fff" />
-        <Badge
-          value={props.value}
-          status="error"
-          containerStyle={{position: 'absolute', top: -3, right: -3}}
-        />
-      </View>
-    </TouchableOpacity>
   );
 };
 
@@ -149,6 +124,7 @@ const Components = ({navigationComponents}) => {
     {
       nameIcon: 'log-out',
       title: 'Đăng xuất',
+      onPress: () => _removeData(navigationComponents),
       color: true,
     },
   ];
@@ -171,6 +147,10 @@ const Components = ({navigationComponents}) => {
         color: () => '#bc4749', // optional //#6a994e //#bc4749
       },
     ],
+  };
+  const dataProgress = {
+    labels: ['Swim', 'Bike', 'Run'], // optional
+    data: [0.4, 0.6, 0.8],
   };
   const chartConfig = {
     backgroundGradientFrom: '#f2e8cf',
@@ -226,6 +206,31 @@ const Components = ({navigationComponents}) => {
                   title: '' + value + ' tr',
                 });
               }}
+            />
+          }
+        />
+        <ItemViews
+          title="Hàng hoá"
+          code={
+            <ProgressChart
+              data={dataProgress}
+              width={Response_Size('wd', 1, 91, 93)}
+              height={220}
+              strokeWidth={16}
+              radius={32}
+              chartConfig={{
+                backgroundGradientFrom: '#309045',
+                backgroundGradientTo: '#309045',
+                decimalPlaces: 2,
+                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                style: {
+                  borderRadius: 16,
+                },
+              }}
+              style={{
+                borderRadius: 16,
+              }}
+              hideLegend={false}
             />
           }
         />
@@ -356,7 +361,7 @@ const styles = StyleSheet.create({
   },
   text_card: {
     fontSize: 23,
-    color: '#386641',
+    color: '#309045',
     fontWeight: 'bold',
     textAlign: 'justify',
   },

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, ScrollView, View, TouchableOpacity} from 'react-native';
 import ScalableText from 'react-native-text';
