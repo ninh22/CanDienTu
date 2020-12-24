@@ -29,11 +29,17 @@ import Login_Screen from './src/Account_Tab/Login_Screen';
 import UserChangePassword_Screen from './src/Account_Tab/UserChangePassword_Screen';
 // Admin
 import HomeAdmin_Screen from './src/Account_Tab/Admin/HomeAdmin_Screen';
+import Add_Screen from './src/Account_Tab/Admin/Add_Screen';
+// Admin_UserGroup
 import ListUserGroup_Screen from './src/Account_Tab/Admin/ListUserGroup_Screen';
+import UserGroupInfo_Screen from './src/Account_Tab/Admin/UserGroupInfo_Screen';
+// Admin_User
 import ListUser_Screen from './src/Account_Tab/Admin/ListUser_Screen';
 import DetailUser_Screen from './src/Account_Tab/Admin/DetailUser_Screen';
+// Option
 import EditUser_Screen from './src/Account_Tab/Admin/EditUser_Screen';
-import AddUser_Screen from './src/Account_Tab/Admin/AddUser_Screen';
+import AddAccount_Screen from './src/Account_Tab/Admin/AddAccount_Screen';
+import AddUserGroup_Screen from './src/Account_Tab/Admin/AddUserGroup_Screen';
 // User
 import HomeUser_Screen from './src/Account_Tab/User/HomeUser_Screen';
 import TongQuanUser from './src/TongQuan/TongQuanThongKeUser';
@@ -47,8 +53,8 @@ function HomeStackScreen() {
   return (
     <HomeStack.Navigator headerMode="none">
       <HomeStack.Screen name="home" component={Home_Screen} />
-      <HomeStack.Screen name="product" component={Product_Screen} />
-      <HomeStack.Screen name="productdetail" component={ProductDetail_Screen} />
+      {/* <HomeStack.Screen name="product" component={Product_Screen} />
+      <HomeStack.Screen name="productdetail" component={ProductDetail_Screen} /> */}
     </HomeStack.Navigator>
   );
 }
@@ -59,54 +65,99 @@ function SearchStackScreen() {
   return (
     <SearchStack.Navigator headerMode="none">
       <SearchStack.Screen name="searchscreen" component={Search_Screen} />
-      <SearchStack.Screen name="resultscreen" component={Result_Screen} />
+      {/* <SearchStack.Screen name="resultscreen" component={Result_Screen} />
       <SearchStack.Screen
         name="resultdetailscreen"
         component={ResultDetail_Screen}
-      />
+      /> */}
     </SearchStack.Navigator>
   );
 }
+
+const listStackPerson = [
+  {
+    name: 'loginscreen',
+    component: Login_Screen,
+  },
+  // {
+  //   name: 'userchangepasswordscreen',
+  //   component: UserChangePassword_Screen,
+  // },
+  // Admin
+  {
+    name: 'homeadminscreen',
+    component: HomeAdmin_Screen,
+  },
+  {
+    name: 'addscreen',
+    component: Add_Screen,
+  },
+  // // Admin_UserGroup
+  // {
+  //   name: 'listusergroupscreen',
+  //   component: ListUserGroup_Screen,
+  // },
+  // {
+  //   name: 'usergroupinfoscreen',
+  //   component: UserGroupInfo_Screen,
+  // },
+  // // Admin_User
+  // {
+  //   name: 'listuserscreen',
+  //   component: ListUser_Screen,
+  // },
+  // {
+  //   name: 'detailuserscreen',
+  //   component: DetailUser_Screen,
+  // },
+  // // Option
+  // {
+  //   name: 'edituserscreen',
+  //   component: EditUser_Screen,
+  // },
+  // {
+  //   name: 'addaccountscreen',
+  //   component: AddAccount_Screen,
+  // },
+  // {
+  //   name: 'addusergroupscreen',
+  //   component: AddUserGroup_Screen,
+  // },
+  // User
+  {
+    name: 'homeuserscreen',
+    component: HomeUser_Screen,
+  },
+  // {
+  //   name: 'tongQuanUser',
+  //   component: TongQuanUser,
+  // },
+  // {
+  //   name: 'userinfoscreen',
+  //   component: UserInfo_Screen,
+  // },
+  // // Phiếu
+  // {
+  //   name: 'resultscreen',
+  //   component: Result_Screen,
+  // },
+  // {
+  //   name: 'resultdetailscreen',
+  //   component: ResultDetail_Screen,
+  // },
+];
 
 const LoginStack = createStackNavigator();
 
 function LoginStackScreen() {
   return (
-    <Provider store={store}>
-      <LoginStack.Navigator headerMode="none" initialRouteName="loginscreen">
-        <LoginStack.Screen name="loginscreen" component={Login_Screen} />
-        <LoginStack.Screen
-          name="userchangepasswordscreen"
-          component={UserChangePassword_Screen}
-        />
-        {/* Admin */}
-        <LoginStack.Screen
-          name="homeadminscreen"
-          component={HomeAdmin_Screen}
-        />
-        <LoginStack.Screen
-          name="listusergroupscreen"
-          component={ListUserGroup_Screen}
-        />
-        <LoginStack.Screen name="listuserscreen" component={ListUser_Screen} />
-        <LoginStack.Screen
-          name="detailuserscreen"
-          component={DetailUser_Screen}
-        />
-        <LoginStack.Screen name="edituserscreen" component={EditUser_Screen} />
-        <LoginStack.Screen name="adduserscreen" component={AddUser_Screen} />
-        {/* User */}
-        <LoginStack.Screen name="homeuserscreen" component={HomeUser_Screen} />
-        <LoginStack.Screen name="tongQuanUser" component={TongQuanUser} />
-        <LoginStack.Screen name="userinfoscreen" component={UserInfo_Screen} />
-        {/* Phiếu */}
-        <SearchStack.Screen name="resultscreen" component={Result_Screen} />
-        <SearchStack.Screen
-          name="resultdetailscreen"
-          component={ResultDetail_Screen}
-        />
-      </LoginStack.Navigator>
-    </Provider>
+    // <Provider store={store}>
+    <LoginStack.Navigator headerMode="none" initialRouteName="loginscreen">
+      {listStackPerson.map((l, i) => (
+        <LoginStack.Screen key={i} name={l.name} component={l.component} />
+      ))}
+    </LoginStack.Navigator>
+    // </Provider>
   );
 }
 
@@ -114,67 +165,19 @@ const AdminHomePersonStack = createStackNavigator();
 
 function AdminHomePersonStackScreen() {
   return (
-    <Provider store={store}>
-      <AdminHomePersonStack.Navigator
-        headerMode="none"
-        initialRouteName="homeadminscreen">
+    // <Provider store={store}>
+    <AdminHomePersonStack.Navigator
+      headerMode="none"
+      initialRouteName="homeadminscreen">
+      {listStackPerson.map((l, i) => (
         <AdminHomePersonStack.Screen
-          name="loginscreen"
-          component={Login_Screen}
+          key={i}
+          name={l.name}
+          component={l.component}
         />
-        <AdminHomePersonStack.Screen
-          name="userchangepasswordscreen"
-          component={UserChangePassword_Screen}
-        />
-        {/* Admin */}
-        <AdminHomePersonStack.Screen
-          name="homeadminscreen"
-          component={HomeAdmin_Screen}
-        />
-        <AdminHomePersonStack.Screen
-          name="listusergroupscreen"
-          component={ListUserGroup_Screen}
-        />
-        <AdminHomePersonStack.Screen
-          name="listuserscreen"
-          component={ListUser_Screen}
-        />
-        <AdminHomePersonStack.Screen
-          name="detailuserscreen"
-          component={DetailUser_Screen}
-        />
-        <AdminHomePersonStack.Screen
-          name="edituserscreen"
-          component={EditUser_Screen}
-        />
-        <AdminHomePersonStack.Screen
-          name="adduserscreen"
-          component={AddUser_Screen}
-        />
-        {/* User */}
-        <AdminHomePersonStack.Screen
-          name="homeuserscreen"
-          component={HomeUser_Screen}
-        />
-        <AdminHomePersonStack.Screen
-          name="tongQuanUser"
-          component={TongQuanUser}
-        />
-        <AdminHomePersonStack.Screen
-          name="userinfoscreen"
-          component={UserInfo_Screen}
-        />
-        {/* Phiếu */}
-        <AdminHomePersonStack.Screen
-          name="resultscreen"
-          component={Result_Screen}
-        />
-        <AdminHomePersonStack.Screen
-          name="resultdetailscreen"
-          component={ResultDetail_Screen}
-        />
-      </AdminHomePersonStack.Navigator>
-    </Provider>
+      ))}
+    </AdminHomePersonStack.Navigator>
+    // </Provider>
   );
 }
 
@@ -182,71 +185,318 @@ const UserHomePersonStack = createStackNavigator();
 
 function UserHomePersonStackScreen() {
   return (
-    <Provider store={store}>
-      <UserHomePersonStack.Navigator
-        headerMode="none"
-        initialRouteName="homeuserscreen">
+    // <Provider store={store}>
+    <UserHomePersonStack.Navigator
+      headerMode="none"
+      initialRouteName="homeuserscreen">
+      {listStackPerson.map((l, i) => (
         <UserHomePersonStack.Screen
-          name="loginscreen"
-          component={Login_Screen}
+          key={i}
+          name={l.name}
+          component={l.component}
         />
-        <UserHomePersonStack.Screen
-          name="userchangepasswordscreen"
-          component={UserChangePassword_Screen}
-        />
-        {/* Admin */}
-        <UserHomePersonStack.Screen
-          name="homeadminscreen"
-          component={HomeAdmin_Screen}
-        />
-        <UserHomePersonStack.Screen
-          name="listusergroupscreen"
-          component={ListUserGroup_Screen}
-        />
-        <UserHomePersonStack.Screen
-          name="listuserscreen"
-          component={ListUser_Screen}
-        />
-        <UserHomePersonStack.Screen
-          name="detailuserscreen"
-          component={DetailUser_Screen}
-        />
-        <UserHomePersonStack.Screen
-          name="edituserscreen"
-          component={EditUser_Screen}
-        />
-        <UserHomePersonStack.Screen
-          name="adduserscreen"
-          component={AddUser_Screen}
-        />
-        {/* User */}
-        <UserHomePersonStack.Screen
-          name="homeuserscreen"
-          component={HomeUser_Screen}
-        />
-        <UserHomePersonStack.Screen
-          name="tongQuanUser"
-          component={TongQuanUser}
-        />
-        <UserHomePersonStack.Screen
-          name="userinfoscreen"
-          component={UserInfo_Screen}
-        />
-        {/* Phiếu */}
-        <UserHomePersonStack.Screen
-          name="resultscreen"
-          component={Result_Screen}
-        />
-        <UserHomePersonStack.Screen
-          name="resultdetailscreen"
-          component={ResultDetail_Screen}
-        />
-      </UserHomePersonStack.Navigator>
-    </Provider>
+      ))}
+    </UserHomePersonStack.Navigator>
+    // </Provider>
   );
 }
 
 const Tab = createBottomTabNavigator();
+
+const TabScreen = () => {
+  return (
+    <Tab.Navigator
+      initialRouteName="Trang chủ"
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
+          let iconName;
+
+          if (route.name === 'Trang chủ') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Tra cứu') {
+            iconName = focused ? 'md-search-sharp' : 'md-search-outline';
+          } else if (route.name === 'Tài khoản') {
+            iconName = focused
+              ? 'md-person-circle'
+              : 'md-person-circle-outline';
+          }
+
+          // You can return any component that you like here!
+          return <Icon name={iconName} size={size} color={color} />;
+        },
+      })}
+      tabBarOptions={{
+        activeTintColor: '#309045',
+        inactiveTintColor: 'gray',
+        keyboardHidesTabBar: true,
+      }}>
+      <Tab.Screen name="Trang chủ" component={HomeStackScreen} />
+      <Tab.Screen name="Tra cứu" component={SearchStackScreen} />
+      <Tab.Screen name="Tài khoản" component={LoginStackScreen} />
+    </Tab.Navigator>
+  );
+};
+
+const TabAdmin = createBottomTabNavigator();
+
+const TabAdminScreen = () => {
+  return (
+    <TabAdmin.Navigator
+      initialRouteName="Tài khoản"
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
+          let iconName;
+
+          if (route.name === 'Trang chủ') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Tra cứu') {
+            iconName = focused ? 'md-search-sharp' : 'md-search-outline';
+          } else if (route.name === 'Tài khoản') {
+            iconName = focused
+              ? 'md-person-circle'
+              : 'md-person-circle-outline';
+          }
+
+          // You can return any component that you like here!
+          return <Icon name={iconName} size={size} color={color} />;
+        },
+      })}
+      tabBarOptions={{
+        activeTintColor: '#309045',
+        inactiveTintColor: 'gray',
+        keyboardHidesTabBar: true,
+      }}>
+      <TabAdmin.Screen name="Trang chủ" component={HomeStackScreen} />
+      <TabAdmin.Screen name="Tra cứu" component={SearchStackScreen} />
+      <TabAdmin.Screen
+        name="Tài khoản"
+        component={AdminHomePersonStackScreen}
+      />
+    </TabAdmin.Navigator>
+  );
+};
+
+const TabUser = createBottomTabNavigator();
+
+const TabUserScreen = () => {
+  return (
+    <TabUser.Navigator
+      initialRouteName="Tài khoản"
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
+          let iconName;
+
+          if (route.name === 'Trang chủ') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Tra cứu') {
+            iconName = focused ? 'md-search-sharp' : 'md-search-outline';
+          } else if (route.name === 'Tài khoản') {
+            iconName = focused
+              ? 'md-person-circle'
+              : 'md-person-circle-outline';
+          }
+
+          // You can return any component that you like here!
+          return <Icon name={iconName} size={size} color={color} />;
+        },
+      })}
+      tabBarOptions={{
+        activeTintColor: '#309045',
+        inactiveTintColor: 'gray',
+        keyboardHidesTabBar: true,
+      }}>
+      <TabUser.Screen name="Trang chủ" component={HomeStackScreen} />
+      <TabUser.Screen name="Tra cứu" component={SearchStackScreen} />
+      <TabUser.Screen name="Tài khoản" component={UserHomePersonStackScreen} />
+    </TabUser.Navigator>
+  );
+};
+
+// const Tab = createBottomTabNavigator();
+
+// const App = () => {
+//   const [checkLogin, setCheckLogin] = useState(null);
+//   const [checkAdmin, setCheckAdmin] = useState(null);
+//   const _retrieveData = async () => {
+//     try {
+//       let value = await AsyncStorage.getItem('@Key');
+//       value = await JSON.parse(value);
+//       // console.warn(value);
+//       if (value !== null) {
+//         // We have data!!
+//         // console.log(value);
+//         setCheckLogin(true);
+//         switch (value.idGroup) {
+//           case 1:
+//             setCheckAdmin(true);
+//             break;
+//           default:
+//             setCheckAdmin(false);
+//             break;
+//         }
+//       } else {
+//         setCheckLogin(false);
+//       }
+//     } catch (error) {
+//       // Error retrieving data
+//     }
+//   };
+//   let init = async () => {
+//     // …do multiple async tasks
+//     _retrieveData();
+//   };
+//   useEffect(() => {
+//     init().finally(() => {
+//       RNBootSplash.hide({duration: 1000});
+//     });
+//   });
+
+//   return (
+//     <SafeAreaProvider>
+//       <NavigationContainer>
+//         {checkLogin ? (
+//           <Tab.Navigator
+//             initialRouteName="Tài khoản"
+//             screenOptions={({route}) => ({
+//               tabBarIcon: ({focused, color, size}) => {
+//                 let iconName;
+
+//                 if (route.name === 'Trang chủ') {
+//                   iconName = focused ? 'home' : 'home-outline';
+//                 } else if (route.name === 'Tra cứu') {
+//                   iconName = focused ? 'md-search-sharp' : 'md-search-outline';
+//                 } else if (route.name === 'Tài khoản') {
+//                   iconName = focused
+//                     ? 'md-person-circle'
+//                     : 'md-person-circle-outline';
+//                 }
+
+//                 // You can return any component that you like here!
+//                 return <Icon name={iconName} size={size} color={color} />;
+//               },
+//             })}
+//             tabBarOptions={{
+//               activeTintColor: '#309045',
+//               inactiveTintColor: 'gray',
+//               keyboardHidesTabBar: true,
+//             }}>
+//             <Tab.Screen name="Trang chủ" component={HomeStackScreen} />
+//             <Tab.Screen name="Tra cứu" component={SearchStackScreen} />
+//             {checkAdmin ? (
+//               <Tab.Screen
+//                 name="Tài khoản"
+//                 component={AdminHomePersonStackScreen}
+//               />
+//             ) : (
+//               <Tab.Screen
+//                 name="Tài khoản"
+//                 component={UserHomePersonStackScreen}
+//               />
+//             )}
+//           </Tab.Navigator>
+//         ) : (
+//           <Tab.Navigator
+//             initialRouteName="Trang chủ"
+//             screenOptions={({route}) => ({
+//               tabBarIcon: ({focused, color, size}) => {
+//                 let iconName;
+
+//                 if (route.name === 'Trang chủ') {
+//                   iconName = focused ? 'home' : 'home-outline';
+//                 } else if (route.name === 'Tra cứu') {
+//                   iconName = focused ? 'md-search-sharp' : 'md-search-outline';
+//                 } else if (route.name === 'Tài khoản') {
+//                   iconName = focused
+//                     ? 'md-person-circle'
+//                     : 'md-person-circle-outline';
+//                 }
+
+//                 // You can return any component that you like here!
+//                 return <Icon name={iconName} size={size} color={color} />;
+//               },
+//             })}
+//             tabBarOptions={{
+//               activeTintColor: '#309045',
+//               inactiveTintColor: 'gray',
+//               keyboardHidesTabBar: true,
+//             }}>
+//             <Tab.Screen name="Trang chủ" component={HomeStackScreen} />
+//             <Tab.Screen name="Tra cứu" component={SearchStackScreen} />
+//             <Tab.Screen name="Tài khoản" component={LoginStackScreen} />
+//           </Tab.Navigator>
+//         )}
+//       </NavigationContainer>
+//     </SafeAreaProvider>
+//   );
+// };
+
+const listStack = [
+  // HomeTab
+  {
+    name: 'product',
+    component: Product_Screen,
+  },
+  {
+    name: 'productdetail',
+    component: ProductDetail_Screen,
+  },
+  // SearchTab
+  {
+    name: 'resultscreen',
+    component: Result_Screen,
+  },
+  {
+    name: 'resultdetailscreen',
+    component: ResultDetail_Screen,
+  },
+  // PersonTab
+  {
+    name: 'userchangepasswordscreen',
+    component: UserChangePassword_Screen,
+  },
+  // Admin_UserGroup
+  {
+    name: 'listusergroupscreen',
+    component: ListUserGroup_Screen,
+  },
+  {
+    name: 'usergroupinfoscreen',
+    component: UserGroupInfo_Screen,
+  },
+  // Admin_User
+  {
+    name: 'listuserscreen',
+    component: ListUser_Screen,
+  },
+  {
+    name: 'detailuserscreen',
+    component: DetailUser_Screen,
+  },
+  // Option
+  {
+    name: 'edituserscreen',
+    component: EditUser_Screen,
+  },
+  {
+    name: 'addaccountscreen',
+    component: AddAccount_Screen,
+  },
+  {
+    name: 'addusergroupscreen',
+    component: AddUserGroup_Screen,
+  },
+  // User
+  {
+    name: 'tongQuanUser',
+    component: TongQuanUser,
+  },
+  {
+    name: 'userinfoscreen',
+    component: UserInfo_Screen,
+  },
+];
+
+const Stack = createStackNavigator();
 
 const App = () => {
   const [checkLogin, setCheckLogin] = useState(null);
@@ -284,82 +534,26 @@ const App = () => {
       RNBootSplash.hide({duration: 1000});
     });
   });
-
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
-        {checkLogin ? (
-          <Tab.Navigator
-            initialRouteName="Tài khoản"
-            screenOptions={({route}) => ({
-              tabBarIcon: ({focused, color, size}) => {
-                let iconName;
-
-                if (route.name === 'Trang chủ') {
-                  iconName = focused ? 'home' : 'home-outline';
-                } else if (route.name === 'Tra cứu') {
-                  iconName = focused ? 'md-search-sharp' : 'md-search-outline';
-                } else if (route.name === 'Tài khoản') {
-                  iconName = focused
-                    ? 'md-person-circle'
-                    : 'md-person-circle-outline';
-                }
-
-                // You can return any component that you like here!
-                return <Icon name={iconName} size={size} color={color} />;
-              },
-            })}
-            tabBarOptions={{
-              activeTintColor: '#309045',
-              inactiveTintColor: 'gray',
-              keyboardHidesTabBar: true,
-            }}>
-            <Tab.Screen name="Trang chủ" component={HomeStackScreen} />
-            <Tab.Screen name="Tra cứu" component={SearchStackScreen} />
-            {checkAdmin ? (
-              <Tab.Screen
-                name="Tài khoản"
-                component={AdminHomePersonStackScreen}
-              />
+      <Provider store={store}>
+        <NavigationContainer>
+          <Stack.Navigator headerMode="none" initialRouteName="tab">
+            {checkLogin ? (
+              checkAdmin ? (
+                <Stack.Screen name="tab" component={TabAdminScreen} />
+              ) : (
+                <Stack.Screen name="tab" component={TabUserScreen} />
+              )
             ) : (
-              <Tab.Screen
-                name="Tài khoản"
-                component={UserHomePersonStackScreen}
-              />
+              <Stack.Screen name="tab" component={TabScreen} />
             )}
-          </Tab.Navigator>
-        ) : (
-          <Tab.Navigator
-            initialRouteName="Trang chủ"
-            screenOptions={({route}) => ({
-              tabBarIcon: ({focused, color, size}) => {
-                let iconName;
-
-                if (route.name === 'Trang chủ') {
-                  iconName = focused ? 'home' : 'home-outline';
-                } else if (route.name === 'Tra cứu') {
-                  iconName = focused ? 'md-search-sharp' : 'md-search-outline';
-                } else if (route.name === 'Tài khoản') {
-                  iconName = focused
-                    ? 'md-person-circle'
-                    : 'md-person-circle-outline';
-                }
-
-                // You can return any component that you like here!
-                return <Icon name={iconName} size={size} color={color} />;
-              },
-            })}
-            tabBarOptions={{
-              activeTintColor: '#309045',
-              inactiveTintColor: 'gray',
-              keyboardHidesTabBar: true,
-            }}>
-            <Tab.Screen name="Trang chủ" component={HomeStackScreen} />
-            <Tab.Screen name="Tra cứu" component={SearchStackScreen} />
-            <Tab.Screen name="Tài khoản" component={LoginStackScreen} />
-          </Tab.Navigator>
-        )}
-      </NavigationContainer>
+            {listStack.map((l, i) => (
+              <Stack.Screen name={l.name} component={l.component} />
+            ))}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
     </SafeAreaProvider>
   );
 };

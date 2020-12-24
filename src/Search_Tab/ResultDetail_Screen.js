@@ -10,10 +10,13 @@ import {
   Image,
   Modal,
 } from 'react-native';
+import DateTime from '../Components/DateTime';
+import HeaderCustom from '../Components/Header_Custom';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Card, Button} from 'react-native-elements';
+import {Card, Button, ListItem} from 'react-native-elements';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import DataNull from '../Components/DataNull';
 import Loading_Screen from '../ScriptFile/Loading_Screen';
 import ScalableText from 'react-native-text';
 import Response_Size from '../ScriptFile/ResponsiveSize_Script';
@@ -50,6 +53,47 @@ const IconCustom = (icons) => {
   );
 };
 
+const List = ({lists}) => {
+  return (
+    <View>
+      {lists.map((l, i) => (
+        <ListItem
+          key={i}
+          onPress={l.onPress}
+          bottomDivider
+          title={l.title + ':'}
+          titleStyle={[
+            {color: 'gray', fontWeight: 'bold'},
+            false || l.money ? {color: 'red'} : null,
+          ]}
+          rightElement={
+            false || l.money ? (
+              <ScalableText
+                style={{
+                  width: '60%',
+                  textAlign: 'right',
+                  fontWeight: 'bold',
+                  color: 'red',
+                }}>
+                {DataNull(l.content, l.money)} Đồng
+              </ScalableText>
+            ) : false || l.weight ? (
+              <ScalableText
+                style={{width: '60%', textAlign: 'right', fontWeight: 'bold'}}>
+                {DataNull(l.content)} Kg
+              </ScalableText>
+            ) : (
+              <ScalableText style={{width: '60%', textAlign: 'right'}}>
+                {DataNull(l.content)}
+              </ScalableText>
+            )
+          }
+        />
+      ))}
+    </View>
+  );
+};
+
 const Components = ({navigationComponents, dataRoute}) => {
   const [isModal, setIsModal] = useState(false);
   const [num, setnum] = useState(0);
@@ -74,13 +118,64 @@ const Components = ({navigationComponents, dataRoute}) => {
   //     height: Response_Size('hg', 0, 40), //300
   //   };
   // });
+  const listItem = [
+    {
+      title: 'Xe số',
+      content: dataRoute.truct_no,
+    },
+    {
+      title: 'Khách hàng',
+      content: dataRoute.customer_name,
+    },
+    {
+      title: 'Ngày nhập cân',
+      content: DateTime(dataRoute.date_in),
+    },
+    {
+      title: 'Ngày xuất cân',
+      content: DateTime(dataRoute.date_out),
+    },
+    {
+      title: 'Hàng hoá',
+      content: dataRoute.items_name,
+    },
+    {
+      title: 'Trọng lượng toàn bộ',
+      content: dataRoute.net_weight,
+      weight: true,
+    },
+    {
+      title: 'Trọng lượng xe',
+      content: dataRoute.weight_1,
+      weight: true,
+    },
+    {
+      title: 'Trọng lượng hàng hoá',
+      content: dataRoute.weight_2,
+      weight: true,
+    },
+    {
+      title: 'Tiền cân',
+      content: dataRoute.price_total,
+      money: true,
+    },
+    {
+      title: 'Ghi chú',
+      content: dataRoute.notes,
+    },
+  ];
   return (
     <ScrollView>
       <View style={styles.parent}>
+        <HeaderCustom
+          navigationHeader={navigationComponents}
+          title="Chi tiết phiếu"
+        />
         <View style={styles.imgView}>
           <Image
             style={styles.img}
-            source={require('../Images/logo_white.png')}
+            // source={require('../Images/logo_white.png')}
+            source={require('../Images/Logo/500px/bootsplash_logo.png')}
           />
           {/* <ImageViewer
             imageUrls={imageUrls}
@@ -129,12 +224,12 @@ const Components = ({navigationComponents, dataRoute}) => {
               onChange={(index) => setnum(index)}
             />
           </Modal> */}
-          <IconCustom
+          {/* <IconCustom
             icon={true} // Custom type icon
             nameIcon="chevron-back-outline"
             location={{left: 0}} // true is left
             onPress={() => navigationComponents.goBack()}
-          />
+          /> */}
           {/* <IconCustom
             icon={false} // Custom type icon
             nameIcon={'arrow-expand'}
@@ -142,17 +237,9 @@ const Components = ({navigationComponents, dataRoute}) => {
             onPress={() => setIsModal(true)}
           /> */}
         </View>
-        <View style={{padding: '1.5%'}}>
+        <List lists={listItem} />
+        {/* <View style={{padding: '1.5%'}}>
           <ScalableText style={{fontSize: 20}}>
-            {/* Số phiếu: 1 {'\n'}
-            Xe số: 92C-04610 {'\n'}
-            Khách hàng: Bê tông Đại Đường {'\n'}
-            Hàng hoá: Xi măng {'\n'}
-            Trọng lượng toàn bộ: 50,870 (65000 Đồng) {'\n'}
-            Trọng lượng xe: 19,140 (0 Đồng) {'\n'}
-            Trọng lượng hàng hoá: 31,730 (65000 Đồng) {'\n'}
-            Ngày giờ cân: 01/09/2018 08:49 */}
-            {/* Số phiếu: 1 {'\n'} */}
             Xe số: {dataRoute.truct_no} {'\n'}
             Khách hàng: {dataRoute.customer_name} {'\n'}
             Hàng hoá: {dataRoute.items_name} {'\n'}
@@ -164,7 +251,7 @@ const Components = ({navigationComponents, dataRoute}) => {
             Đồng) {'\n'}
             Ngày giờ cân: {dataRoute.date_in}
           </ScalableText>
-        </View>
+        </View> */}
       </View>
     </ScrollView>
   );
@@ -180,7 +267,7 @@ const ResultDetail_Screen = ({navigation, route}) => {
   });
   return (
     <Loading_Screen
-      edgesTop={true}
+      edgesTop={false}
       visible={visible}
       code={<Components navigationComponents={navigation} dataRoute={item} />}
     />
@@ -194,14 +281,14 @@ const styles = StyleSheet.create({
   },
   imgView: {
     width: '100%',
-    height: Response_Size('hg', 0, 40), //300
-    backgroundColor: '#309045',
+    height: Response_Size('hg', 0, 30), //300
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
   img: {
     width: Response_Size('wd', 0, 95), //350
-    height: Response_Size('hg', 1, 40, 35), //100
+    height: Response_Size('hg', 1, 40, 40), //100
   },
   iconLeft: {
     position: 'absolute',

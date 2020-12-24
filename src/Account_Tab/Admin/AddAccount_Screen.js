@@ -6,13 +6,16 @@ import {
   View,
   TouchableOpacity,
   Alert,
+  FlatList,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import ScalableText from 'react-native-text';
 import Input from '../../Components/Input';
 import HeaderCustom from '../../Components/Header_Custom';
+import Wait from '../../Components/Wait';
 import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
 import {RNToasty} from 'react-native-toasty';
-import {Avatar, ListItem, Button} from 'react-native-elements';
+import {Avatar, ListItem, Button, Overlay} from 'react-native-elements';
 import ImagePicker from 'react-native-image-picker';
 import host from '../../Server/host';
 
@@ -27,16 +30,23 @@ const options = {
   },
 };
 
-const AddUser_Screen = ({navigation}) => {
+const AddAccount_Screen = ({navigation}) => {
   const [visible, setVisible] = useState(true);
+  const [visibleButtonLoading, setVisibleButtonLoading] = useState(false);
+  const [visibleOverlay, setVisibleOverlay] = useState(false);
   const [imageData, setImageData] = useState('');
   const [imageName, setImageName] = useState('');
   const [icon, setIcon] = useState('');
 
+  const [titleAlert, setTitleAlert] = useState('Tạo tài khoản');
+  const [visibleAlert, setVisibleAlert] = useState(false);
+  const [waitDone, setWaitDone] = useState(false);
+  const [error, setError] = useState(false);
+
   const [userImg, setUserImg] = useState('');
   const [userName, setUserName] = useState('');
   const [userDate, setUserDate] = useState('');
-  const [userSex, setUserSex] = useState('Nam');
+  const [userSex, setUserSex] = useState('Chọn khách hàng');
   const [userNumber, setUserNumber] = useState('');
   const [userAddress, setUserAddress] = useState('');
   const [userWebsites, setUserWebsites] = useState('');
@@ -73,14 +83,7 @@ const AddUser_Screen = ({navigation}) => {
   const [checkWebsites, setCheckWebsites] = useState(true);
   const [statusWebsites, setStatusWebsites] = useState(false);
 
-  const listItemDropDown = [
-    {
-      dropDown_Item: 'Nam',
-    },
-    {
-      dropDown_Item: 'Nữ',
-    },
-  ];
+  const [listItemDropDown, setListItemDropDown] = useState(null);
 
   const _PickImage = () => {
     ImagePicker.showImagePicker(options, (response) => {
@@ -184,9 +187,19 @@ const AddUser_Screen = ({navigation}) => {
           });
           setCheckPass(false);
           setStatusPass(false);
+        } else if (userCheckPass !== '' && content !== userCheckPass) {
+          RNToasty.Error({
+            title: 'Mật khẩu phải giống nhau',
+          });
+          setCheckCheckPass(false);
+          setStatusCheckPass(false);
+        } else if (userCheckPass == '') {
+          setStatusCheckPass(false);
         } else {
           setCheckPass(true);
           setStatusPass(true);
+          setCheckCheckPass(true);
+          setStatusCheckPass(true);
         }
         break;
       case 'Nhập lại mật khẩu':
@@ -199,6 +212,8 @@ const AddUser_Screen = ({navigation}) => {
         } else {
           setCheckCheckPass(true);
           setStatusCheckPass(true);
+          setCheckPass(true);
+          setStatusPass(true);
         }
         break;
       case 'Email':
@@ -229,39 +244,88 @@ const AddUser_Screen = ({navigation}) => {
   };
 
   const visible_Button = () => {
-    return statusName &&
-      // statusDate &&
-      statusNumber &&
-      statusAddress &&
-      statusWebsites
-      ? // statusAcc &&
-        // statusPass &&
-        // statusCheckPass &&
-        // statusEmail
+    return statusDate && statusAcc && statusPass && statusCheckPass
+      ? // statusName &&
+        // statusEmail &&
+        // statusNumber &&
+        // statusAddress &&
+        // statusWebsites
         false
       : true;
   };
 
-  const _AddCustomer = () => {
-    return fetch(host.addCustomer, {
+  const _getAllUserGroupFromAPI = () => {
+    return fetch(host.getAllUsersGroup, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        setListItemDropDown(responseJson);
+        setVisibleButtonLoading(false);
+        setVisibleOverlay(!visibleOverlay);
+        // if (responseJson == 'successed') {
+        //   Alert.alert(
+        //     'Thông báo',
+        //     'Thêm thành công!'
+        //     [
+        //       {
+        //         text: 'Xác nhận',
+        //         style: 'cancel',
+        //       },
+        //     ],
+        //   );
+        // }
+      })
+      .catch((error) => {
+        // console.error(error);
+        RNToasty.Error({
+          title: 'Lỗi',
+        });
+        // Alert.alert('Thông báo', 'Thêm thất bại!', [
+        //   {
+        //     text: 'Xác nhận',
+        //     style: 'cancel',
+        //   },
+        // ]);
+      });
+  };
+
+  const _AddAccount = () => {
+    return fetch(host.addAccount, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        name: userName,
-        phonenumber: userNumber,
-        address: userAddress,
-        websites: userWebsites,
+        username: userAcc,
+        password: userCheckPass,
+        idusergroup: userDate,
       }),
     })
       .then((response) => response.text())
       .then((responseJson) => {
+        // console.log(responseJson);
         if (responseJson == 'successed') {
-          RNToasty.Success({
-            title: 'Thêm khách hàng thành công',
-          });
+          setWaitDone(true);
+          setError(false);
+          // RNToasty.Success({
+          //   title: 'Thêm tài khoản thành công',
+          // });
+        } else if (responseJson == 'failed') {
+          setTitleAlert('Tên tài khoản đã tồn tại, vui lòng chọn tên khác!');
+          setWaitDone(true);
+          setError(true);
+          setCheckAcc(false);
+          setStatusAcc(false);
+          // RNToasty.Success({
+          //   title: 'Thêm tài khoản thành công',
+          // });
         }
         // if (responseJson == 'successed') {
         //   Alert.alert(
@@ -277,10 +341,12 @@ const AddUser_Screen = ({navigation}) => {
         // }
       })
       .catch((error) => {
-        console.error(error);
-        RNToasty.Error({
-          title: 'Thêm khách hàng thất bại',
-        });
+        // console.error(error);
+        setWaitDone(true);
+        setError(true);
+        // RNToasty.Error({
+        //   title: 'Thêm thất bại',
+        // });
         // Alert.alert('Thông báo', 'Thêm thất bại!', [
         //   {
         //     text: 'Xác nhận',
@@ -290,16 +356,36 @@ const AddUser_Screen = ({navigation}) => {
       });
   };
 
+  const getDataUserGroup = async () => {
+    setVisibleButtonLoading(true);
+    if (listItemDropDown == null || listItemDropDown == '') {
+      await _getAllUserGroupFromAPI();
+    } else {
+      setVisibleButtonLoading(false);
+      setVisibleOverlay(!visibleOverlay);
+    }
+  };
+
+  const check = () => {
+    if (userDate !== '') {
+      setStatusDate(true);
+    }
+  };
+
+  useEffect(() => {
+    check();
+  });
+
   return (
     <ScrollView>
       <View style={styles.parent}>
-        <HeaderCustom title="Thêm khách hàng" navigationHeader={navigation} />
+        <HeaderCustom title="Tạo tài khoản" navigationHeader={navigation} />
         <View
           style={{
             width: '100%',
             height: '100%',
           }}>
-          <View backgroundColor="#309045" style={styles.view_avatar}>
+          {/* <View backgroundColor="#309045" style={styles.view_avatar}>
             <Avatar
               rounded
               size="xlarge"
@@ -312,9 +398,9 @@ const AddUser_Screen = ({navigation}) => {
               onAccessoryPress={() => _PickImage()}
               source={image_Null()}
             />
-          </View>
+          </View> */}
           <View style={{padding: '3%'}}>
-            <View
+            {/* <View
             // style={styles.view_card}
             >
               <View style={styles.card_title}>
@@ -345,7 +431,7 @@ const AddUser_Screen = ({navigation}) => {
                     onChangeText={setUserName}
                   />
                 </View>
-                {/*<View>
+                <View>
                   <ScalableText style={styles.text_input}>
                     Ngày sinh
                   </ScalableText>
@@ -359,8 +445,8 @@ const AddUser_Screen = ({navigation}) => {
                     check={checkDate}
                     codeCheck={check_Content}
                   />
-                </View>*/}
-                {/*<View>
+                </View>
+                <View>
                   <ScalableText style={styles.text_input}>
                     Giới tính
                   </ScalableText>
@@ -372,7 +458,7 @@ const AddUser_Screen = ({navigation}) => {
                     setDropDown_TextSelected={setUserSex}
                     dropDown_List={listItemDropDown}
                   />
-                </View>*/}
+                </View>
                 <View>
                   <ScalableText style={styles.text_input}>
                     Số điện thoại
@@ -421,8 +507,8 @@ const AddUser_Screen = ({navigation}) => {
                   />
                 </View>
               </View>
-            </View>
-            {/*<View
+            </View> */}
+            <View
             // style={styles.view_card}
             >
               <View style={styles.card_title}>
@@ -438,6 +524,30 @@ const AddUser_Screen = ({navigation}) => {
                   },
                 ]}>
                 <View>
+                  <View>
+                    <ScalableText style={styles.text_input}>
+                      Khách hàng
+                    </ScalableText>
+                    <Button
+                      buttonStyle={[
+                        styles.btn,
+                        {
+                          backgroundColor: '#fff',
+                          borderColor: '#309045',
+                          borderWidth: 1,
+                        },
+                      ]}
+                      loading={visibleButtonLoading}
+                      loadingProps={{color: '#309045'}}
+                      titleStyle={{color: '#309045'}}
+                      title={userSex}
+                      type="outline"
+                      onPress={() => {
+                        // setVisibleOverlay(!visibleOverlay);
+                        getDataUserGroup();
+                      }}
+                    />
+                  </View>
                   <ScalableText style={styles.text_input}>
                     Tên tài khoản
                   </ScalableText>
@@ -485,37 +595,142 @@ const AddUser_Screen = ({navigation}) => {
                     onChangeText={setUserCheckPass}
                   />
                 </View>
-                <View>
-                  <ScalableText style={styles.text_input}>Email</ScalableText>
-                  <Input
-                    heightParent={40}
-                    heightI={18}
-                    placeHolder="Nhập Email"
-                    type={1}
-                    keyboardType="email-address"
-                    value={userEmail}
-                    check={checkEmail}
-                    keyCheck="Email"
-                    codeCheck={check_Content}
-                    onChangeText={setUserEmail}
-                  />
-                </View>
               </View>
             </View>
-            */}
             <View>
               <Button
                 buttonStyle={styles.btn}
                 title="Tạo tài khoản"
                 disabled={visible_Button()}
                 onPress={() => {
-                  _AddCustomer();
+                  setTitleAlert('Tạo tài khoản');
+                  setWaitDone(false);
+                  setError(false);
+                  setVisibleAlert(true);
+                  _AddAccount();
                 }}
               />
             </View>
           </View>
         </View>
       </View>
+      <Overlay
+        isVisible={visibleOverlay}
+        overlayStyle={{
+          width: '80%',
+          height: '90%',
+          borderRadius: 10,
+          elevation: 0,
+          padding: 0,
+          backgroundColor: 'transparent',
+        }}
+        // onBackdropPress={() => setVisibleOverlay(!visibleOverlay)}
+      >
+        <View
+          style={{
+            borderTopLeftRadius: 10,
+            borderTopRightRadius: 10,
+            elevation: 2,
+            width: '100%',
+            height: '10%',
+            backgroundColor: '#309045',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <ScalableText
+            style={{color: '#fff', fontWeight: 'bold', fontSize: 17}}>
+            Chọn khách hàng
+          </ScalableText>
+        </View>
+        <View
+          style={{
+            height: '77%',
+            paddingHorizontal: '3%',
+            backgroundColor: '#fff',
+            borderBottomLeftRadius: 10,
+            borderBottomRightRadius: 10,
+            elevation: 2,
+          }}>
+          <FlatList
+            data={listItemDropDown}
+            ListHeaderComponent={<View style={{marginBottom: '3%'}} />}
+            ListFooterComponent={<View style={{marginTop: '3%'}} />}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                onPress={() => {
+                  setUserSex(item.name);
+                  setUserDate(item.id);
+                  setVisibleOverlay(!visibleOverlay);
+                }}
+                style={[
+                  styles.btn,
+                  {
+                    backgroundColor: '#fff',
+                    flexDirection: 'row',
+                    padding: '1%',
+                    borderWidth: 1,
+                    borderColor: '#309045',
+                    marginVertical: '1%',
+                  },
+                ]}>
+                <View
+                  style={{
+                    width: '20%',
+                    height: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Icon name="business" size={30} color="#309045" />
+                </View>
+                <View
+                  style={{
+                    width: '80%',
+                    height: '100%',
+                    alignItems: 'flex-start',
+                    justifyContent: 'center',
+                  }}>
+                  <ScalableText
+                    numberOfLines={2}
+                    style={{color: '#309045', fontWeight: 'bold'}}>
+                    {item.name}
+                  </ScalableText>
+                </View>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item) => item.id}
+          />
+        </View>
+        <View
+          style={{
+            width: '100%',
+            height: '13%',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+          }}>
+          <TouchableOpacity
+            onPress={() => setVisibleOverlay(!visibleOverlay)}
+            style={{
+              width: 50,
+              height: 50,
+              borderRadius: 30,
+              elevation: 2,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#fff',
+              padding: '1%',
+            }}>
+            <Icon name="close" size={30} color="#309045" />
+          </TouchableOpacity>
+        </View>
+      </Overlay>
+      <Wait
+        show={visibleAlert}
+        setShow={setVisibleAlert}
+        title={titleAlert}
+        waitDone={waitDone}
+        setWaitDone={setWaitDone}
+        error={error}
+      />
     </ScrollView>
   );
 };
@@ -560,4 +775,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddUser_Screen;
+export default AddAccount_Screen;

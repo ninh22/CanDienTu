@@ -8,13 +8,14 @@ import {
   TouchableOpacity,
   Alert,
   TextInput,
+  Image,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {getUserAction, loadMoreUserAction} from '../../Redux/index';
+import {getUserGroupAction, loadMoreUserGroupAction} from '../../Redux/index';
 import host from '../../Server/host';
 
 import {RNToasty} from 'react-native-toasty';
-import {Header, Card, Image, Avatar} from 'react-native-elements';
+import {Header, Card, Avatar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
@@ -26,19 +27,22 @@ import HeaderCustom from '../../Components/Header_Custom';
 const ListUserGroup_Screen = ({navigation}) => {
   const [visible, setVisible] = useState(true);
   const [visibleLoadMore, setVisibleLoadMore] = useState(false);
-  const [noData, setNoData] = useState(false);
+  const [visibleLoadMoreLoading, setVisibleLoadMoreLoading] = useState(false);
+
+  // const [noData, setNoData] = useState(false);
   const [noDataContent, setNoDataContent] = useState(null);
-  let list = useSelector((state) => state);
-  const [page, setPage] = useState(1);
+  let list = useSelector((state) => state.userGroupReducer);
+  // const [page, setPage] = useState(1);
   const [limitItem, setLimitItem] = useState(10);
   const [pageSearch, setPageSearch] = useState(1);
   const [search, setSearch] = useState('');
   const [searchCheck, setSearchCheck] = useState(false);
   const dispatch = useDispatch();
-  const getUser = (item) => dispatch(getUserAction(item));
-  const loadMoreUser = (item) => dispatch(loadMoreUserAction(item));
-  const _getUserFromAPI = () => {
-    return fetch(host.getCustomer, {
+  const getUserGroup = (item) => dispatch(getUserGroupAction(item));
+  const loadMoreUserGroup = (item) => dispatch(loadMoreUserGroupAction(item));
+  {
+    /*const _getUserGroupFromAPI = () => {
+    return fetch(host.getUsersGroup, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -51,38 +55,40 @@ const ListUserGroup_Screen = ({navigation}) => {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        // console.log(responseJson.check);
+        // console.log(responseJson);//Test
         switch (responseJson.check) {
           case 'notfull':
             if (list == null) {
-              getUser(responseJson.data);
+              getUserGroup(responseJson.data);
             } else {
-              loadMoreUser(responseJson.data);
+              loadMoreUserGroup(responseJson.data);
             }
             setPage(page + 1);
+            setVisibleLoadMoreLoading(false);
             setVisibleLoadMore(true);
             break;
           case 'full':
             if (list == null) {
-              getUser(responseJson.data);
+              getUserGroup(responseJson.data);
             } else {
-              loadMoreUser(responseJson.data);
+              loadMoreUserGroup(responseJson.data);
             }
             setVisibleLoadMore(false);
             break;
           case 'maxfull':
             setVisibleLoadMore(false);
-            setNoData(true);
+            getUserGroup('');
+            // setNoData(true);
             setNoDataContent('Không có dữ liệu');
             break;
         }
         // if (responseJson.check == 'notfull') {
-        //   getUser(responseJson.data);
+        //   getUserGroup(responseJson.data);
         // }
       })
       .catch((error) => {
-        // console.error(error);
-        setNoData(true);
+        // console.error(error);//Test
+        // setNoData(true);
         setNoDataContent('Lỗi');
         RNToasty.Warn({
           title: 'Lỗi',
@@ -94,9 +100,10 @@ const ListUserGroup_Screen = ({navigation}) => {
         //   },
         // ]);
       });
-  };
-  const _searchUserFromAPI = () => {
-    return fetch(host.searchCustomer, {
+  };*/
+  }
+  const _searchUserGroupFromAPI = () => {
+    return fetch(host.searchUsersGroup, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -114,34 +121,39 @@ const ListUserGroup_Screen = ({navigation}) => {
         switch (responseJson.check) {
           case 'notfull':
             if (list == null) {
-              getUser(responseJson.data);
+              getUserGroup(responseJson.data);
             } else {
-              loadMoreUser(responseJson.data);
+              loadMoreUserGroup(responseJson.data);
             }
+            setSearchCheck(false);
             setPageSearch(pageSearch + 1);
+            setVisibleLoadMoreLoading(false);
             setVisibleLoadMore(true);
             break;
           case 'full':
             if (list == null) {
-              getUser(responseJson.data);
+              getUserGroup(responseJson.data);
             } else {
-              loadMoreUser(responseJson.data);
+              loadMoreUserGroup(responseJson.data);
             }
+            setSearchCheck(true);
             setVisibleLoadMore(false);
             break;
           case 'maxfull':
+            setSearchCheck(true);
             setVisibleLoadMore(false);
-            setNoData(true);
+            getUserGroup('');
+            // setNoData(true);
             setNoDataContent('Không có dữ liệu');
             break;
         }
         // if (responseJson.check == 'notfull') {
-        //   getUser(responseJson.data);
+        //   getUserGroup(responseJson.data);
         // }
       })
       .catch((error) => {
         // console.error(error);
-        setNoData(true);
+        // setNoData(true);
         setNoDataContent('Lỗi');
         RNToasty.Warn({
           title: 'Lỗi',
@@ -154,35 +166,14 @@ const ListUserGroup_Screen = ({navigation}) => {
         // ]);
       });
   };
-  // const _getUserFromAPI = () => {
-  //   return fetch(host.getUser)
-  //     .then((response) => response.json())
-  //     .then((json) => {
-  //       getUser(json);
-  //     })
-  //     .catch((error) => {
-  //       Alert.alert(
-  //         'Thông báo',
-  //         'Lỗi kết nối',
-  //         [
-  //           {
-  //             text: 'Cancel',
-  //             onPress: () => {
-  //               navigation.goBack();
-  //             },
-  //             style: 'cancel',
-  //           },
-  //           {text: 'OK', onPress: _getUserFromAPI},
-  //         ],
-  //         {cancelable: false},
-  //       );
-  //     });
-  // };
   const _retrieveData = async () => {
-    if (list == null && searchCheck == false) {
-      await _getUserFromAPI();
-    } else if (list == null && searchCheck == true) {
-      await _searchUserFromAPI();
+    // if (list == null && searchCheck == false) {
+    //   await _getUserGroupFromAPI();
+    // } else if (list == null && searchCheck == true) {
+    //   await _searchUserGroupFromAPI();
+    // }
+    if (list == null) {
+      await _searchUserGroupFromAPI();
     }
     setVisible(false);
   };
@@ -190,21 +181,11 @@ const ListUserGroup_Screen = ({navigation}) => {
     _retrieveData();
   });
 
-  const image_Null = (uri) => {
-    if (uri == '' || uri == undefined || uri == null) {
-      return require('../../Images/icons8_person_96.png');
-    } else {
-      return {
-        uri: uri,
-      };
-    }
-  };
-
   const renderItem = ({item, index}) => (
     <TouchableOpacity
       style={styles.parent_item}
       onPress={() => {
-        navigation.navigate('detailuserscreen', {
+        navigation.navigate('usergroupinfoscreen', {
           // item: item,
           index: index,
         });
@@ -212,9 +193,12 @@ const ListUserGroup_Screen = ({navigation}) => {
       <Avatar
         rounded
         size="large"
-        source={require('../../Images/icons8_person_96.png')}
+        source={require('../../Images/icons8-user-account-96.png')}
       />
-      <TextS text={item.name} style={{fontWeight: 'bold', fontSize: 15}} />
+      <TextS
+        text={item.name}
+        style={{fontWeight: 'bold', fontSize: 15, marginTop: '1%'}}
+      />
     </TouchableOpacity>
   );
   return (
@@ -232,15 +216,16 @@ const ListUserGroup_Screen = ({navigation}) => {
             value={search}
             onChangeText={setSearch}
             searchCode={() => {
-              if (search == null) {
-                setPage(1);
-                setSearchCheck(false);
-                getUser(null);
-              } else {
-                setPageSearch(1);
-                setSearchCheck(true);
-                getUser(null);
-              }
+              setPageSearch(1);
+              getUserGroup(null);
+              setNoDataContent(null);
+              // if (search == '') {
+              //   setPage(1);
+              //   setSearchCheck(false);
+              // } else {
+              //   setPageSearch(1);
+              //   setSearchCheck(true);
+              // }
             }}
           />
           <View
@@ -254,8 +239,8 @@ const ListUserGroup_Screen = ({navigation}) => {
               onPress={() => {
                 setPageSearch(1);
                 setSearchCheck(true);
-                getUser(null);
-                // _searchUserFromAPI();
+                getUserGroup(null);
+                // _searchUserGroupFromAPI();
               }}
             />
             <Button
@@ -264,8 +249,8 @@ const ListUserGroup_Screen = ({navigation}) => {
               onPress={() => {
                 setPage(1);
                 setSearchCheck(false);
-                getUser(null);
-                // _searchUserFromAPI();
+                getUserGroup(null);
+                // _searchUserGroupFromAPI();
               }}
             /> */}
             <FlatList
@@ -277,40 +262,55 @@ const ListUserGroup_Screen = ({navigation}) => {
               ListEmptyComponent={
                 <View
                   style={{
-                    width: '100%',
-                    height: '100%',
+                    width: Response_Size('wd', 0, 100),
+                    height: Response_Size('hg', 0, 90),
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}>
-                  <ScalableText style={{fontSize: 17, marginBottom: '3%'}}>
-                    {noDataContent}
-                  </ScalableText>
+                  {noDataContent ? (
+                    <ScalableText style={{fontSize: 17, marginBottom: '3%'}}>
+                      Không có dữ liệu
+                    </ScalableText>
+                  ) : (
+                    <Image
+                      style={{
+                        width: 50, //30
+                        height: 50, //30
+                        // tintColor: '#309045',
+                      }}
+                      source={require('../../Images/loading/Spin-1s-200px.gif')}
+                    />
+                  )}
                 </View>
               }
-              // onEndReached={() => {
-              //   searchCheck ? _searchUserFromAPI() : _getUserFromAPI();
-              //   // setListItems(list);
-              // }}
-              // onEndReachedThreshold={0}
+              onEndReached={() => {
+                if (searchCheck == false) {
+                  _searchUserGroupFromAPI();
+                }
+                // setListItems(list);
+              }}
+              onEndReachedThreshold={0.1}
               ListFooterComponent={
-                // <View
-                //   style={{
-                //     width: '100%',
-                //     height: 40,
-                //     alignItems: 'center',
-                //     justifyContent: 'center',
-                //   }}>
-                //   <Image
-                //     style={{
-                //       width: 40, //30
-                //       height: 40, //30
-                //       // tintColor: '#309045',
-                //     }}
-                //     source={require('../../Images/loading/Spin-1s-200px.gif')}
-                //   />
-                // </View>
-                <View>
+                <View style={{padding: '1%'}}>
                   {visibleLoadMore ? (
+                    <View
+                      style={{
+                        width: '100%',
+                        height: 40,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <Image
+                        style={{
+                          width: 40, //30
+                          height: 40, //30
+                          // tintColor: '#309045',
+                        }}
+                        source={require('../../Images/loading/Spin-1s-200px.gif')}
+                      />
+                    </View>
+                  ) : null}
+                  {/* {visibleLoadMore ? (
                     <View
                       style={{
                         width: '100%',
@@ -318,25 +318,36 @@ const ListUserGroup_Screen = ({navigation}) => {
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          searchCheck
-                            ? _searchUserFromAPI()
-                            : _getUserFromAPI();
-                          // _getUserFromAPI();
-                          // loadMoreUser(DATA);
-                        }}>
-                        <ScalableText
+                      {visibleLoadMoreLoading ? (
+                        <Image
                           style={{
-                            color: '#309045',
-                            fontWeight: 'bold',
-                            fontSize: 17,
+                            width: 40, //30
+                            height: 40, //30
+                            // tintColor: '#309045',
+                          }}
+                          source={require('../../Images/loading/Spin-1s-200px.gif')}
+                        />
+                      ) : (
+                        <TouchableOpacity
+                          onPress={() => {
+                            setVisibleLoadMoreLoading(true);
+                            _searchUserGroupFromAPI();
+                            // searchCheck
+                            //   ? _searchUserGroupFromAPI()
+                            //   : _getUserGroupFromAPI();
                           }}>
-                          Xem thêm
-                        </ScalableText>
-                      </TouchableOpacity>
+                          <ScalableText
+                            style={{
+                              color: '#309045',
+                              fontWeight: 'bold',
+                              fontSize: 17,
+                            }}>
+                            Xem thêm
+                          </ScalableText>
+                        </TouchableOpacity>
+                      )}
                     </View>
-                  ) : null}
+                  ) : null} */}
                 </View>
               }
             />

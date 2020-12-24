@@ -17,9 +17,6 @@ import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper-hooks';
 import ScalableText from 'react-native-text';
 import CallButton from '../Components/CallButton';
-import call from 'react-native-phone-call';
-import host from '../Server/host';
-import {RNToasty} from 'react-native-toasty';
 
 const Home_Screen = ({navigation, route}) => {
   const DATA = [
@@ -236,24 +233,6 @@ const Home_Screen = ({navigation, route}) => {
     ));
   };
 
-  const [number, setNumber] = useState(null);
-  const _getNumberFromApi = () => {
-    return fetch(host.GetNumber)
-      .then((response) => response.json())
-      .then((json) => {
-        //   console.log(json[0].value);
-        setNumber(json[0].value);
-      })
-      .catch((error) => {
-        RNToasty.Warn({
-          title: 'Lỗi',
-        });
-      });
-  };
-  useEffect(() => {
-    _getNumberFromApi();
-  });
-
   return (
     <SafeAreaView>
       <ScrollView>
@@ -381,16 +360,7 @@ const Home_Screen = ({navigation, route}) => {
           />
         </View>
       </ScrollView>
-      <CallButton
-        icon="call"
-        onPress={() => {
-          const args = {
-            number: number, // String value with the number to call
-            prompt: false, // Optional boolean property. Determines if the user should be prompt prior to the call
-          };
-          call(args).catch(console.error);
-        }}
-      />
+      <CallButton />
     </SafeAreaView>
   );
 };

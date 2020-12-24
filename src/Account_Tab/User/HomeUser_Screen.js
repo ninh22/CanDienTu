@@ -15,7 +15,7 @@ import Loading_Screen from '../../ScriptFile/Loading_Screen';
 import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
 import ScalableText from 'react-native-text';
 import Input from '../../Components/Input';
-import _removeData from '../../Components/LogOut';
+import _removeData from '../../Components/Logout';
 import {RNToasty} from 'react-native-toasty';
 import {LineChart, ProgressChart} from 'react-native-chart-kit';
 

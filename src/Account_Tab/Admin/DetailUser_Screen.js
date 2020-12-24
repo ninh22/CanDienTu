@@ -208,7 +208,7 @@ const Components = ({navigationComponents, dataRoute, onBackRefresh}) => {
 const DetailUser_Screen = ({navigation, route}) => {
   const [visible, setVisible] = useState(false);
   let index = route.params.index;
-  let item = useSelector((state) => state[index]);
+  let item = useSelector((state) => state.userReducer[index]);
 
   useEffect(() => {
     // setTimeout(() => {

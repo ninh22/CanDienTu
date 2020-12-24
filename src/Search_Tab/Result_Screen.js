@@ -6,12 +6,15 @@ import {
   View,
   FlatList,
   TouchableOpacity,
+  Image,
 } from 'react-native';
-import {Card, Image} from 'react-native-elements';
+// import {Card} from 'react-native-elements';
+import DateTime from '../Components/DateTime';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Loading_Screen from '../ScriptFile/Loading_Screen';
 import Response_Size from '../ScriptFile/ResponsiveSize_Script';
 import HeaderCustom from '../Components/Header_Custom';
+import DataNull from '../Components/DataNull';
 import TextS from '../Components/TextS';
 import host from '../Server/host';
 import ScalableText from 'react-native-text';
@@ -41,9 +44,12 @@ const DATA = [
 const Result_Screen = ({navigation, route}) => {
   const [visible, setVisible] = useState(true);
   const [visibleLoadMore, setVisibleLoadMore] = useState(false);
+  const [visibleLoadMoreLoading, setVisibleLoadMoreLoading] = useState(false);
+
   const [noData, setNoData] = useState(false);
   const [noDataContent, setNoDataContent] = useState(null);
   const [searchValue, setSearchValue] = useState(route.params.value);
+  const [searchCheck, setSearchCheck] = useState(false);
   const [page, setPage] = useState(1);
   const [limitItem, setLimitItem] = useState(5);
   const [listItem, setListItem] = useState(null);
@@ -71,7 +77,10 @@ const Result_Screen = ({navigation, route}) => {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        // console.log(responseJson);
+        // console.log(
+        //   moment(responseJson.data[0].createtime).format('YYYY-MM-DD HH:mm:ss'),
+        //   moment('2022-12-13 21:45:16').format('DD/MM/YYYY HH:mm'),
+        // );
         // console.log(responseJson.check);
         switch (responseJson.check) {
           case 'notfull':
@@ -80,7 +89,9 @@ const Result_Screen = ({navigation, route}) => {
             } else {
               setListItem(listItem.concat(responseJson.data));
             }
+            setSearchCheck(false);
             setPage(page + 1);
+            setVisibleLoadMoreLoading(false);
             setVisibleLoadMore(true);
             break;
           case 'full':
@@ -89,11 +100,13 @@ const Result_Screen = ({navigation, route}) => {
             } else {
               setListItem(listItem.concat(responseJson.data));
             }
+            setSearchCheck(true);
             setVisibleLoadMore(false);
             break;
           case 'maxfull':
+            setSearchCheck(true);
             setVisibleLoadMore(false);
-            setNoData(true);
+            setListItem('');
             setNoDataContent('Không có dữ liệu');
             break;
         }
@@ -124,20 +137,27 @@ const Result_Screen = ({navigation, route}) => {
           item: item,
         });
       }}>
-      {/* <View style={styles.view_img}>
-        <Image source={{uri: item.img}} style={styles.img} />
-      </View> */}
-      <View style={[styles.view_content, {width: '100%'}]}>
-        <TextS text={item.customer_name} />
-        <TextS text={item.truct_no} style={{color: 'gray'}} />
-        <TextS text={item.items_name} style={{color: 'gray'}} />
-        <TextS text={item.price_total1 + ' đồng'} style={{color: 'red'}} />
+      <View style={styles.view_img}>
+        {/* <Image source={{uri: item.img}} style={styles.img} /> */}
+        <Image
+          source={require('../Images/icons8-note-96.png')}
+          style={styles.img}
+        />
+      </View>
+      <View style={[styles.view_content, {width: '70%'}]}>
+        <TextS text={DataNull(item.customer_name)} />
+        <TextS text={DataNull(item.truct_no)} style={{color: 'gray'}} />
+        <TextS text={DataNull(item.items_name)} style={{color: 'gray'}} />
+        <TextS text={item.price_total + ' đồng'} style={{color: 'red'}} />
         <View
           style={{
             width: '100%',
             alignItems: 'flex-end',
           }}>
-          <TextS text={item.date_in} style={{color: 'gray'}} />
+          <TextS
+            text={DataNull(DateTime(item.createtime))}
+            style={{color: 'gray'}}
+          />
         </View>
       </View>
     </TouchableOpacity>
@@ -148,7 +168,19 @@ const Result_Screen = ({navigation, route}) => {
       visible={visible}
       code={
         <View style={styles.parent}>
-          <HeaderCustom navigationHeader={navigation} title="Danh sách phiếu" />
+          <HeaderCustom
+            navigationHeader={navigation}
+            title="Danh sách phiếu"
+            visibleSearch={true}
+            searchPlaceHolder="Tìm phiếu"
+            value={searchValue}
+            onChangeText={setSearchValue}
+            searchCode={() => {
+              setPage(1);
+              setListItem(null);
+              setNoDataContent(null);
+            }}
+          />
           <View style={{flex: 1, paddingHorizontal: '1.5%'}}>
             <FlatList
               data={listItem}
@@ -158,40 +190,54 @@ const Result_Screen = ({navigation, route}) => {
               ListEmptyComponent={
                 <View
                   style={{
-                    width: '100%',
-                    height: '100%',
+                    width: Response_Size('wd', 0, 100),
+                    height: Response_Size('hg', 0, 90),
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}>
-                  <ScalableText style={{fontSize: 17, marginBottom: '3%'}}>
-                    {noDataContent}
-                  </ScalableText>
+                  {noDataContent ? (
+                    <ScalableText style={{fontSize: 17, marginBottom: '3%'}}>
+                      Không có dữ liệu
+                    </ScalableText>
+                  ) : (
+                    <Image
+                      style={{
+                        width: 50, //30
+                        height: 50, //30
+                        // tintColor: '#309045',
+                      }}
+                      source={require('../Images/loading/Spin-1s-200px.gif')}
+                    />
+                  )}
                 </View>
               }
-              // onEndReached={() => {
-              //   searchCheck ? _searchUserFromAPI() : _getUserFromAPI();
-              //   // setListItems(list);
-              // }}
-              // onEndReachedThreshold={0}
+              onEndReached={() => {
+                if (searchCheck == false) {
+                  _SearchPhieuCan();
+                } // setListItems(list);
+              }}
+              onEndReachedThreshold={0.1}
               ListFooterComponent={
-                // <View
-                //   style={{
-                //     width: '100%',
-                //     height: 40,
-                //     alignItems: 'center',
-                //     justifyContent: 'center',
-                //   }}>
-                //   <Image
-                //     style={{
-                //       width: 40, //30
-                //       height: 40, //30
-                //       // tintColor: '#309045',
-                //     }}
-                //     source={require('../../Images/loading/Spin-1s-200px.gif')}
-                //   />
-                // </View>
-                <View>
+                <View style={{padding: '1%'}}>
                   {visibleLoadMore ? (
+                    <View
+                      style={{
+                        width: '100%',
+                        height: 40,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <Image
+                        style={{
+                          width: 40, //30
+                          height: 40, //30
+                          // tintColor: '#309045',
+                        }}
+                        source={require('../Images/loading/Spin-1s-200px.gif')}
+                      />
+                    </View>
+                  ) : null}
+                  {/* {visibleLoadMore ? (
                     <View
                       style={{
                         width: '100%',
@@ -199,23 +245,33 @@ const Result_Screen = ({navigation, route}) => {
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          _SearchPhieuCan();
-                          // _getUserFromAPI();
-                          // loadMoreUser(DATA);
-                        }}>
-                        <ScalableText
+                      {visibleLoadMoreLoading ? (
+                        <Image
                           style={{
-                            color: '#309045',
-                            fontWeight: 'bold',
-                            fontSize: 17,
+                            width: 40, //30
+                            height: 40, //30
+                            // tintColor: '#309045',
+                          }}
+                          source={require('../Images/loading/Spin-1s-200px.gif')}
+                        />
+                      ) : (
+                        <TouchableOpacity
+                          onPress={() => {
+                            setVisibleLoadMoreLoading(true);
+                            _SearchPhieuCan();
                           }}>
-                          Xem thêm
-                        </ScalableText>
-                      </TouchableOpacity>
+                          <ScalableText
+                            style={{
+                              color: '#309045',
+                              fontWeight: 'bold',
+                              fontSize: 17,
+                            }}>
+                            Xem thêm
+                          </ScalableText>
+                        </TouchableOpacity>
+                      )}
                     </View>
-                  ) : null}
+                  ) : null} */}
                 </View>
               }
             />
@@ -246,12 +302,16 @@ const styles = StyleSheet.create({
   view_img: {
     width: '30%',
     height: '100%',
+    backgroundColor: '#309045',
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
   },
   img: {
     width: '100%',
     height: '100%',
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
+    // borderTopLeftRadius: 10,
+    // borderBottomLeftRadius: 10,
+    color: 'yellow',
   },
   view_content: {
     width: '70%',

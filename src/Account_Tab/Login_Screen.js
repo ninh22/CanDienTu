@@ -92,23 +92,24 @@ const Login_Screen = ({navigation}) => {
       .then((response) => response.json())
       .then((responseJson) => {
         // console.log(responseJson[0]);
-        if (responseJson == '') {
-          setShowAlert(true);
-        } else if (responseJson !== '' && save == false) {
-          navigationProps(responseJson[0].idusergroup);
-        } else if (responseJson !== '' && save == true) {
-          _storeData(
-            '@Key',
-            JSON.stringify({
-              name: responseJson[0].username,
-              idGroup: responseJson[0].idusergroup,
-            }),
-          );
-          navigationProps(responseJson[0].idusergroup);
+        switch (true) {
+          case responseJson == '':
+            setShowAlert(true);
+            break;
+          case responseJson !== '' && save == false:
+            navigationProps(responseJson[0].idusergroup, responseJson[0].id);
+            break;
+          case responseJson !== '' && save == true:
+            _storeData(
+              '@Key',
+              JSON.stringify({
+                id: responseJson[0].id,
+                idGroup: responseJson[0].idusergroup,
+              }),
+            );
+            navigationProps(responseJson[0].idusergroup, responseJson[0].id);
+            break;
         }
-        // if (responseJson.check == 'notfull') {
-        //   getUser(responseJson.data);
-        // }
       })
       .catch((error) => {
         console.error(error);
@@ -123,16 +124,16 @@ const Login_Screen = ({navigation}) => {
         // ]);
       });
   };
-  const navigationProps = (props) => {
+  const navigationProps = (check, id) => {
     RNToasty.Success({
       title: 'Đăng nhập thành công',
     });
-    switch (props) {
+    switch (check) {
       case 1:
-        navigation.replace('homeadminscreen');
+        navigation.replace('homeadminscreen', {id: id});
         break;
       default:
-        navigation.replace('homeuserscreen');
+        navigation.replace('homeuserscreen', {id: id});
         break;
     }
   };

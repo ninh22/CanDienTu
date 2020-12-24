@@ -1,8 +1,14 @@
-import {createStore} from 'redux';
+/* eslint-disable prettier/prettier */
+import {createStore, combineReducers} from 'redux';
 
 import userReducer from './User/UserReducer';
+import userGroupReducer from './UserGroup/UserGroupReducer';
 
-// Passing burgerReducer to createStore
-const store = createStore(userReducer);
+const rootReducer = combineReducers({
+  userGroupReducer: userGroupReducer,
+  userReducer: userReducer,
+});
+
+const store = createStore(rootReducer);
 
 export default store;

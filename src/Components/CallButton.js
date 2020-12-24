@@ -3,15 +3,66 @@ import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import {Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
+import host from '../Server/host';
+import {RNToasty} from 'react-native-toasty';
+import call from 'react-native-phone-call';
 
-const ButtonAbsolute = ({icon, onPress}) => {
+const ButtonAbsolute = () => {
   const {button, container} = styles;
+  const [number, setNumber] = useState(null);
+  const _getNumberFromApi = () => {
+    return fetch(host.getNumber, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        // console.log(responseJson);//Test
+        setNumber(responseJson[0].value);
+      })
+      .catch((error) => {
+        // console.error(error);//Test
+        RNToasty.Warn({
+          title: 'Lỗi',
+        });
+        // Alert.alert('Thông báo', 'Lỗi', [
+        //   {
+        //     text: 'Xác nhận',
+        //     style: 'cancel',
+        //   },
+        // ]);
+      });
+    // return fetch(host.getNumber)
+    //   .then((response) => response.json())
+    //   .then((json) => {
+    //     //   console.log(json[0].value);
+    //     setNumber(json[0].value);
+    //   })
+    //   .catch((error) => {
+    //     RNToasty.Warn({
+    //       title: 'Lỗi',
+    //     });
+    //   });
+  };
+  useEffect(() => {
+    _getNumberFromApi();
+  });
   return (
     <Button
-      title={<Icon name={icon} size={25} color="#fff" />}
+      title={<Icon name="call" size={25} color="#fff" />}
       containerStyle={container}
       buttonStyle={button}
-      onPress={onPress}
+      onPress={() => {
+        const args = {
+          number: number, // String value with the number to call
+          prompt: false, // Optional boolean property. Determines if the user should be prompt prior to the call
+        };
+        call(args).catch(console.error);
+      }}
     />
   );
 };

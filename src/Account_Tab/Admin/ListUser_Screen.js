@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   StyleSheet,
   Button,
@@ -8,58 +8,45 @@ import {
   TouchableOpacity,
   Alert,
   TextInput,
+  Image,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {getUserAction, loadMoreUserAction} from '../../Redux/index';
+import {
+  getUserAction,
+  loadMoreUserAction,
+  deleteUserAction,
+} from '../../Redux/index';
 import host from '../../Server/host';
 
 import {RNToasty} from 'react-native-toasty';
-import {Header, Card, Image, Avatar} from 'react-native-elements';
+import {Tooltip, Divider, Avatar} from 'react-native-elements';
+import BottomSheetCustom from '../../Components/BottomSheet_Custom';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
 import ScalableText from 'react-native-text';
 import TextS from '../../Components/TextS';
 import Loading_Screen from '../../ScriptFile/Loading_Screen';
 import HeaderCustom from '../../Components/Header_Custom';
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    name:
-      'Nguyen Van ANguyen Van ANguyen Van ANguyen Van ANguyen Van ANguyen Van AANguyen Van ANguyen Van A',
-    acc:
-      'NguyenvanaNguyenvanaNguyenvanaNguyenvanaNguyenvanaNguyenvanaNguyenvanaNguyenvanaNguyenvana',
-    pass: '123',
-    img:
-      'https://cdn.now.howstuffworks.com/media-content/0b7f4e9b-f59c-4024-9f06-b3dc12850ab7-1920-1080.jpg',
-    number: '092584687',
-  },
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28bb',
-    name: 'Nguyen Van A',
-    acc: 'Nguyenvana',
-    pass: '123',
-    img:
-      'https://cdn.now.howstuffworks.com/media-content/0b7f4e9b-f59c-4024-9f06-b3dc12850ab7-1920-1080.jpg',
-    number: '092584687',
-  },
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28bc',
-    name: 'Nguyen Van A',
-    acc: 'Nguyenvana',
-    pass: '123',
-    img:
-      'https://cdn.now.howstuffworks.com/media-content/0b7f4e9b-f59c-4024-9f06-b3dc12850ab7-1920-1080.jpg',
-    number: '092584687',
-  },
-];
+import {SCLAlert, SCLAlertButton} from 'react-native-scl-alert';
 
-const ListUser_Screen = ({navigation}) => {
+const ListUser_Screen = ({navigation, route}) => {
+  const [isVisibleBSC, setIsVisibleBSC] = useState(false);
   const [visible, setVisible] = useState(true);
   const [visibleLoadMore, setVisibleLoadMore] = useState(false);
-  const [noData, setNoData] = useState(false);
+  const [visibleLoadMoreLoading, setVisibleLoadMoreLoading] = useState(false);
+
+  const [startDelete, setStartDelete] = useState(false);
+  const [loadingDone, setLoadingDone] = useState(true);
+  const [error, setError] = useState(false);
+
+  const [showDelete, setShowDelete] = useState(false);
+  const [id, setId] = useState(null);
+  const [index, setIndex] = useState(null);
+  const [userName, setUserName] = useState(null);
+  // const [noData, setNoData] = useState(false);
   const [noDataContent, setNoDataContent] = useState(null);
-  let list = useSelector((state) => state);
-  const [page, setPage] = useState(1);
+  let list = useSelector((state) => state.userReducer);
+  // const [page, setPage] = useState(1);
   const [limitItem, setLimitItem] = useState(10);
   const [pageSearch, setPageSearch] = useState(1);
   const [search, setSearch] = useState('');
@@ -67,14 +54,17 @@ const ListUser_Screen = ({navigation}) => {
   const dispatch = useDispatch();
   const getUser = (item) => dispatch(getUserAction(item));
   const loadMoreUser = (item) => dispatch(loadMoreUserAction(item));
-  const _getUserFromAPI = () => {
-    return fetch(host.getCustomer, {
+  const deleteUser = (item) => dispatch(deleteUserAction(item));
+  {
+    /*const _getUserFromAPI = () => {
+    return fetch(host.getUsers, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        idusergroup: route.params.idUsers,
         page: page,
         limit: limitItem,
       }),
@@ -90,6 +80,7 @@ const ListUser_Screen = ({navigation}) => {
               loadMoreUser(responseJson.data);
             }
             setPage(page + 1);
+            setVisibleLoadMoreLoading(false);
             setVisibleLoadMore(true);
             break;
           case 'full':
@@ -102,7 +93,8 @@ const ListUser_Screen = ({navigation}) => {
             break;
           case 'maxfull':
             setVisibleLoadMore(false);
-            setNoData(true);
+            getUser('');
+            // setNoData(true);
             setNoDataContent('Không có dữ liệu');
             break;
         }
@@ -112,7 +104,7 @@ const ListUser_Screen = ({navigation}) => {
       })
       .catch((error) => {
         // console.error(error);
-        setNoData(true);
+        // setNoData(true);
         setNoDataContent('Lỗi');
         RNToasty.Warn({
           title: 'Lỗi',
@@ -124,16 +116,18 @@ const ListUser_Screen = ({navigation}) => {
         //   },
         // ]);
       });
-  };
+  };*/
+  }
   const _searchUserFromAPI = () => {
-    return fetch(host.searchCustomer, {
+    return fetch(host.searchUsers, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        name: search,
+        idusergroup: route.params.idUsers,
+        username: search,
         page: pageSearch,
         limit: limitItem,
       }),
@@ -141,6 +135,7 @@ const ListUser_Screen = ({navigation}) => {
       .then((response) => response.json())
       .then((responseJson) => {
         // console.log(responseJson.check);
+        setSearchCheck(false);
         switch (responseJson.check) {
           case 'notfull':
             if (list == null) {
@@ -148,7 +143,9 @@ const ListUser_Screen = ({navigation}) => {
             } else {
               loadMoreUser(responseJson.data);
             }
+            setSearchCheck(false);
             setPageSearch(pageSearch + 1);
+            setVisibleLoadMoreLoading(false);
             setVisibleLoadMore(true);
             break;
           case 'full':
@@ -157,11 +154,14 @@ const ListUser_Screen = ({navigation}) => {
             } else {
               loadMoreUser(responseJson.data);
             }
+            setSearchCheck(true);
             setVisibleLoadMore(false);
             break;
           case 'maxfull':
+            setSearchCheck(true);
             setVisibleLoadMore(false);
-            setNoData(true);
+            getUser('');
+            // setNoData(true);
             setNoDataContent('Không có dữ liệu');
             break;
         }
@@ -171,7 +171,7 @@ const ListUser_Screen = ({navigation}) => {
       })
       .catch((error) => {
         // console.error(error);
-        setNoData(true);
+        // setNoData(true);
         setNoDataContent('Lỗi');
         RNToasty.Warn({
           title: 'Lỗi',
@@ -184,34 +184,64 @@ const ListUser_Screen = ({navigation}) => {
         // ]);
       });
   };
-  // const _getUserFromAPI = () => {
-  //   return fetch(host.getUser)
-  //     .then((response) => response.json())
-  //     .then((json) => {
-  //       getUser(json);
-  //     })
-  //     .catch((error) => {
-  //       Alert.alert(
-  //         'Thông báo',
-  //         'Lỗi kết nối',
-  //         [
-  //           {
-  //             text: 'Cancel',
-  //             onPress: () => {
-  //               navigation.goBack();
-  //             },
-  //             style: 'cancel',
-  //           },
-  //           {text: 'OK', onPress: _getUserFromAPI},
-  //         ],
-  //         {cancelable: false},
-  //       );
-  //     });
-  // };
+  const check = (display, loading, fail, success) => {
+    return startDelete
+      ? loadingDone
+        ? error
+          ? fail
+          : success
+        : loading
+      : display;
+  };
+  const _deleteUserFromAPI = () => {
+    return fetch(host.deleteUsers, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: id,
+      }),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        // console.log(responseJson);
+        if (responseJson == 'successed') {
+          // deleteUser(index);
+          getUser(null);
+          setPageSearch(1);
+          setNoDataContent(null);
+          setLoadingDone(true);
+          setError(false);
+          // setShowDelete(false);
+          // RNToasty.Success({
+          //   title: 'Xoá thành công',
+          // });
+        }
+      })
+      .catch((error) => {
+        // console.error(error);
+        setLoadingDone(true);
+        setError(true);
+        RNToasty.Warn({
+          title: 'Lỗi',
+        });
+        // Alert.alert('Thông báo', 'Lỗi', [
+        //   {
+        //     text: 'Xác nhận',
+        //     style: 'cancel',
+        //   },
+        // ]);
+      });
+  };
   const _retrieveData = async () => {
-    if (list == null && searchCheck == false) {
-      await _getUserFromAPI();
-    } else if (list == null && searchCheck == true) {
+    // if (list == null && searchCheck == false) {
+    //   await _getUserFromAPI();
+    // } else if (list == null && searchCheck == true) {
+    //   await _searchUserFromAPI();
+    // }
+    if (list == null) {
       await _searchUserFromAPI();
     }
     setVisible(false);
@@ -219,35 +249,124 @@ const ListUser_Screen = ({navigation}) => {
   useEffect(() => {
     _retrieveData();
   });
-
-  const image_Null = (uri) => {
-    if (uri == '' || uri == undefined || uri == null) {
-      return require('../../Images/icons8_person_96.png');
-    } else {
-      return {
-        uri: uri,
-      };
-    }
-  };
-
-  const renderItem = ({item, index}) => (
-    <TouchableOpacity
-      style={styles.parent_item}
-      onPress={() => {
-        navigation.navigate('detailuserscreen', {
-          // item: item,
-          index: index,
+  const toolTip = [
+    {
+      icon: 'person-remove',
+      title: 'Xoá tài khoản',
+      onPress: true,
+    },
+    {
+      icon: 'key',
+      title: 'Đổi mật khẩu',
+      onPress: false,
+      end: true,
+    },
+  ];
+  const listBottomSheet = [
+    {
+      title: 'Xoá tài khoản',
+      icon: 'person-remove',
+      onPress: () => {
+        setStartDelete(false);
+        setLoadingDone(false);
+        setError(false);
+        setShowDelete(true);
+        setIsVisibleBSC(false);
+      },
+    },
+    {
+      title: 'Đổi mật khẩu',
+      icon: 'key',
+      onPress: () => {
+        navigation.navigate('userchangepasswordscreen', {
+          changePassword: {
+            permission: 'admin',
+            id: id,
+          },
         });
-      }}>
-      <Avatar
-        rounded
-        size="large"
-        //  source={image_Null(item.img)}
-        source={require('../../Images/icons8_person_96.png')}
-      />
-      <TextS text={item.name} style={{fontWeight: 'bold', fontSize: 15}} />
-    </TouchableOpacity>
-  );
+        setIsVisibleBSC(false);
+      },
+    },
+  ];
+  const renderItem = ({item, index}) => {
+    const {tooltip, tooltip_title, divider} = styles;
+    return (
+      // <Tooltip
+      //   containerStyle={{
+      //     height: 'auto',
+      //   }}
+      //   backgroundColor="#309045"
+      //   popover={
+      //     <View>
+      //       {toolTip.map((l, i) => (
+      //         <View>
+      //           <TouchableOpacity
+      //             key={i}
+      //             onPress={() => {
+      //               setIndex(index);
+      //               setId(item.id);
+      //               setUserName(item.username);
+      //               l.onPress
+      //                 ? setShowDelete(true)
+      //                 : navigation.navigate('userchangepasswordscreen', {
+      //                     changePassword: {
+      //                       permission: 'admin',
+      //                       id: item.id,
+      //                     },
+      //                   });
+      //             }}
+      //             style={{width: '100%', flexDirection: 'row'}}>
+      //             <View
+      //               style={[
+      //                 tooltip,
+      //                 {
+      //                   width: '30%',
+      //                 },
+      //               ]}>
+      //               <Icon name={l.icon} size={25} color="#fff" />
+      //             </View>
+      //             <View
+      //               style={[
+      //                 tooltip,
+      //                 {
+      //                   width: '70%',
+      //                   alignItems: 'flex-start',
+      //                 },
+      //               ]}>
+      //               <ScalableText style={tooltip_title}>{l.title}</ScalableText>
+      //             </View>
+      //           </TouchableOpacity>
+      //           {false || l.end ? null : <Divider style={divider} />}
+      //         </View>
+      //       ))}
+      //     </View>
+      //   }>
+      <TouchableOpacity
+        style={styles.parent_item}
+        onPress={() => {
+          setIsVisibleBSC(true);
+          setIndex(index);
+          setId(item.id);
+          setUserName(item.username);
+          // navigation.navigate('detailuserscreen', {
+          //   // item: item,
+          //   index: index,
+          // });
+        }}>
+        <Avatar
+          rounded
+          size="large"
+          //  source={image_Null(item.img)}
+          source={require('../../Images/icons8_person_96.png')}
+        />
+        <TextS
+          text={item.username}
+          style={{fontWeight: 'bold', fontSize: 15, marginTop: '1%'}}
+        />
+      </TouchableOpacity>
+      // </Tooltip>
+    );
+  };
   return (
     <Loading_Screen
       edgesTop={false}
@@ -257,21 +376,22 @@ const ListUser_Screen = ({navigation}) => {
         <View style={styles.parent}>
           <HeaderCustom
             navigationHeader={navigation}
-            title="Danh sách Khách hàng"
+            title="Danh sách tài khoản"
             visibleSearch={true}
-            searchPlaceHolder="Tìm tên khách hàng"
+            searchPlaceHolder="Tìm tên tài khoản"
             value={search}
             onChangeText={setSearch}
             searchCode={() => {
-              if (search == null) {
-                setPage(1);
-                setSearchCheck(false);
-                getUser(null);
-              } else {
-                setPageSearch(1);
-                setSearchCheck(true);
-                getUser(null);
-              }
+              setPageSearch(1);
+              getUser(null);
+              setNoDataContent(null);
+              // if (search == null) {
+              //   setPage(1);
+              //   setSearchCheck(false);
+              // } else {
+              //   setPageSearch(1);
+              //   setSearchCheck(true);
+              // }
             }}
           />
           <View
@@ -279,26 +399,6 @@ const ListUser_Screen = ({navigation}) => {
               flex: 1,
               justifyContent: 'flex-start',
             }}>
-            {/* <Button
-              style={{width: '100%', height: 50}}
-              title="123"
-              onPress={() => {
-                setPageSearch(1);
-                setSearchCheck(true);
-                getUser(null);
-                // _searchUserFromAPI();
-              }}
-            />
-            <Button
-              style={{width: '100%', height: 50}}
-              title="234"
-              onPress={() => {
-                setPage(1);
-                setSearchCheck(false);
-                getUser(null);
-                // _searchUserFromAPI();
-              }}
-            /> */}
             <FlatList
               data={list}
               renderItem={renderItem}
@@ -308,40 +408,56 @@ const ListUser_Screen = ({navigation}) => {
               ListEmptyComponent={
                 <View
                   style={{
-                    width: '100%',
-                    height: '100%',
+                    width: Response_Size('wd', 0, 100),
+                    height: Response_Size('hg', 0, 90),
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}>
-                  <ScalableText style={{fontSize: 17, marginBottom: '3%'}}>
-                    {noDataContent}
-                  </ScalableText>
+                  {noDataContent ? (
+                    <ScalableText style={{fontSize: 17, marginBottom: '3%'}}>
+                      Không có dữ liệu
+                    </ScalableText>
+                  ) : (
+                    <Image
+                      style={{
+                        width: 50, //30
+                        height: 50, //30
+                        // tintColor: '#309045',
+                      }}
+                      source={require('../../Images/loading/Spin-1s-200px.gif')}
+                    />
+                  )}
                 </View>
               }
-              // onEndReached={() => {
-              //   searchCheck ? _searchUserFromAPI() : _getUserFromAPI();
-              //   // setListItems(list);
-              // }}
-              // onEndReachedThreshold={0}
+              onEndReached={() => {
+                // _searchUserFromAPI();
+                if (searchCheck == false) {
+                  _searchUserFromAPI();
+                }
+                // setListItems(list);
+              }}
+              onEndReachedThreshold={0.1}
               ListFooterComponent={
-                // <View
-                //   style={{
-                //     width: '100%',
-                //     height: 40,
-                //     alignItems: 'center',
-                //     justifyContent: 'center',
-                //   }}>
-                //   <Image
-                //     style={{
-                //       width: 40, //30
-                //       height: 40, //30
-                //       // tintColor: '#309045',
-                //     }}
-                //     source={require('../../Images/loading/Spin-1s-200px.gif')}
-                //   />
-                // </View>
-                <View>
+                <View style={{padding: '1%'}}>
                   {visibleLoadMore ? (
+                    <View
+                      style={{
+                        width: '100%',
+                        height: 40,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <Image
+                        style={{
+                          width: 40, //30
+                          height: 40, //30
+                          // tintColor: '#309045',
+                        }}
+                        source={require('../../Images/loading/Spin-1s-200px.gif')}
+                      />
+                    </View>
+                  ) : null}
+                  {/* {visibleLoadMore ? (
                     <View
                       style={{
                         width: '100%',
@@ -349,29 +465,98 @@ const ListUser_Screen = ({navigation}) => {
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          searchCheck
-                            ? _searchUserFromAPI()
-                            : _getUserFromAPI();
-                          // _getUserFromAPI();
-                          // loadMoreUser(DATA);
-                        }}>
-                        <ScalableText
+                      {visibleLoadMoreLoading ? (
+                        <Image
                           style={{
-                            color: '#309045',
-                            fontWeight: 'bold',
-                            fontSize: 17,
+                            width: 40, //30
+                            height: 40, //30
+                            // tintColor: '#309045',
+                          }}
+                          source={require('../../Images/loading/Spin-1s-200px.gif')}
+                        />
+                      ) : (
+                        <TouchableOpacity
+                          onPress={() => {
+                            setVisibleLoadMoreLoading(true);
+                            _searchUserFromAPI();
+                            // searchCheck
+                            //   ? _searchUserFromAPI()
+                            //   : _getUserFromAPI();
+                            // _getUserGroupFromAPI();
+                            // loadMoreUserGroup(DATA);
                           }}>
-                          Xem thêm
-                        </ScalableText>
-                      </TouchableOpacity>
+                          <ScalableText
+                            style={{
+                              color: '#309045',
+                              fontWeight: 'bold',
+                              fontSize: 17,
+                            }}>
+                            Xem thêm
+                          </ScalableText>
+                        </TouchableOpacity>
+                      )}
                     </View>
-                  ) : null}
+                  ) : null} */}
                 </View>
               }
             />
           </View>
+          <BottomSheetCustom
+            visible={isVisibleBSC}
+            setVisible={setIsVisibleBSC}
+            title="Tuỳ chọn"
+            listItem={listBottomSheet}
+          />
+          <SCLAlert
+            theme={check('danger', 'default', 'danger', 'success')}
+            show={showDelete}
+            title={check(
+              'Bạn chắc chứ?',
+              'Vui lòng chờ...',
+              'Thất bại',
+              'Thành công',
+            )}
+            headerIconComponent={check(
+              <Icon name="trash" size={35} color="#fff" />,
+              <Image
+                style={{
+                  width: 50, //30
+                  height: 50, //30
+                  // tintColor: '#309045',
+                }}
+                source={require('../../Images/loading/Spin-1s-200px.gif')}
+              />,
+              <Icon name="close-circle" size={35} color="#fff" />,
+              <Icon name="checkmark-circle" size={35} color="#fff" />,
+            )}
+            cancellable={false}
+            subtitle={'Xoá tài khoản ' + userName}>
+            {startDelete ? (
+              loadingDone ? (
+                <SCLAlertButton
+                  theme={check('danger', 'default', 'danger', 'success')}
+                  onPress={() => setShowDelete(false)}>
+                  Xác nhận
+                </SCLAlertButton>
+              ) : null
+            ) : (
+              <View>
+                <SCLAlertButton
+                  theme="danger"
+                  onPress={() => {
+                    setStartDelete(true);
+                    _deleteUserFromAPI();
+                  }}>
+                  Xoá
+                </SCLAlertButton>
+                <SCLAlertButton
+                  theme="default"
+                  onPress={() => setShowDelete(false)}>
+                  Huỷ
+                </SCLAlertButton>
+              </View>
+            )}
+          </SCLAlert>
         </View>
       }
     />
@@ -395,6 +580,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     elevation: 5,
+  },
+  tooltip: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '1%',
+  },
+  tooltip_title: {
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'justify',
+  },
+  divider: {
+    backgroundColor: '#fff',
+    height: '1%',
+    marginVertical: '1%',
   },
 });
 

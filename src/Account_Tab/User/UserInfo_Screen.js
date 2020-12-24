@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, ScrollView, View} from 'react-native';
 import {Avatar, ListItem} from 'react-native-elements';

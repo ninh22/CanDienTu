@@ -1,10 +1,20 @@
-const http = 'https://canquochungdlk.com/';
+/* eslint-disable prettier/prettier */
+const https = 'https://canquochungdlk.com/';
 const host = {
-  SearchPhieuCan: http + 'SearchPhieuCan',
-  Login: http + 'Login',
-  getCustomer: http + 'GetCustomer',
-  searchCustomer: http + 'SearchCustomer',
-  addCustomer: http + 'AddCustomer',
-  GetNumber: http + 'GetNumber',
+  SearchPhieuCan: https + 'SearchPhieuCan',
+  Login: https + 'Login',
+  // getUsersGroup: https + 'GetUsersGroup',
+  searchUsersGroup: https + 'SearchUsersGroup',
+  getAllUsersGroup: https + 'GetAllUsersGroup',
+  getAllAppType: https + 'GetAllAppType',
+  countUsersOfUsersGroup: https + 'CountUsersOfUsersGroup',
+  // getUsers: https + 'GetUsers',
+  searchUsers: https + 'SearchUsers',
+  deleteUsers: https + 'DeleteUsers',
+  addUsersGroup: https + 'AddUsersGroup',
+  addAccount: https + 'AddAccount',
+  checkPass: https + 'CheckPass',
+  changePass: https + 'ChangePass',
+  getNumber: https + 'GetNumber',
 };
 export default host;
