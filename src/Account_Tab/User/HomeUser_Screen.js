@@ -6,8 +6,9 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
-  Image,
+  ActivityIndicator,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {Card, Button, Badge, Divider} from 'react-native-elements';
@@ -15,9 +16,12 @@ import Loading_Screen from '../../ScriptFile/Loading_Screen';
 import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
 import ScalableText from 'react-native-text';
 import Input from '../../Components/Input';
+import GetDate from '../../Components/GetDate';
 import _removeData from '../../Components/Logout';
 import {RNToasty} from 'react-native-toasty';
 import {LineChart, ProgressChart} from 'react-native-chart-kit';
+import host from '../../Server/host';
+import moment from 'moment';
 
 const Item = ({items}) => {
   return (
@@ -28,7 +32,7 @@ const Item = ({items}) => {
           onPress={l.onPress}
           style={{
             width: '48.5%',
-            height: Response_Size('hg', 1, 40, 35),
+            height: Response_Size('hg', 1, 40, 40),
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: 10,
@@ -43,17 +47,17 @@ const Item = ({items}) => {
   );
 };
 
-const ItemView = ({items}) => {
+const ItemView = ({items, loading, navigation, data}) => {
   return (
     <View>
       {items.map((l, i) => (
         <TouchableOpacity
           key={i}
-          // onPress={() =>
-          //   navigationComponents.navigate('resultscreen', {
-          //     key: key,
-          //   })
-          // }
+          onPress={() =>
+            navigation.navigate('overviewscreen', {
+              data: data,
+            })
+          }
           style={{
             width: '100%',
             height: Response_Size('hg', 1, 40, 35),
@@ -64,8 +68,16 @@ const ItemView = ({items}) => {
             marginBottom: false || l.end ? null : '3%',
             borderRadius: 10,
           }}>
-          <ScalableText style={styles.item_txt}>{l.title}</ScalableText>
-          <ScalableText style={styles.item_txt}>{l.number}</ScalableText>
+          {loading ? (
+            <ActivityIndicator size="large" color="#fff" />
+          ) : (
+            <View>
+              <ScalableText style={[styles.item_txt, {marginBottom: '1%'}]}>
+                {l.title}
+              </ScalableText>
+              <ScalableText style={styles.item_txt}>{l.number}</ScalableText>
+            </View>
+          )}
         </TouchableOpacity>
       ))}
     </View>
@@ -93,16 +105,69 @@ const ItemViews = ({code, title}) => {
   );
 };
 
-const Components = ({navigationComponents}) => {
+const HomeUser_Screen = ({navigation, route}) => {
+  const [visible, setVisible] = useState(true);
+  const [visibleLoading, setVisibleLoading] = useState(false);
+  const [id, setId] = useState(null);
+  const [idGroup, setIdGroup] = useState(null);
+  const [money, setMoney] = useState('');
+  const [total, setTotal] = useState('');
+  const listItemDropDown = [
+    {
+      dropDown_title: 'Hôm nay',
+      dropDown_value: GetDate('YYYY-MM-DD'),
+    },
+    {
+      dropDown_title: 'Trong tháng',
+      dropDown_value: GetDate('YYYY-MM'),
+    },
+    {
+      dropDown_title: 'Trong năm',
+      dropDown_value: GetDate('YYYY'),
+    },
+    {
+      dropDown_title: 'Tất cả',
+      dropDown_value: '',
+    },
+  ];
   const [keyWords, setKeyWords] = useState('Hôm nay');
+  const [keyWordValue, setKeyWordValue] = useState(
+    listItemDropDown[0].dropDown_value,
+  );
+
+  useEffect(() => {
+    _retrieveData();
+    // console.log(tabBarHeight);
+  });
+
+  const _retrieveData = async () => {
+    try {
+      let value = await AsyncStorage.getItem('@Key');
+      value = await JSON.parse(value);
+      // console.warn(value);
+      await _getUserOverviewFromAPI();
+      if (value !== null) {
+        setId(value.id);
+        setIdGroup(value.idGroup);
+        // We have data!!
+        // console.log(value);idGroup
+      } else {
+        setId(route.params.id);
+        setIdGroup(route.params.idGroup);
+      }
+      setVisible(false);
+    } catch (error) {
+      // Error retrieving data
+    }
+  };
   const listItem = [
     {
       title: 'Doanh thu',
-      number: '1.000.000' + ' VNĐ',
+      number: money + ' VNĐ',
     },
     {
       title: 'Tổng phiếu',
-      number: 15,
+      number: total,
       end: true,
     },
   ];
@@ -120,23 +185,19 @@ const Components = ({navigationComponents}) => {
     {
       nameIcon: 'person',
       title: 'Tài khoản',
+      onPress: () =>
+        navigation.navigate('userchangepasswordscreen', {
+          changePassword: {
+            permission: 'user',
+            id: id,
+          },
+        }),
     },
     {
       nameIcon: 'log-out',
       title: 'Đăng xuất',
-      onPress: () => _removeData(navigationComponents),
+      onPress: () => _removeData(navigation),
       color: true,
-    },
-  ];
-  const listItemDropDown = [
-    {
-      dropDown_Item: 'Hôm nay',
-    },
-    {
-      dropDown_Item: 'Trong tháng',
-    },
-    {
-      dropDown_Item: 'Trong năm',
     },
   ];
   const data = {
@@ -164,96 +225,144 @@ const Components = ({navigationComponents}) => {
       stroke: '#000',
     },
   };
+  const _getUserOverviewFromAPI = () => {
+    return fetch(host.userOverview, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        overview: false,
+        idusergroup: idGroup,
+        date_in: keyWordValue,
+      }),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        // console.log(responseJson, id, idGroup);
+        setMoney(responseJson.money);
+        setTotal(responseJson.countResult);
+        setVisibleLoading(false);
+      })
+      .catch((error) => {
+        // console.error(error);//Test
+        RNToasty.Warn({
+          title: 'Lỗi',
+        });
+        // Alert.alert('Thông báo', 'Lỗi', [
+        //   {
+        //     text: 'Xác nhận',
+        //     style: 'cancel',
+        //   },
+        // ]);
+      });
+  };
   return (
-    <ScrollView>
-      <View style={styles.parent}>
-        <ItemViews
-          title="Thống Kê"
-          code={
-            <View
-              style={{
-                width: '100%',
-                height: 'auto',
-              }}>
-              <Input
-                heightParent={40}
-                heightI={18}
-                type={2}
-                dropDown_TextSelected={keyWords}
-                setDropDown_TextSelected={setKeyWords}
-                dropDown_List={listItemDropDown}
-              />
-              <ItemView items={listItem} />
-            </View>
-          }
-        />
-        <ItemViews
-          title="Biểu đồ doanh thu 7 ngày qua"
-          code={
-            <LineChart
-              data={data}
-              width={Response_Size('wd', 1, 91, 93)}
-              height={300}
-              chartConfig={chartConfig}
-              yAxisSuffix="tr"
-              bezier
-              getDotColor={() => '#fff'}
-              style={{
-                borderRadius: 10,
-              }}
-              onDataPointClick={({value}) => {
-                RNToasty.Info({
-                  title: '' + value + ' tr',
-                });
-              }}
+    <Loading_Screen
+      edgesTop={true}
+      visible={visible}
+      code={
+        <ScrollView>
+          <View style={styles.parent}>
+            <ItemViews
+              title="Thống Kê"
+              code={
+                <View
+                  style={{
+                    width: '100%',
+                    height: 'auto',
+                  }}>
+                  <Input
+                    heightParent={40}
+                    heightI={18}
+                    type={2}
+                    dropDown_TextSelected={keyWords}
+                    setDropDown_TextSelected={setKeyWords}
+                    setDropDown_Value={setKeyWordValue}
+                    dropDown_CustomOnPress={setVisibleLoading}
+                    dropDown_List={listItemDropDown}
+                  />
+                  <ItemView
+                    items={listItem}
+                    loading={visibleLoading}
+                    navigation={navigation}
+                    data={{
+                      date_in: keyWordValue,
+                      idGroup: idGroup,
+                      title: keyWords,
+                    }}
+                  />
+                </View>
+              }
             />
-          }
-        />
-        <ItemViews
-          title="Hàng hoá"
-          code={
-            <ProgressChart
-              data={dataProgress}
-              width={Response_Size('wd', 1, 91, 93)}
-              height={220}
-              strokeWidth={16}
-              radius={32}
-              chartConfig={{
-                backgroundGradientFrom: '#309045',
-                backgroundGradientTo: '#309045',
-                decimalPlaces: 2,
-                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                style: {
-                  borderRadius: 16,
-                },
-              }}
-              style={{
-                borderRadius: 16,
-              }}
-              hideLegend={false}
+            {/* <ItemViews
+              title="Biểu đồ doanh thu 7 ngày qua"
+              code={
+                <LineChart
+                  data={data}
+                  width={Response_Size('wd', 1, 91, 93)}
+                  height={300}
+                  chartConfig={chartConfig}
+                  yAxisSuffix="tr"
+                  bezier
+                  getDotColor={() => '#fff'}
+                  style={{
+                    borderRadius: 10,
+                  }}
+                  onDataPointClick={({value}) => {
+                    RNToasty.Info({
+                      title: '' + value + ' tr',
+                    });
+                  }}
+                />
+              }
             />
-          }
-        />
-        <ItemViews
-          title="Tùy chọn"
-          code={
-            <View
-              style={{
-                width: '100%',
-                height: 'auto',
-              }}>
-              <Item items={listOption1} />
-              <View style={{height: '5%'}} />
-              <Item items={listOption2} />
-            </View>
-          }
-        />
-        {/* <View style={styles.view_item}>
+            <ItemViews
+              title="Hàng hoá"
+              code={
+                <ProgressChart
+                  data={dataProgress}
+                  width={Response_Size('wd', 1, 91, 93)}
+                  height={220}
+                  strokeWidth={16}
+                  radius={32}
+                  chartConfig={{
+                    backgroundGradientFrom: '#309045',
+                    backgroundGradientTo: '#309045',
+                    decimalPlaces: 2,
+                    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                    style: {
+                      borderRadius: 16,
+                    },
+                  }}
+                  style={{
+                    borderRadius: 16,
+                  }}
+                  hideLegend={false}
+                />
+              }
+            /> */}
+            <ItemViews
+              title="Tùy chọn"
+              code={
+                <View
+                  style={{
+                    width: '100%',
+                    height: 'auto',
+                  }}>
+                  {/* <Item items={listOption1} />
+                  <View style={{height: '5%'}} /> */}
+                  <Item items={listOption2} />
+                </View>
+              }
+            />
+            {/* <View style={styles.view_item}>
               <Item
                 title="Tài khoản"
                 typeIcon={true}
                 nameIcon="user-alt"
-                onPress={() => navigationComponents.navigate('userinfoscreen')}
+                onPress={() => navigation.navigate('userinfoscreen')}
               />
               <Item
                 title="Đăng xuất"
@@ -262,23 +371,9 @@ const Components = ({navigationComponents}) => {
                 onPress={() => alert(123)}
               />
             </View> */}
-      </View>
-    </ScrollView>
-  );
-};
-
-const HomeUser_Screen = ({navigation, route}) => {
-  const [visible, setVisible] = useState(true);
-  useEffect(() => {
-    setTimeout(() => {
-      setVisible(false);
-    }, 500);
-  });
-  return (
-    <Loading_Screen
-      edgesTop={true}
-      visible={visible}
-      code={<Components navigationComponents={navigation} />}
+          </View>
+        </ScrollView>
+      }
     />
   );
 };

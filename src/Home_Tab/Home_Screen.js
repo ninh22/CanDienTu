@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unreachable */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -13,12 +13,12 @@ import {
 } from 'react-native';
 import Response_Size from '../ScriptFile/ResponsiveSize_Script';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper-hooks';
 import ScalableText from 'react-native-text';
 import CallButton from '../Components/CallButton';
 
-const Home_Screen = ({navigation, route}) => {
+const Home_Screen = ({ navigation, route }) => {
   const DATA = [
     {
       id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -112,17 +112,17 @@ const Home_Screen = ({navigation, route}) => {
     return (
       <View style={styles.view_card}>
         <View style={styles.card_title}>
-          <ScalableText style={{color: '#309045', fontSize: 20}}>
+          <ScalableText style={{ color: '#309045', fontSize: 20 }}>
             {items.title}
           </ScalableText>
           <TouchableOpacity
-            style={{flexDirection: 'row', alignItems: 'center'}}
+            style={{ flexDirection: 'row', alignItems: 'center' }}
             onPress={() =>
               navigation.navigate('product', {
                 product: items.title,
               })
             }>
-            <ScalableText style={{color: '#A5A5A5', fontSize: 15}}>
+            <ScalableText style={{ color: '#A5A5A5', fontSize: 15 }}>
               Xem thêm
             </ScalableText>
             <Icon name="chevron-forward" size={25} color="#A5A5A5" />
@@ -141,7 +141,7 @@ const Home_Screen = ({navigation, route}) => {
     );
   };
 
-  const renderItem = ({item}) => (
+  const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.view_item}
       onPress={() => {
@@ -153,7 +153,7 @@ const Home_Screen = ({navigation, route}) => {
         );
       }}>
       <View style={styles.item_view_img}>
-        <Image source={{uri: item.img}} style={styles.item_img} />
+        <Image source={{ uri: item.img }} style={styles.item_img} />
       </View>
       <View style={styles.item_view_title}>
         <ScalableText style={styles.item_title} numberOfLines={2}>
@@ -247,36 +247,10 @@ const Home_Screen = ({navigation, route}) => {
               {_renderList()}
             </Swiper>
           </View> */}
-          <View style={styles.view_img} backgroundColor="#309045">
-            <Image
-              source={{
-                uri:
-                  'https://candientuquochung.com/wp-content/uploads/2019/04/qhs.jpg',
-              }}
-              style={[styles.img, {opacity: 0.7}]}></Image>
-            <View style={styles.img_view_title}>
-              <ScalableText
-                style={[
-                  styles.img_title,
-                  {
-                    fontWeight: 'bold',
-                    fontSize: 20,
-                    marginBottom: '1%',
-                  },
-                ]}>
-                CÂN ĐIỆN TỬ QUỐC HƯNG
-              </ScalableText>
-              <ScalableText
-                style={[
-                  styles.img_title,
-                  {
-                    fontSize: 15,
-                  },
-                ]}>
-                Cung cấp đa dạng và phù hợp với hoạt động kinh doanh của khách
-                hàng
-              </ScalableText>
-            </View>
+          <View style={{justifyContent:"center",alignItems:"center",backgroundColor:"white",marginBottom:5}}>
+            <Image resizeMode={"center"}
+              source={require('../Images/logo2.png')}
+              style={{height:200,width:200}}></Image>
           </View>
 
           <ListItem
@@ -300,7 +274,7 @@ const Home_Screen = ({navigation, route}) => {
               <View
                 style={[
                   styles.view_img,
-                  {height: '100%', justifyContent: 'space-between'},
+                  { height: '100%', justifyContent: 'space-between' },
                 ]}
                 backgroundColor="#1F502A">
                 <View style={styles.ServiceView_1}>
@@ -339,7 +313,7 @@ const Home_Screen = ({navigation, route}) => {
                       <View style={styles.ServiceView_Image}>
                         <Image
                           source={l.image}
-                          style={{width: '100%', height: '100%'}}
+                          style={{ width: '100%', height: '100%' }}
                         />
                       </View>
                       <ScalableText
@@ -358,6 +332,39 @@ const Home_Screen = ({navigation, route}) => {
               </View>
             }
           />
+          <View style={{marginBottom:10}}>
+            <View style={styles.view_img} backgroundColor="#309045">
+              <Image
+                source={{
+                  uri:
+                    'https://cdn.pixabay.com/photo/2020/05/18/13/19/landscape-5186249_960_720.jpg',
+                }}
+                style={[styles.img, { opacity: 0.7 }]}></Image>
+              <View style={styles.img_view_title}>
+                <ScalableText
+                  style={[
+                    styles.img_title,
+                    {
+                      fontWeight: 'bold',
+                      fontSize: 20,
+                      marginBottom: '1%',
+                    },
+                  ]}>
+                  CÂN ĐIỆN TỬ QUỐC HƯNG
+              </ScalableText>
+                <ScalableText
+                  style={[
+                    styles.img_title,
+                    {
+                      fontSize: 15,
+                    },
+                  ]}>
+                  Cung cấp đa dạng và phù hợp với hoạt động kinh doanh của khách
+                  hàng
+              </ScalableText>
+              </View>
+            </View>
+          </View>
         </View>
       </ScrollView>
       <CallButton />

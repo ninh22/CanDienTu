@@ -1,13 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {
-  StyleSheet,
-  TextInput,
-  View,
-  TouchableOpacity,
-  FlatList,
-} from 'react-native';
+import {StyleSheet, TextInput, View, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Response_Size from '../ScriptFile/ResponsiveSize_Script';
 import DatePicker from 'react-native-datepicker';
@@ -30,6 +24,8 @@ const Input = ({
   setDate,
   dropDown_TextSelected,
   setDropDown_TextSelected,
+  setDropDown_Value,
+  dropDown_CustomOnPress,
   dropDown_List,
   keyboardType,
 }) => {
@@ -171,29 +167,27 @@ const Input = ({
           </TouchableOpacity>
           {IsDropDown ? (
             <View style={[styles.input, styles.dropDown_ItemView]}>
-              <FlatList
-                data={dropDown_List}
-                renderItem={({item}) => (
-                  <View style={{width: '100%'}}>
-                    <TouchableOpacity
-                      style={{
-                        width: Response_Size('wd', 0, 100),
-                        height: Response_Size('hg', 1, heightI, 30),
-                        alignItems: 'flex-start',
-                        justifyContent: 'center',
-                      }}
-                      onPress={() => {
-                        setIsDropDown(!IsDropDown);
-                        setIsDropDownBorder(!IsDropDownBorder);
-                        setIsDropDownIcon(!IsDropDownIcon);
-                        setDropDown_TextSelected(item.dropDown_value);
-                      }}>
-                      <ScalableText>{item.dropDown_title}</ScalableText>
-                    </TouchableOpacity>
-                  </View>
-                )}
-                keyExtractor={(item) => item.id}
-              />
+              {dropDown_List.map((l, i) => (
+                <View style={{width: '100%'}} key={i}>
+                  <TouchableOpacity
+                    style={{
+                      width: Response_Size('wd', 0, 100),
+                      height: Response_Size('hg', 1, heightI, 30),
+                      alignItems: 'flex-start',
+                      justifyContent: 'center',
+                    }}
+                    onPress={() => {
+                      setIsDropDown(!IsDropDown);
+                      setIsDropDownBorder(!IsDropDownBorder);
+                      setIsDropDownIcon(!IsDropDownIcon);
+                      setDropDown_TextSelected(l.dropDown_title);
+                      dropDown_CustomOnPress(true);
+                      setDropDown_Value(l.dropDown_value);
+                    }}>
+                    <ScalableText>{l.dropDown_title}</ScalableText>
+                  </TouchableOpacity>
+                </View>
+              ))}
             </View>
           ) : null}
         </View>
@@ -259,11 +253,9 @@ const styles = StyleSheet.flatten({
     justifyContent: 'center',
   },
   dropDown_ItemView: {
-    height: 100,
     borderColor: '#C9CFD3',
     flexDirection: 'column',
     position: 'absolute',
-    alignItems: 'flex-start',
     zIndex: 1,
     top: '80%', //50
     backgroundColor: '#fff',

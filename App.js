@@ -44,6 +44,7 @@ import AddUserGroup_Screen from './src/Account_Tab/Admin/AddUserGroup_Screen';
 import HomeUser_Screen from './src/Account_Tab/User/HomeUser_Screen';
 import TongQuanUser from './src/TongQuan/TongQuanThongKeUser';
 import UserInfo_Screen from './src/Account_Tab/User/UserInfo_Screen';
+import Overview_Screen from './src/Account_Tab/User/Overview_Screen';
 
 console.disableYellowBox = true; // Hide Warning
 
@@ -494,6 +495,10 @@ const listStack = [
     name: 'userinfoscreen',
     component: UserInfo_Screen,
   },
+  {
+    name: 'overviewscreen',
+    component: Overview_Screen,
+  },
 ];
 
 const Stack = createStackNavigator();
@@ -549,7 +554,7 @@ const App = () => {
               <Stack.Screen name="tab" component={TabScreen} />
             )}
             {listStack.map((l, i) => (
-              <Stack.Screen name={l.name} component={l.component} />
+              <Stack.Screen key={i} name={l.name} component={l.component} />
             ))}
           </Stack.Navigator>
         </NavigationContainer>

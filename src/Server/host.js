@@ -16,5 +16,6 @@ const host = {
   checkPass: https + 'CheckPass',
   changePass: https + 'ChangePass',
   getNumber: https + 'GetNumber',
+  userOverview: https + 'UserOverview',
 };
 export default host;

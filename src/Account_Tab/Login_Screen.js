@@ -133,7 +133,7 @@ const Login_Screen = ({navigation}) => {
         navigation.replace('homeadminscreen', {id: id});
         break;
       default:
-        navigation.replace('homeuserscreen', {id: id});
+        navigation.replace('homeuserscreen', {id: id, idGroup: check});
         break;
     }
   };

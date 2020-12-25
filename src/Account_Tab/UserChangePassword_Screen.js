@@ -18,7 +18,7 @@ const UserChangePassword_Screen = ({navigation, route}) => {
   // });
   const [admin, setAdmin] = useState(false);
 
-  const [oldPassCheck, setOldPassCheck] = useState('');
+  const [oldPassCheck, setOldPassCheck] = useState(data.id);
 
   const [newPass, setNewPass] = useState('');
   const [newPassCheck, setNewPassCheck] = useState('');
@@ -126,7 +126,7 @@ const UserChangePassword_Screen = ({navigation, route}) => {
     // console.log(data.permission, admin, visible);
   });
   const _CheckPass = () => {
-    return fetch(host.checkPa, {
+    return fetch(host.checkPass, {
       method: 'POST',
       headers: {
         Accept: 'application/json',

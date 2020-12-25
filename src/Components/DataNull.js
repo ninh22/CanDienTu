@@ -5,7 +5,7 @@ const DataNull = (props) => {
     case null:
     case undefined:
     case 'Invalid date':
-      return '(Trống)';
+      return '(trống)';
     default:
       return props;
   }
