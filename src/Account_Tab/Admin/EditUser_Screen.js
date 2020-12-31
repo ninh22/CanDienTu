@@ -4,7 +4,7 @@ import {StyleSheet, ScrollView, View, TouchableOpacity} from 'react-native';
 import ScalableText from 'react-native-text';
 import Input from '../../Components/Input';
 import HeaderCustom from '../../Components/Header_Custom';
-import Loading_Screen from '../../ScriptFile/Loading_Screen';
+import Loading_Screen from '../../Components/Loading_Screen';
 import {RNToasty} from 'react-native-toasty';
 
 const Components = ({navigationComponents, dataRoute, onBackRefresh}) => {

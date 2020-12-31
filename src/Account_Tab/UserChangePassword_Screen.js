@@ -4,19 +4,15 @@ import {StyleSheet, ScrollView, View, TouchableOpacity} from 'react-native';
 import ScalableText from 'react-native-text';
 import Input from '../Components/Input';
 import HeaderCustom from '../Components/Header_Custom';
-import Loading_Screen from '../ScriptFile/Loading_Screen';
+import Loading_Screen from '../Components/Loading_Screen';
 import {RNToasty} from 'react-native-toasty';
 import host from '../Server/host';
 import Wait from '../Components/Wait';
+import Regex from '../ScriptFile/Regex';
 
 const UserChangePassword_Screen = ({navigation, route}) => {
   const data = route.params.changePassword;
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setVisible(false);
-  //   }, 500);
-  // });
-  const [admin, setAdmin] = useState(false);
+  const [admin, setAdmin] = useState(null);
 
   const [oldPassCheck, setOldPassCheck] = useState(data.id);
 
@@ -36,94 +32,84 @@ const UserChangePassword_Screen = ({navigation, route}) => {
   const [error, setError] = useState(false);
 
   const [visible, setVisible] = useState(false);
-  const [save, setSave] = useState(true);
 
   const check_OldPass = (content) => {
-    if (content == '') {
+    if (Regex(content, 'password') == false) {
       RNToasty.Error({
-        title: 'Nội dung không được để trống',
+        title: 'Mật khẩu cần ít nhất 8 kí tự và không chứa kí tự đặc biệt',
+        duration: 1,
       });
       setcheckOldPass(false);
       setVisible(false);
-    }
-    // else if (content !== oldPass) {
-    //   RNToasty.Error({
-    //     title: 'Mật khẩu cũ không đúng',
-    //   });
-    //   setcheckOldPass(false);
-    //   setVisible(false);
-    // }
-    else {
-      // setcheckOldPass(true);
-      // setVisible(true);
+      setstatusOldPass(false);
+    } else {
       _CheckPass();
     }
   };
   const check_NewPass = (content) => {
-    if (content == '') {
+    if (Regex(content, 'password') == false) {
       RNToasty.Error({
-        title: 'Nội dung không được để trống',
+        title: 'Mật khẩu cần ít nhất 8 kí tự và không chứa kí tự đặc biệt',
+        duration: 1,
       });
       setcheckNewPass(false);
+      setstatusNewPass(false);
     } else if (newPassCheck !== '' && content !== newPassCheck) {
       RNToasty.Error({
         title: 'Mật khẩu phải giống nhau',
+        duration: 1,
       });
+      setcheckNewPass(true);
       setcheckNewPassCheck(false);
+      setstatusNewPass(true);
+      setstatusNewPassCheck(false);
+    } else if (newPassCheck == '') {
+      setstatusNewPassCheck(false);
+      setcheckNewPass(true);
+      setstatusNewPass(true);
     } else {
       setcheckNewPass(true);
+      setcheckNewPassCheck(true);
+      setstatusNewPass(true);
+      setstatusNewPassCheck(true);
     }
   };
   const check_NewPassCheck = (content) => {
-    if (content !== newPass) {
+    if (content !== newPass || content == '' || newPass == '') {
       RNToasty.Error({
         title: 'Mật khẩu mới phải giống nhau',
+        duration: 1,
       });
       setcheckNewPassCheck(false);
+      setstatusNewPassCheck(false);
     } else {
+      setcheckNewPass(true);
       setcheckNewPassCheck(true);
+      setstatusNewPass(true);
+      setstatusNewPassCheck(true);
     }
   };
   const check_Save = () => {
-    // if (oldPassCheck !== oldPass) {
-    //   setstatusOldPass(false);
-    // } else {
-    //   setstatusOldPass(true);
-    // }
-    if (newPass == '') {
-      setstatusNewPass(false);
-    } else {
-      setstatusNewPass(true);
-    }
-    if (newPassCheck !== newPass) {
-      setstatusNewPassCheck(false);
-    } else {
-      setstatusNewPassCheck(true);
-    }
-    if (statusOldPasss && statusNewPass && statusNewPassCheck == true) {
-      setSave(false);
-    } else {
-      setSave(true);
-    }
+    return statusOldPasss && statusNewPass && statusNewPassCheck ? false : true;
   };
   const checkPermission = () => {
-    switch (data.permission) {
-      case 'admin':
-        setAdmin(true);
-        setVisible(true);
-        setstatusOldPass(true);
-        break;
-      // case 'user':
-      //   setAdmin(false);
-      //   setVisible(false);
-      //   break;
+    if (admin == null) {
+      switch (data.permission) {
+        case 'admin':
+          setAdmin(true);
+          setVisible(true);
+          setstatusOldPass(true);
+          break;
+        case 'user':
+          setAdmin(false);
+          setVisible(false);
+          setstatusOldPass(false);
+          break;
+      }
     }
   };
   useEffect(() => {
     checkPermission();
-    check_Save();
-    // console.log(data.id);
-    // console.log(data.permission, admin, visible);
   });
   const _CheckPass = () => {
     return fetch(host.checkPass, {
@@ -143,6 +129,7 @@ const UserChangePassword_Screen = ({navigation, route}) => {
           case responseJson[0] == undefined:
             RNToasty.Error({
               title: 'Mật khẩu hiện tại không đúng',
+              duration: 1,
             });
             setcheckOldPass(false);
             setVisible(false);
@@ -160,12 +147,6 @@ const UserChangePassword_Screen = ({navigation, route}) => {
         RNToasty.Error({
           title: 'Lỗi',
         });
-        // Alert.alert('Thông báo', 'Lỗi', [
-        //   {
-        //     text: 'Xác nhận',
-        //     style: 'cancel',
-        //   },
-        // ]);
       });
   };
   const _changePassUserFromAPI = () => {
@@ -186,24 +167,12 @@ const UserChangePassword_Screen = ({navigation, route}) => {
         if (responseJson == 'successed') {
           setWaitDone(true);
           setError(false);
-          // RNToasty.Success({
-          //   title: 'Đổi mật khẩu thành công',
-          // });
         }
       })
       .catch((error) => {
         // console.error(error);
         setWaitDone(true);
         setError(true);
-        // RNToasty.Warn({
-        //   title: 'Đổi mật khẩu thất bại',
-        // });
-        // Alert.alert('Thông báo', 'Lỗi', [
-        //   {
-        //     text: 'Xác nhận',
-        //     style: 'cancel',
-        //   },
-        // ]);
       });
   };
   return (
@@ -213,7 +182,7 @@ const UserChangePassword_Screen = ({navigation, route}) => {
         navigationHeader={navigation}
         rightComponent={
           <TouchableOpacity
-            disabled={save}
+            disabled={check_Save()}
             onPress={() => {
               setWaitDone(false);
               setError(false);
@@ -221,7 +190,7 @@ const UserChangePassword_Screen = ({navigation, route}) => {
               _changePassUserFromAPI();
             }}>
             <ScalableText
-              style={{color: save ? '#989898' : '#fff', fontSize: 17}}>
+              style={{color: check_Save() ? '#989898' : '#fff', fontSize: 17}}>
               Lưu
             </ScalableText>
           </TouchableOpacity>

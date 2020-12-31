@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   TextInput,
   View,
-  Image,
 } from 'react-native';
 import {Header, SearchBar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -52,7 +51,6 @@ const HeaderCustom = ({
           </ScalableText>
         )
       }
-      // rightComponent={rightComponent}
       rightComponent={
         false || visibleSearch ? (
           <View style={styles.view_input}>
@@ -61,10 +59,8 @@ const HeaderCustom = ({
               onFocus={handleFocus}
               onBlur={handleBlur}
               placeholder={searchPlaceHolder}
-              // placeholderTextColor="#309045"
               style={{
                 width: width(IsFocused),
-                // width: '90%',
                 borderWidth: 0,
                 padding: 0,
               }}
@@ -78,16 +74,6 @@ const HeaderCustom = ({
                 <Icon name="close-circle" size={25} color="#989898" />
               </TouchableOpacity>
             )}
-            {/* {IsFocused ? null : (
-              <Image
-                style={{
-                  width: Response_Size('wd', 1, 85, 10), //30
-                  height: Response_Size('hg', 1, 6, 80), //30
-                  // tintColor: '#309045',
-                }}
-                source={require('../Images/loading/Spin-1s-200px.gif')}
-              />
-            )} */}
           </View>
         ) : (
           rightComponent

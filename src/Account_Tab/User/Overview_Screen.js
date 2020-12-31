@@ -2,51 +2,25 @@
 import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
-  Button,
   View,
   FlatList,
   TouchableOpacity,
   Image,
 } from 'react-native';
-// import {Card} from 'react-native-elements';
-import DateTime from '../../Components/DateTime';
-import Icon from 'react-native-vector-icons/Ionicons';
-import Loading_Screen from '../../ScriptFile/Loading_Screen';
+import DateTime from '../../ScriptFile/DateTime';
+import Loading_Screen from '../../Components/Loading_Screen';
 import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
-import Input from '../../Components/Input';
 import HeaderCustom from '../../Components/Header_Custom';
-import DataNull from '../../Components/DataNull';
-import GetDate from '../../Components/GetDate';
+import DataNull from '../../ScriptFile/DataNull';
 import TextS from '../../Components/TextS';
 import host from '../../Server/host';
 import ScalableText from 'react-native-text';
 import {RNToasty} from 'react-native-toasty';
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title:
-      'https://nhaxevanchuyen.com/wp-content/uploads/2016/04/cho-thue-xe-tai-cho-hang-hai-phong.jpg',
-    seri_car: '92C-04610',
-    stuff: 'Xi măng',
-    money: '65,000',
-    img:
-      'https://nhaxevanchuyen.com/wp-content/uploads/2016/04/cho-thue-xe-tai-cho-hang-hai-phong.jpg',
-  },
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28bb',
-    title: 'Bê tông Đại Đồng',
-    seri_car: '92C-04610',
-    stuff: 'Xi măng',
-    money: '65,000',
-    img:
-      'https://nhaxevanchuyen.com/wp-content/uploads/2016/04/cho-thue-xe-tai-cho-hang-hai-phong.jpg',
-  },
-];
+import Money from '../../ScriptFile/Money';
 
 const Overview_Screen = ({navigation, route}) => {
   const [visible, setVisible] = useState(true);
   const [visibleLoadMore, setVisibleLoadMore] = useState(false);
-  const [visibleLoadMoreLoading, setVisibleLoadMoreLoading] = useState(false);
 
   const [data, setData] = useState(route.params.data);
   const [noDataContent, setNoDataContent] = useState(null);
@@ -56,25 +30,6 @@ const Overview_Screen = ({navigation, route}) => {
   const [limitItem, setLimitItem] = useState(5);
   const [listItem, setListItem] = useState(null);
 
-  const listItemDropDown = [
-    {
-      dropDown_title: 'Hôm nay',
-      dropDown_value: GetDate('YYYY-MM-DD'),
-    },
-    {
-      dropDown_title: 'Trong tháng',
-      dropDown_value: GetDate('YYYY-MM'),
-    },
-    {
-      dropDown_title: 'Trong năm',
-      dropDown_value: GetDate('YYYY'),
-    },
-    {
-      dropDown_title: 'Tất cả',
-      dropDown_value: '',
-    },
-  ];
-  const [keyWords, setKeyWords] = useState(data.title);
   const [keyWordValue, setKeyWordValue] = useState(data.date_in);
   const [visibleLoading, setVisibleLoading] = useState(false);
 
@@ -105,11 +60,6 @@ const Overview_Screen = ({navigation, route}) => {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        // console.log(
-        //   moment(responseJson.data[0].createtime).format('YYYY-MM-DD HH:mm:ss'),
-        //   moment('2022-12-13 21:45:16').format('DD/MM/YYYY HH:mm'),
-        // );
-        // console.log(responseJson.check);
         setVisibleLoading(false);
         switch (responseJson.check) {
           case 'notfull':
@@ -120,7 +70,6 @@ const Overview_Screen = ({navigation, route}) => {
             }
             setSearchCheck(false);
             setPage(page + 1);
-            setVisibleLoadMoreLoading(false);
             setVisibleLoadMore(true);
             break;
           case 'full':
@@ -139,23 +88,11 @@ const Overview_Screen = ({navigation, route}) => {
             setNoDataContent('Không có dữ liệu');
             break;
         }
-        // if (responseJson.check == 'notfull') {
-        //   getUser(responseJson.data);
-        // }
       })
       .catch((error) => {
-        // console.error(error);
-        // setNoData(true);
-        // setNoDataContent('Lỗi');
         RNToasty.Warn({
           title: 'Lỗi',
         });
-        // Alert.alert('Thông báo', 'Lỗi', [
-        //   {
-        //     text: 'Xác nhận',
-        //     style: 'cancel',
-        //   },
-        // ]);
       });
   };
   const renderItem = ({item}) => (
@@ -167,9 +104,9 @@ const Overview_Screen = ({navigation, route}) => {
         });
       }}>
       <View style={styles.view_img}>
-        {/* <Image source={{uri: item.img}} style={styles.img} /> */}
         <Image
           source={require('../../Images/icons8-note-96.png')}
+          resizeMode="stretch"
           style={styles.img}
         />
       </View>
@@ -177,14 +114,14 @@ const Overview_Screen = ({navigation, route}) => {
         <TextS text={DataNull(item.customer_name)} />
         <TextS text={DataNull(item.truct_no)} style={{color: 'gray'}} />
         <TextS text={DataNull(item.items_name)} style={{color: 'gray'}} />
-        <TextS text={item.price_total + ' đồng'} style={{color: 'red'}} />
+        <TextS text={Money(item.price_total) + ' đồng'} style={{color: 'red'}} />
         <View
           style={{
             width: '100%',
             alignItems: 'flex-end',
           }}>
           <TextS
-            text={DataNull(DateTime(item.createtime))}
+            text={DataNull(DateTime(item.date_in))}
             style={{color: 'gray'}}
           />
         </View>
@@ -233,7 +170,6 @@ const Overview_Screen = ({navigation, route}) => {
                       style={{
                         width: 50, //30
                         height: 50, //30
-                        // tintColor: '#309045',
                       }}
                       source={require('../../Images/loading/Spin-1s-200px.gif')}
                     />
@@ -243,7 +179,7 @@ const Overview_Screen = ({navigation, route}) => {
               onEndReached={() => {
                 if (searchCheck == false) {
                   _searchUserOverviewFromAPI();
-                } // setListItems(list);
+                }
               }}
               onEndReachedThreshold={0.1}
               ListFooterComponent={
@@ -260,47 +196,11 @@ const Overview_Screen = ({navigation, route}) => {
                         style={{
                           width: 40, //30
                           height: 40, //30
-                          // tintColor: '#309045',
                         }}
                         source={require('../../Images/loading/Spin-1s-200px.gif')}
                       />
                     </View>
                   ) : null}
-                  {/* {visibleLoadMore ? (
-                    <View
-                      style={{
-                        width: '100%',
-                        height: Response_Size('hg', 0, 5),
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      {visibleLoadMoreLoading ? (
-                        <Image
-                          style={{
-                            width: 40, //30
-                            height: 40, //30
-                            // tintColor: '#309045',
-                          }}
-                          source={require('../Images/loading/Spin-1s-200px.gif')}
-                        />
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() => {
-                            setVisibleLoadMoreLoading(true);
-                            _SearchPhieuCan();
-                          }}>
-                          <ScalableText
-                            style={{
-                              color: '#309045',
-                              fontWeight: 'bold',
-                              fontSize: 17,
-                            }}>
-                            Xem thêm
-                          </ScalableText>
-                        </TouchableOpacity>
-                      )}
-                    </View>
-                  ) : null} */}
                 </View>
               }
             />
@@ -338,8 +238,6 @@ const styles = StyleSheet.create({
   img: {
     width: '100%',
     height: '100%',
-    // borderTopLeftRadius: 10,
-    // borderBottomLeftRadius: 10,
     color: 'yellow',
   },
   view_content: {

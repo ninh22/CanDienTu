@@ -10,22 +10,18 @@ const Wait = ({show, setShow, title, waitDone, error}) => {
   };
   const theme = () => {
     return check('default', 'danger', 'success');
-    // return wait ? 'default' : error ? 'danger' : 'success';
   };
   return (
     <SCLAlert
       theme={theme()}
       show={show}
-      //   title={title}
       title={check('Vui lòng chờ...', 'Thất bại', 'Thành công')}
       subtitle={title}
-      // subtitleContainerStyle={{height: 0}}
       headerIconComponent={check(
         <Image
           style={{
             width: 50, //30
             height: 50, //30
-            // tintColor: '#309045',
           }}
           source={require('../Images/loading/Spin-1s-200px.gif')}
         />,

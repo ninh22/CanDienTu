@@ -3,35 +3,8 @@
 import React, {useState, useEffect} from 'react';
 import {View, Dimensions, Image} from 'react-native';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
-import ScalableText from 'react-native-text';
-import {Button} from 'react-native-elements';
-import Response_Size from './ResponsiveSize_Script';
 
-// const wait = (timeout) => {
-//   return new Promise((resolve) => {
-//     setTimeout(resolve, timeout);
-//   });
-// };
-
-const Loading_Screen = ({code, visible, edgesTop, navigation}) => {
-  // useEffect(() => {
-  //   // wait(2000).then(() => {
-  //   //   // seta(false);
-  //   // });
-  //   _retrieveData();
-  // });
-
-  // const _retrieveData = async () => {
-  //   await seta('');
-  //   if (a !== null) {
-  //     // We have data!!
-  //     setisShow(false);
-  //     console.log('Correct');
-  //   } else {
-  //     console.log('Wrong');
-  //   }
-  // };
-
+const Loading_Screen = ({code, visible, edgesTop}) => {
   return (
     <SafeAreaView
       edges={

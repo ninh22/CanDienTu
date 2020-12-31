@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import ScalableText from 'react-native-text';
 import TextS from '../../Components/TextS';
 import HeaderCustom from '../../Components/Header_Custom';
-import Loading_Screen from '../../ScriptFile/Loading_Screen';
+import Loading_Screen from '../../Components/Loading_Screen';
 import BottomSheetCustom from '../../Components/BottomSheet_Custom';
 import {SCLAlert, SCLAlertButton} from 'react-native-scl-alert';
 import ImagePicker from 'react-native-image-picker';

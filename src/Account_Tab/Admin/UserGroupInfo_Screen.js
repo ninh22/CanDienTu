@@ -4,15 +4,13 @@ import {useSelector, useDispatch} from 'react-redux';
 import {getUserAction} from '../../Redux/index';
 import {StyleSheet, ScrollView, View} from 'react-native';
 import {Avatar, ListItem} from 'react-native-elements';
-import Icon from 'react-native-vector-icons/Ionicons';
-import DataNull from '../../Components/DataNull';
+import DataNull from '../../ScriptFile/DataNull';
 import ScalableText from 'react-native-text';
 import TextS from '../../Components/TextS';
 import HeaderCustom from '../../Components/Header_Custom';
-import BottomSheetCustom from '../../Components/BottomSheet_Custom';
-import Loading_Screen from '../../ScriptFile/Loading_Screen';
+import Loading_Screen from '../../Components/Loading_Screen';
 import host from '../../Server/host';
-import DateTime from '../../Components/DateTime';
+import DateTime from '../../ScriptFile/DateTime';
 import {RNToasty} from 'react-native-toasty';
 
 const List = ({lists}) => {
@@ -62,16 +60,9 @@ const UserGroupInfo_Screen = ({navigation, route}) => {
         setCount(responseJson);
       })
       .catch((error) => {
-        // console.error(error);//Test
         RNToasty.Warn({
           title: 'Lỗi',
         });
-        // Alert.alert('Thông báo', 'Lỗi', [
-        //   {
-        //     text: 'Xác nhận',
-        //     style: 'cancel',
-        //   },
-        // ]);
       });
   };
   const getData = async () => {
@@ -81,19 +72,6 @@ const UserGroupInfo_Screen = ({navigation, route}) => {
   useEffect(() => {
     getData();
   });
-  const [isVisible, setIsVisible] = useState(false);
-  const listBottomSheet = [
-    {
-      title: 'Đổi mật khẩu',
-      icon: 'lock-closed',
-      onPress: () => {
-        navigation.navigate('userchangepasswordscreen', {
-          password: '123',
-        });
-        setIsVisible(false);
-      },
-    },
-  ];
   const listItem = [
     {
       title: 'Địa chỉ',
@@ -127,15 +105,6 @@ const UserGroupInfo_Screen = ({navigation, route}) => {
             <HeaderCustom
               title="Thông tin Công ty"
               navigationHeader={navigation}
-              // onBackRefresh={onBackRefresh.state.params.test(true)}
-              // rightComponent={
-              //   <Icon
-              //     name="ellipsis-vertical"
-              //     size={30}
-              //     color="#fff"
-              //     onPress={() => setIsVisible(true)}
-              //   />
-              // }
             />
             <View style={{width: '100%', height: '100%'}}>
               <View backgroundColor="#309045" style={styles.view_avatar}>
@@ -157,12 +126,6 @@ const UserGroupInfo_Screen = ({navigation, route}) => {
               <List lists={listItem} />
             </View>
           </View>
-          {/* <BottomSheetCustom
-            visible={isVisible}
-            setVisible={setIsVisible}
-            title="Tuỳ chọn"
-            listItem={listBottomSheet}
-          /> */}
         </ScrollView>
       }
     />

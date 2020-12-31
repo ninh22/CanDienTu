@@ -7,7 +7,7 @@ import ScalableText from 'react-native-text';
 import TextS from '../../Components/TextS';
 import HeaderCustom from '../../Components/Header_Custom';
 import BottomSheetCustom from '../../Components/BottomSheet_Custom';
-import Loading_Screen from '../../ScriptFile/Loading_Screen';
+import Loading_Screen from '../../Components/Loading_Screen';
 
 const List = ({lists}) => {
   return (

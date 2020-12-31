@@ -7,15 +7,17 @@ import Input from '../Components/Input';
 import Response_Size from '../ScriptFile/ResponsiveSize_Script';
 import CardView from '../Components/CardView_Custom';
 import {RNToasty} from 'react-native-toasty';
+import Regex from '../ScriptFile/Regex';
 
 const Search_Screen = ({navigation}) => {
   const [text, setText] = useState('');
   const [check, setCheck] = useState(true);
   const [isButton, setIsButton] = useState(true);
   const checkText = (content) => {
-    if (content == '') {
+    if (Regex(content, 'licensePlates') == false) {
       RNToasty.Error({
-        title: 'Nội dung không được để trống',
+        title: 'Nội dung không chứa các ký tự đặc biệt',
+        duration: 1,
       });
       setCheck(false);
       setIsButton(true);

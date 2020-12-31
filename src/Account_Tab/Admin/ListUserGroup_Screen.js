@@ -2,12 +2,9 @@
 import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
-  Button,
   View,
   FlatList,
   TouchableOpacity,
-  Alert,
-  TextInput,
   Image,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
@@ -15,24 +12,19 @@ import {getUserGroupAction, loadMoreUserGroupAction} from '../../Redux/index';
 import host from '../../Server/host';
 
 import {RNToasty} from 'react-native-toasty';
-import {Header, Card, Avatar} from 'react-native-elements';
-import Icon from 'react-native-vector-icons/Ionicons';
-import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import {Avatar} from 'react-native-elements';
 import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
 import ScalableText from 'react-native-text';
 import TextS from '../../Components/TextS';
-import Loading_Screen from '../../ScriptFile/Loading_Screen';
+import Loading_Screen from '../../Components/Loading_Screen';
 import HeaderCustom from '../../Components/Header_Custom';
 
 const ListUserGroup_Screen = ({navigation}) => {
   const [visible, setVisible] = useState(true);
   const [visibleLoadMore, setVisibleLoadMore] = useState(false);
-  const [visibleLoadMoreLoading, setVisibleLoadMoreLoading] = useState(false);
 
-  // const [noData, setNoData] = useState(false);
   const [noDataContent, setNoDataContent] = useState(null);
   let list = useSelector((state) => state.userGroupReducer);
-  // const [page, setPage] = useState(1);
   const [limitItem, setLimitItem] = useState(10);
   const [pageSearch, setPageSearch] = useState(1);
   const [search, setSearch] = useState('');
@@ -40,68 +32,6 @@ const ListUserGroup_Screen = ({navigation}) => {
   const dispatch = useDispatch();
   const getUserGroup = (item) => dispatch(getUserGroupAction(item));
   const loadMoreUserGroup = (item) => dispatch(loadMoreUserGroupAction(item));
-  {
-    /*const _getUserGroupFromAPI = () => {
-    return fetch(host.getUsersGroup, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        page: page,
-        limit: limitItem,
-      }),
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        // console.log(responseJson);//Test
-        switch (responseJson.check) {
-          case 'notfull':
-            if (list == null) {
-              getUserGroup(responseJson.data);
-            } else {
-              loadMoreUserGroup(responseJson.data);
-            }
-            setPage(page + 1);
-            setVisibleLoadMoreLoading(false);
-            setVisibleLoadMore(true);
-            break;
-          case 'full':
-            if (list == null) {
-              getUserGroup(responseJson.data);
-            } else {
-              loadMoreUserGroup(responseJson.data);
-            }
-            setVisibleLoadMore(false);
-            break;
-          case 'maxfull':
-            setVisibleLoadMore(false);
-            getUserGroup('');
-            // setNoData(true);
-            setNoDataContent('Không có dữ liệu');
-            break;
-        }
-        // if (responseJson.check == 'notfull') {
-        //   getUserGroup(responseJson.data);
-        // }
-      })
-      .catch((error) => {
-        // console.error(error);//Test
-        // setNoData(true);
-        setNoDataContent('Lỗi');
-        RNToasty.Warn({
-          title: 'Lỗi',
-        });
-        // Alert.alert('Thông báo', 'Lỗi', [
-        //   {
-        //     text: 'Xác nhận',
-        //     style: 'cancel',
-        //   },
-        // ]);
-      });
-  };*/
-  }
   const _searchUserGroupFromAPI = () => {
     return fetch(host.searchUsersGroup, {
       method: 'POST',
@@ -127,7 +57,6 @@ const ListUserGroup_Screen = ({navigation}) => {
             }
             setSearchCheck(false);
             setPageSearch(pageSearch + 1);
-            setVisibleLoadMoreLoading(false);
             setVisibleLoadMore(true);
             break;
           case 'full':
@@ -143,35 +72,18 @@ const ListUserGroup_Screen = ({navigation}) => {
             setSearchCheck(true);
             setVisibleLoadMore(false);
             getUserGroup('');
-            // setNoData(true);
             setNoDataContent('Không có dữ liệu');
             break;
         }
-        // if (responseJson.check == 'notfull') {
-        //   getUserGroup(responseJson.data);
-        // }
       })
       .catch((error) => {
-        // console.error(error);
-        // setNoData(true);
         setNoDataContent('Lỗi');
         RNToasty.Warn({
           title: 'Lỗi',
         });
-        // Alert.alert('Thông báo', 'Lỗi', [
-        //   {
-        //     text: 'Xác nhận',
-        //     style: 'cancel',
-        //   },
-        // ]);
       });
   };
   const _retrieveData = async () => {
-    // if (list == null && searchCheck == false) {
-    //   await _getUserGroupFromAPI();
-    // } else if (list == null && searchCheck == true) {
-    //   await _searchUserGroupFromAPI();
-    // }
     if (list == null) {
       await _searchUserGroupFromAPI();
     }
@@ -186,7 +98,6 @@ const ListUserGroup_Screen = ({navigation}) => {
       style={styles.parent_item}
       onPress={() => {
         navigation.navigate('usergroupinfoscreen', {
-          // item: item,
           index: index,
         });
       }}>
@@ -219,13 +130,6 @@ const ListUserGroup_Screen = ({navigation}) => {
               setPageSearch(1);
               getUserGroup(null);
               setNoDataContent(null);
-              // if (search == '') {
-              //   setPage(1);
-              //   setSearchCheck(false);
-              // } else {
-              //   setPageSearch(1);
-              //   setSearchCheck(true);
-              // }
             }}
           />
           <View
@@ -233,26 +137,6 @@ const ListUserGroup_Screen = ({navigation}) => {
               flex: 1,
               justifyContent: 'flex-start',
             }}>
-            {/* <Button
-              style={{width: '100%', height: 50}}
-              title="123"
-              onPress={() => {
-                setPageSearch(1);
-                setSearchCheck(true);
-                getUserGroup(null);
-                // _searchUserGroupFromAPI();
-              }}
-            />
-            <Button
-              style={{width: '100%', height: 50}}
-              title="234"
-              onPress={() => {
-                setPage(1);
-                setSearchCheck(false);
-                getUserGroup(null);
-                // _searchUserGroupFromAPI();
-              }}
-            /> */}
             <FlatList
               data={list}
               renderItem={renderItem}
@@ -260,23 +144,22 @@ const ListUserGroup_Screen = ({navigation}) => {
               numColumns={2}
               extraData={list}
               ListEmptyComponent={
-                <View
-                  style={{
-                    width: Response_Size('wd', 0, 100),
-                    height: Response_Size('hg', 0, 90),
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
+                <View style={styles.view_empty}>
                   {noDataContent ? (
-                    <ScalableText style={{fontSize: 17, marginBottom: '3%'}}>
-                      Không có dữ liệu
-                    </ScalableText>
+                    <View style={styles.view_empty}>
+                      <View style={{width: '20%', height: '20%'}}>
+                        <Image
+                          source={require('../../Images/icons8-empty-box-96.png')}
+                          style={{height: '100%', width: '100%'}}
+                        />
+                      </View>
+                      <ScalableText>Không có dữ liệu</ScalableText>
+                    </View>
                   ) : (
                     <Image
                       style={{
                         width: 50, //30
                         height: 50, //30
-                        // tintColor: '#309045',
                       }}
                       source={require('../../Images/loading/Spin-1s-200px.gif')}
                     />
@@ -287,7 +170,6 @@ const ListUserGroup_Screen = ({navigation}) => {
                 if (searchCheck == false) {
                   _searchUserGroupFromAPI();
                 }
-                // setListItems(list);
               }}
               onEndReachedThreshold={0.1}
               ListFooterComponent={
@@ -304,50 +186,11 @@ const ListUserGroup_Screen = ({navigation}) => {
                         style={{
                           width: 40, //30
                           height: 40, //30
-                          // tintColor: '#309045',
                         }}
                         source={require('../../Images/loading/Spin-1s-200px.gif')}
                       />
                     </View>
                   ) : null}
-                  {/* {visibleLoadMore ? (
-                    <View
-                      style={{
-                        width: '100%',
-                        height: Response_Size('hg', 0, 5),
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      {visibleLoadMoreLoading ? (
-                        <Image
-                          style={{
-                            width: 40, //30
-                            height: 40, //30
-                            // tintColor: '#309045',
-                          }}
-                          source={require('../../Images/loading/Spin-1s-200px.gif')}
-                        />
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() => {
-                            setVisibleLoadMoreLoading(true);
-                            _searchUserGroupFromAPI();
-                            // searchCheck
-                            //   ? _searchUserGroupFromAPI()
-                            //   : _getUserGroupFromAPI();
-                          }}>
-                          <ScalableText
-                            style={{
-                              color: '#309045',
-                              fontWeight: 'bold',
-                              fontSize: 17,
-                            }}>
-                            Xem thêm
-                          </ScalableText>
-                        </TouchableOpacity>
-                      )}
-                    </View>
-                  ) : null} */}
                 </View>
               }
             />
@@ -375,6 +218,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     elevation: 5,
+  },
+  view_empty: {
+    width: Response_Size('wd', 0, 100),
+    height: Response_Size('hg', 0, 90),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

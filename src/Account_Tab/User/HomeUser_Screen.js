@@ -10,16 +10,16 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons';
-import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {Card, Button, Badge, Divider} from 'react-native-elements';
-import Loading_Screen from '../../ScriptFile/Loading_Screen';
+import Loading_Screen from '../../Components/Loading_Screen';
 import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
 import ScalableText from 'react-native-text';
 import Input from '../../Components/Input';
-import GetDate from '../../Components/GetDate';
+import GetDate from '../../ScriptFile/GetDate';
 import _removeData from '../../Components/Logout';
 import {RNToasty} from 'react-native-toasty';
-import {LineChart, ProgressChart} from 'react-native-chart-kit';
+import {LineChart} from 'react-native-chart-kit';
+import Money from '../../ScriptFile/Money';
+
 import host from '../../Server/host';
 import moment from 'moment';
 
@@ -110,6 +110,9 @@ const HomeUser_Screen = ({navigation, route}) => {
   const [visibleLoading, setVisibleLoading] = useState(false);
   const [id, setId] = useState(null);
   const [idGroup, setIdGroup] = useState(null);
+
+  const [dataDiagramMap, setDataDiagramMap] = useState([]);
+
   const [money, setMoney] = useState('');
   const [total, setTotal] = useState('');
   const listItemDropDown = [
@@ -137,7 +140,7 @@ const HomeUser_Screen = ({navigation, route}) => {
 
   useEffect(() => {
     _retrieveData();
-    // console.log(tabBarHeight);
+    // console.log(idGroup);
   });
 
   const _retrieveData = async () => {
@@ -145,7 +148,6 @@ const HomeUser_Screen = ({navigation, route}) => {
       let value = await AsyncStorage.getItem('@Key');
       value = await JSON.parse(value);
       // console.warn(value);
-      await _getUserOverviewFromAPI();
       if (value !== null) {
         setId(value.id);
         setIdGroup(value.idGroup);
@@ -154,6 +156,10 @@ const HomeUser_Screen = ({navigation, route}) => {
       } else {
         setId(route.params.id);
         setIdGroup(route.params.idGroup);
+      }
+      await _getUserOverviewFromAPI();
+      if (dataDiagramMap == '') {
+        await _getUserDiagramMapFromAPI();
       }
       setVisible(false);
     } catch (error) {
@@ -183,8 +189,8 @@ const HomeUser_Screen = ({navigation, route}) => {
   ];
   const listOption2 = [
     {
-      nameIcon: 'person',
-      title: 'Tài khoản',
+      nameIcon: 'key',
+      title: 'Đổi mật khẩu',
       onPress: () =>
         navigation.navigate('userchangepasswordscreen', {
           changePassword: {
@@ -201,17 +207,27 @@ const HomeUser_Screen = ({navigation, route}) => {
     },
   ];
   const data = {
-    labels: ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'],
+    legend: [moment().format('YYYY')],
+    labels: dataDiagramMap.map((l, i) => l.title),
     datasets: [
       {
-        data: [20, 45, 28, 80, 99, 43, 43],
+        data: dataDiagramMap.map((l, i) => l.value / 1000000),
         color: () => '#bc4749', // optional //#6a994e //#bc4749
       },
     ],
   };
+  const lbl = [
+    {lb: 'Swim', val: 0.4},
+    {lb: 'Bike', val: 0.6},
+    {lb: 'Run', val: 0.8},
+    {lb: 'Read', val: 0.9},
+    {lb: 'Write', val: 1},
+  ];
   const dataProgress = {
-    labels: ['Swim', 'Bike', 'Run'], // optional
-    data: [0.4, 0.6, 0.8],
+    // labels: ['Swim', 'Bike', 'Run'], // optional
+    labels: lbl.map((l, i) => l.lb),
+    data: [[0.4], [0.3]],
+    barColors: ['#dfe4ea', '#ced6e0', '#a4b0be'],
   };
   const chartConfig = {
     backgroundGradientFrom: '#f2e8cf',
@@ -247,6 +263,35 @@ const HomeUser_Screen = ({navigation, route}) => {
       })
       .catch((error) => {
         // console.error(error);//Test
+        RNToasty.Warn({
+          title: 'Lỗi',
+        });
+        // Alert.alert('Thông báo', 'Lỗi', [
+        //   {
+        //     text: 'Xác nhận',
+        //     style: 'cancel',
+        //   },
+        // ]);
+      });
+  };
+  const _getUserDiagramMapFromAPI = () => {
+    return fetch(host.userDiagramMap, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        idusergroup: idGroup,
+      }),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        // console.log(responseJson);
+        setDataDiagramMap(responseJson);
+      })
+      .catch((error) => {
+        // console.error(error);
         RNToasty.Warn({
           title: 'Lỗi',
         });
@@ -296,7 +341,7 @@ const HomeUser_Screen = ({navigation, route}) => {
                 </View>
               }
             />
-            {/* <ItemViews
+            <ItemViews
               title="Biểu đồ doanh thu 7 ngày qua"
               code={
                 <LineChart
@@ -304,7 +349,7 @@ const HomeUser_Screen = ({navigation, route}) => {
                   width={Response_Size('wd', 1, 91, 93)}
                   height={300}
                   chartConfig={chartConfig}
-                  yAxisSuffix="tr"
+                  yAxisSuffix=" tr"
                   bezier
                   getDotColor={() => '#fff'}
                   style={{
@@ -312,35 +357,66 @@ const HomeUser_Screen = ({navigation, route}) => {
                   }}
                   onDataPointClick={({value}) => {
                     RNToasty.Info({
-                      title: '' + value + ' tr',
+                      title: '' + Money(value * 1000000) + ' VNĐ',
                     });
                   }}
                 />
               }
             />
-            <ItemViews
+            {/* <ItemViews
               title="Hàng hoá"
               code={
-                <ProgressChart
-                  data={dataProgress}
-                  width={Response_Size('wd', 1, 91, 93)}
-                  height={220}
-                  strokeWidth={16}
-                  radius={32}
-                  chartConfig={{
-                    backgroundGradientFrom: '#309045',
-                    backgroundGradientTo: '#309045',
-                    decimalPlaces: 2,
-                    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                    style: {
-                      borderRadius: 16,
-                    },
-                  }}
-                  style={{
-                    borderRadius: 16,
-                  }}
-                  hideLegend={false}
-                />
+                <VictoryContainer width={470} height={400}>
+                  <VictoryLegend
+                    x={125}
+                    y={10}
+                    title="Legend"
+                    centerTitle
+                    orientation="horizontal"
+                    gutter={40}
+                    colorScale="green"
+                    style={{border: {stroke: 'green'}, title: {fontSize: 20}}}
+                    data={[{name: 'One'}, {name: 'Two'}, {name: 'Three'}, {name: 'Three'}, {name: 'Three'}]}
+                  />
+                  <VictoryPie
+                    colorScale="green"
+                    data={[
+                      {x: 'Cats', y: 10},
+                      {x: 'Dogs', y: 40},
+                      {x: 'Birds', y: 50},
+                    ]}
+                    width={400}
+                    height={300}
+                    // innerRadius={50}
+                    labelRadius={100}
+                    // radius={({datum}) => 50 + datum.y * 20}
+                    // innerRadius={50}
+                    style={{
+                      labels: {fill: 'black', fontSize: 20, fontWeight: 'bold'},
+                    }}
+                  />
+                </VictoryContainer>
+
+                // <StackedBarChart
+                //   data={dataProgress}
+                //   width={Response_Size('wd', 1, 91, 93)}
+                //   height={220}
+                //   strokeWidth={16}
+                //   radius={32}
+                //   chartConfig={{
+                //     backgroundGradientFrom: '#309045',
+                //     backgroundGradientTo: '#309045',
+                //     decimalPlaces: 2,
+                //     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                //     style: {
+                //       borderRadius: 16,
+                //     },
+                //   }}
+                //   style={{
+                //     borderRadius: 16,
+                //   }}
+                //   hideLegend={false}
+                // />
               }
             /> */}
             <ItemViews

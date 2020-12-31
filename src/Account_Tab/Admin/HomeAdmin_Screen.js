@@ -13,8 +13,6 @@ import {useSelector, useDispatch} from 'react-redux';
 import {getUserGroupAction} from '../../Redux/index';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {Card, Button, Badge} from 'react-native-elements';
-import Loading_Screen from '../../ScriptFile/Loading_Screen';
 import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
 import ScalableText from 'react-native-text';
 import _removeData from '../../Components/Logout';
@@ -39,43 +37,20 @@ const HomeAdmin_Screen = ({navigation, route}) => {
   const dispatch = useDispatch();
   const nullItem = (item) => dispatch(getUserGroupAction(item));
   const [id, setId] = useState(null);
-  const list = [
-    {
-      title: 'Quản lý khách hàng',
-      icon: 'person',
-      onPress: () => navigation.navigate('listusergroupscreen'),
-    },
-    {
-      title: 'Đổi mật khẩu',
-      icon: 'key',
-      onPress: () => navigation.navigate('userchangepasswordscreen'),
-    },
-    {
-      title: 'Đăng xuất',
-      icon: 'log-out',
-      onPress: () => _removeData(navigation),
-    },
-  ];
   useEffect(() => {
     _retrieveData();
-    // console.log(tabBarHeight);
   });
 
   const _retrieveData = async () => {
     try {
       let value = await AsyncStorage.getItem('@Key');
       value = await JSON.parse(value);
-      // console.warn(value);
       if (value !== null) {
         setId(value.id);
-        // We have data!!
-        // console.log(value);
       } else {
         setId(route.params.id);
       }
-    } catch (error) {
-      // Error retrieving data
-    }
+    } catch (error) {}
   };
 
   return (
@@ -84,9 +59,9 @@ const HomeAdmin_Screen = ({navigation, route}) => {
         <View style={styles.view_img} backgroundColor="#309045">
           <Image
             source={require('../../Images/logo_white.png')}
+            resizeMode="stretch"
             style={styles.img}
           />
-          {/* <Noti value="99+" /> */}
         </View>
         <View
           style={{
@@ -171,17 +146,6 @@ const styles = StyleSheet.create({
   view_item: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  style_touchOpacity_notiIcon: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    margin: 10,
-  },
-  view_icon_noti: {
-    borderRadius: 50,
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   item: {
     width: '47%',

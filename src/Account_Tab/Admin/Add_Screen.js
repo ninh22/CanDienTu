@@ -12,11 +12,8 @@ import {useSelector, useDispatch} from 'react-redux';
 import {getUserGroupAction} from '../../Redux/index';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {Card, Button, Badge} from 'react-native-elements';
-import Loading_Screen from '../../ScriptFile/Loading_Screen';
 import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
 import ScalableText from 'react-native-text';
-import _removeData from '../../Components/Logout';
 import HeaderCustom from '../../Components/Header_Custom';
 
 const Item = ({onPress, title, nameIcon, typeIcon}) => {
@@ -38,26 +35,6 @@ const Item = ({onPress, title, nameIcon, typeIcon}) => {
 const Add_Screen = ({navigation}) => {
   const dispatch = useDispatch();
   const nullItem = (item) => dispatch(getUserGroupAction(item));
-  const list = [
-    {
-      title: 'Quản lý khách hàng',
-      icon: 'person',
-      onPress: () => navigation.navigate('listusergroupscreen'),
-    },
-    {
-      title: 'Đổi mật khẩu',
-      icon: 'key',
-      onPress: () => navigation.navigate('userchangepasswordscreen'),
-    },
-    {
-      title: 'Đăng xuất',
-      icon: 'log-out',
-      onPress: () => _removeData(navigation),
-    },
-  ];
-  useEffect(() => {
-    // console.log(tabBarHeight);
-  });
 
   return (
     <ScrollView>
@@ -66,6 +43,7 @@ const Add_Screen = ({navigation}) => {
         <View style={styles.view_img} backgroundColor="#309045">
           <Image
             source={require('../../Images/logo_white.png')}
+            resizeMode="stretch"
             style={styles.img}
           />
         </View>
@@ -131,17 +109,6 @@ const styles = StyleSheet.create({
   view_item: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  style_touchOpacity_notiIcon: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    margin: 10,
-  },
-  view_icon_noti: {
-    borderRadius: 50,
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   item: {
     width: '47%',

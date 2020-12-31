@@ -54,8 +54,6 @@ function HomeStackScreen() {
   return (
     <HomeStack.Navigator headerMode="none">
       <HomeStack.Screen name="home" component={Home_Screen} />
-      {/* <HomeStack.Screen name="product" component={Product_Screen} />
-      <HomeStack.Screen name="productdetail" component={ProductDetail_Screen} /> */}
     </HomeStack.Navigator>
   );
 }
@@ -66,11 +64,6 @@ function SearchStackScreen() {
   return (
     <SearchStack.Navigator headerMode="none">
       <SearchStack.Screen name="searchscreen" component={Search_Screen} />
-      {/* <SearchStack.Screen name="resultscreen" component={Result_Screen} />
-      <SearchStack.Screen
-        name="resultdetailscreen"
-        component={ResultDetail_Screen}
-      /> */}
     </SearchStack.Navigator>
   );
 }
@@ -80,10 +73,6 @@ const listStackPerson = [
     name: 'loginscreen',
     component: Login_Screen,
   },
-  // {
-  //   name: 'userchangepasswordscreen',
-  //   component: UserChangePassword_Screen,
-  // },
   // Admin
   {
     name: 'homeadminscreen',
@@ -93,72 +82,22 @@ const listStackPerson = [
     name: 'addscreen',
     component: Add_Screen,
   },
-  // // Admin_UserGroup
-  // {
-  //   name: 'listusergroupscreen',
-  //   component: ListUserGroup_Screen,
-  // },
-  // {
-  //   name: 'usergroupinfoscreen',
-  //   component: UserGroupInfo_Screen,
-  // },
-  // // Admin_User
-  // {
-  //   name: 'listuserscreen',
-  //   component: ListUser_Screen,
-  // },
-  // {
-  //   name: 'detailuserscreen',
-  //   component: DetailUser_Screen,
-  // },
-  // // Option
-  // {
-  //   name: 'edituserscreen',
-  //   component: EditUser_Screen,
-  // },
-  // {
-  //   name: 'addaccountscreen',
-  //   component: AddAccount_Screen,
-  // },
-  // {
-  //   name: 'addusergroupscreen',
-  //   component: AddUserGroup_Screen,
-  // },
   // User
   {
     name: 'homeuserscreen',
     component: HomeUser_Screen,
   },
-  // {
-  //   name: 'tongQuanUser',
-  //   component: TongQuanUser,
-  // },
-  // {
-  //   name: 'userinfoscreen',
-  //   component: UserInfo_Screen,
-  // },
-  // // Phiếu
-  // {
-  //   name: 'resultscreen',
-  //   component: Result_Screen,
-  // },
-  // {
-  //   name: 'resultdetailscreen',
-  //   component: ResultDetail_Screen,
-  // },
 ];
 
 const LoginStack = createStackNavigator();
 
 function LoginStackScreen() {
   return (
-    // <Provider store={store}>
     <LoginStack.Navigator headerMode="none" initialRouteName="loginscreen">
       {listStackPerson.map((l, i) => (
         <LoginStack.Screen key={i} name={l.name} component={l.component} />
       ))}
     </LoginStack.Navigator>
-    // </Provider>
   );
 }
 
@@ -166,7 +105,6 @@ const AdminHomePersonStack = createStackNavigator();
 
 function AdminHomePersonStackScreen() {
   return (
-    // <Provider store={store}>
     <AdminHomePersonStack.Navigator
       headerMode="none"
       initialRouteName="homeadminscreen">
@@ -178,7 +116,6 @@ function AdminHomePersonStackScreen() {
         />
       ))}
     </AdminHomePersonStack.Navigator>
-    // </Provider>
   );
 }
 
@@ -186,7 +123,6 @@ const UserHomePersonStack = createStackNavigator();
 
 function UserHomePersonStackScreen() {
   return (
-    // <Provider store={store}>
     <UserHomePersonStack.Navigator
       headerMode="none"
       initialRouteName="homeuserscreen">
@@ -198,7 +134,6 @@ function UserHomePersonStackScreen() {
         />
       ))}
     </UserHomePersonStack.Navigator>
-    // </Provider>
   );
 }
 
@@ -211,7 +146,6 @@ const TabScreen = () => {
       screenOptions={({route}) => ({
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
-
           if (route.name === 'Trang chủ') {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Tra cứu') {
@@ -221,7 +155,6 @@ const TabScreen = () => {
               ? 'md-person-circle'
               : 'md-person-circle-outline';
           }
-
           // You can return any component that you like here!
           return <Icon name={iconName} size={size} color={color} />;
         },
@@ -247,7 +180,6 @@ const TabAdminScreen = () => {
       screenOptions={({route}) => ({
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
-
           if (route.name === 'Trang chủ') {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Tra cứu') {
@@ -257,7 +189,6 @@ const TabAdminScreen = () => {
               ? 'md-person-circle'
               : 'md-person-circle-outline';
           }
-
           // You can return any component that you like here!
           return <Icon name={iconName} size={size} color={color} />;
         },
@@ -286,7 +217,6 @@ const TabUserScreen = () => {
       screenOptions={({route}) => ({
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
-
           if (route.name === 'Trang chủ') {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Tra cứu') {
@@ -296,7 +226,6 @@ const TabUserScreen = () => {
               ? 'md-person-circle'
               : 'md-person-circle-outline';
           }
-
           // You can return any component that you like here!
           return <Icon name={iconName} size={size} color={color} />;
         },
@@ -312,124 +241,6 @@ const TabUserScreen = () => {
     </TabUser.Navigator>
   );
 };
-
-// const Tab = createBottomTabNavigator();
-
-// const App = () => {
-//   const [checkLogin, setCheckLogin] = useState(null);
-//   const [checkAdmin, setCheckAdmin] = useState(null);
-//   const _retrieveData = async () => {
-//     try {
-//       let value = await AsyncStorage.getItem('@Key');
-//       value = await JSON.parse(value);
-//       // console.warn(value);
-//       if (value !== null) {
-//         // We have data!!
-//         // console.log(value);
-//         setCheckLogin(true);
-//         switch (value.idGroup) {
-//           case 1:
-//             setCheckAdmin(true);
-//             break;
-//           default:
-//             setCheckAdmin(false);
-//             break;
-//         }
-//       } else {
-//         setCheckLogin(false);
-//       }
-//     } catch (error) {
-//       // Error retrieving data
-//     }
-//   };
-//   let init = async () => {
-//     // …do multiple async tasks
-//     _retrieveData();
-//   };
-//   useEffect(() => {
-//     init().finally(() => {
-//       RNBootSplash.hide({duration: 1000});
-//     });
-//   });
-
-//   return (
-//     <SafeAreaProvider>
-//       <NavigationContainer>
-//         {checkLogin ? (
-//           <Tab.Navigator
-//             initialRouteName="Tài khoản"
-//             screenOptions={({route}) => ({
-//               tabBarIcon: ({focused, color, size}) => {
-//                 let iconName;
-
-//                 if (route.name === 'Trang chủ') {
-//                   iconName = focused ? 'home' : 'home-outline';
-//                 } else if (route.name === 'Tra cứu') {
-//                   iconName = focused ? 'md-search-sharp' : 'md-search-outline';
-//                 } else if (route.name === 'Tài khoản') {
-//                   iconName = focused
-//                     ? 'md-person-circle'
-//                     : 'md-person-circle-outline';
-//                 }
-
-//                 // You can return any component that you like here!
-//                 return <Icon name={iconName} size={size} color={color} />;
-//               },
-//             })}
-//             tabBarOptions={{
-//               activeTintColor: '#309045',
-//               inactiveTintColor: 'gray',
-//               keyboardHidesTabBar: true,
-//             }}>
-//             <Tab.Screen name="Trang chủ" component={HomeStackScreen} />
-//             <Tab.Screen name="Tra cứu" component={SearchStackScreen} />
-//             {checkAdmin ? (
-//               <Tab.Screen
-//                 name="Tài khoản"
-//                 component={AdminHomePersonStackScreen}
-//               />
-//             ) : (
-//               <Tab.Screen
-//                 name="Tài khoản"
-//                 component={UserHomePersonStackScreen}
-//               />
-//             )}
-//           </Tab.Navigator>
-//         ) : (
-//           <Tab.Navigator
-//             initialRouteName="Trang chủ"
-//             screenOptions={({route}) => ({
-//               tabBarIcon: ({focused, color, size}) => {
-//                 let iconName;
-
-//                 if (route.name === 'Trang chủ') {
-//                   iconName = focused ? 'home' : 'home-outline';
-//                 } else if (route.name === 'Tra cứu') {
-//                   iconName = focused ? 'md-search-sharp' : 'md-search-outline';
-//                 } else if (route.name === 'Tài khoản') {
-//                   iconName = focused
-//                     ? 'md-person-circle'
-//                     : 'md-person-circle-outline';
-//                 }
-
-//                 // You can return any component that you like here!
-//                 return <Icon name={iconName} size={size} color={color} />;
-//               },
-//             })}
-//             tabBarOptions={{
-//               activeTintColor: '#309045',
-//               inactiveTintColor: 'gray',
-//               keyboardHidesTabBar: true,
-//             }}>
-//             <Tab.Screen name="Trang chủ" component={HomeStackScreen} />
-//             <Tab.Screen name="Tra cứu" component={SearchStackScreen} />
-//             <Tab.Screen name="Tài khoản" component={LoginStackScreen} />
-//           </Tab.Navigator>
-//         )}
-//       </NavigationContainer>
-//     </SafeAreaProvider>
-//   );
-// };
 
 const listStack = [
   // HomeTab
@@ -510,13 +321,10 @@ const App = () => {
     try {
       let value = await AsyncStorage.getItem('@Key');
       value = await JSON.parse(value);
-      // console.warn(value);
       if (value !== null) {
-        // We have data!!
-        // console.log(value);
         setCheckLogin(true);
         switch (value.idGroup) {
-          case 1:
+          case 0:
             setCheckAdmin(true);
             break;
           default:

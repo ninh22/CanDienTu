@@ -2,51 +2,26 @@
 import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
-  Button,
   View,
   FlatList,
   TouchableOpacity,
   Image,
 } from 'react-native';
-// import {Card} from 'react-native-elements';
-import DateTime from '../Components/DateTime';
-import Icon from 'react-native-vector-icons/Ionicons';
-import Loading_Screen from '../ScriptFile/Loading_Screen';
+import DateTime from '../ScriptFile/DateTime';
+import Loading_Screen from '../Components/Loading_Screen';
 import Response_Size from '../ScriptFile/ResponsiveSize_Script';
 import HeaderCustom from '../Components/Header_Custom';
-import DataNull from '../Components/DataNull';
+import DataNull from '../ScriptFile/DataNull';
 import TextS from '../Components/TextS';
 import host from '../Server/host';
 import ScalableText from 'react-native-text';
 import {RNToasty} from 'react-native-toasty';
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title:
-      'https://nhaxevanchuyen.com/wp-content/uploads/2016/04/cho-thue-xe-tai-cho-hang-hai-phong.jpg',
-    seri_car: '92C-04610',
-    stuff: 'Xi măng',
-    money: '65,000',
-    img:
-      'https://nhaxevanchuyen.com/wp-content/uploads/2016/04/cho-thue-xe-tai-cho-hang-hai-phong.jpg',
-  },
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28bb',
-    title: 'Bê tông Đại Đồng',
-    seri_car: '92C-04610',
-    stuff: 'Xi măng',
-    money: '65,000',
-    img:
-      'https://nhaxevanchuyen.com/wp-content/uploads/2016/04/cho-thue-xe-tai-cho-hang-hai-phong.jpg',
-  },
-];
+import Money from '../ScriptFile/Money';
 
 const Result_Screen = ({navigation, route}) => {
   const [visible, setVisible] = useState(true);
   const [visibleLoadMore, setVisibleLoadMore] = useState(false);
-  const [visibleLoadMoreLoading, setVisibleLoadMoreLoading] = useState(false);
 
-  const [noData, setNoData] = useState(false);
   const [noDataContent, setNoDataContent] = useState(null);
   const [searchValue, setSearchValue] = useState(route.params.value);
   const [searchCheck, setSearchCheck] = useState(false);
@@ -77,11 +52,6 @@ const Result_Screen = ({navigation, route}) => {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        // console.log(
-        //   moment(responseJson.data[0].createtime).format('YYYY-MM-DD HH:mm:ss'),
-        //   moment('2022-12-13 21:45:16').format('DD/MM/YYYY HH:mm'),
-        // );
-        // console.log(responseJson.check);
         switch (responseJson.check) {
           case 'notfull':
             if (listItem == null) {
@@ -91,7 +61,6 @@ const Result_Screen = ({navigation, route}) => {
             }
             setSearchCheck(false);
             setPage(page + 1);
-            setVisibleLoadMoreLoading(false);
             setVisibleLoadMore(true);
             break;
           case 'full':
@@ -110,23 +79,12 @@ const Result_Screen = ({navigation, route}) => {
             setNoDataContent('Không có dữ liệu');
             break;
         }
-        // if (responseJson.check == 'notfull') {
-        //   getUser(responseJson.data);
-        // }
       })
       .catch((error) => {
         // console.error(error);
-        // setNoData(true);
-        // setNoDataContent('Lỗi');
         RNToasty.Warn({
           title: 'Lỗi',
         });
-        // Alert.alert('Thông báo', 'Lỗi', [
-        //   {
-        //     text: 'Xác nhận',
-        //     style: 'cancel',
-        //   },
-        // ]);
       });
   };
   const renderItem = ({item}) => (
@@ -138,24 +96,24 @@ const Result_Screen = ({navigation, route}) => {
         });
       }}>
       <View style={styles.view_img}>
-        {/* <Image source={{uri: item.img}} style={styles.img} /> */}
         <Image
           source={require('../Images/icons8-note-96.png')}
           style={styles.img}
+          resizeMode="stretch"
         />
       </View>
       <View style={[styles.view_content, {width: '70%'}]}>
         <TextS text={DataNull(item.customer_name)} />
         <TextS text={DataNull(item.truct_no)} style={{color: 'gray'}} />
         <TextS text={DataNull(item.items_name)} style={{color: 'gray'}} />
-        <TextS text={item.price_total + ' đồng'} style={{color: 'red'}} />
+        <TextS text={Money(item.price_total) + ' đồng'} style={{color: 'red'}} />
         <View
           style={{
             width: '100%',
             alignItems: 'flex-end',
           }}>
           <TextS
-            text={DataNull(DateTime(item.createtime))}
+            text={DataNull(DateTime(item.date_in))}
             style={{color: 'gray'}}
           />
         </View>
@@ -188,23 +146,22 @@ const Result_Screen = ({navigation, route}) => {
               keyExtractor={(item) => item.id}
               extraData={listItem}
               ListEmptyComponent={
-                <View
-                  style={{
-                    width: Response_Size('wd', 0, 100),
-                    height: Response_Size('hg', 0, 90),
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
+                <View style={styles.view_empty}>
                   {noDataContent ? (
-                    <ScalableText style={{fontSize: 17, marginBottom: '3%'}}>
-                      Không có dữ liệu
-                    </ScalableText>
+                    <View style={styles.view_empty}>
+                      <View style={{width: '20%', height: '20%'}}>
+                        <Image
+                          source={require('../Images/icons8-empty-box-96.png')}
+                          style={{height: '100%', width: '100%'}}
+                        />
+                      </View>
+                      <ScalableText>Không có dữ liệu</ScalableText>
+                    </View>
                   ) : (
                     <Image
                       style={{
                         width: 50, //30
                         height: 50, //30
-                        // tintColor: '#309045',
                       }}
                       source={require('../Images/loading/Spin-1s-200px.gif')}
                     />
@@ -214,7 +171,7 @@ const Result_Screen = ({navigation, route}) => {
               onEndReached={() => {
                 if (searchCheck == false) {
                   _SearchPhieuCan();
-                } // setListItems(list);
+                }
               }}
               onEndReachedThreshold={0.1}
               ListFooterComponent={
@@ -231,47 +188,11 @@ const Result_Screen = ({navigation, route}) => {
                         style={{
                           width: 40, //30
                           height: 40, //30
-                          // tintColor: '#309045',
                         }}
                         source={require('../Images/loading/Spin-1s-200px.gif')}
                       />
                     </View>
                   ) : null}
-                  {/* {visibleLoadMore ? (
-                    <View
-                      style={{
-                        width: '100%',
-                        height: Response_Size('hg', 0, 5),
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      {visibleLoadMoreLoading ? (
-                        <Image
-                          style={{
-                            width: 40, //30
-                            height: 40, //30
-                            // tintColor: '#309045',
-                          }}
-                          source={require('../Images/loading/Spin-1s-200px.gif')}
-                        />
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() => {
-                            setVisibleLoadMoreLoading(true);
-                            _SearchPhieuCan();
-                          }}>
-                          <ScalableText
-                            style={{
-                              color: '#309045',
-                              fontWeight: 'bold',
-                              fontSize: 17,
-                            }}>
-                            Xem thêm
-                          </ScalableText>
-                        </TouchableOpacity>
-                      )}
-                    </View>
-                  ) : null} */}
                 </View>
               }
             />
@@ -309,14 +230,18 @@ const styles = StyleSheet.create({
   img: {
     width: '100%',
     height: '100%',
-    // borderTopLeftRadius: 10,
-    // borderBottomLeftRadius: 10,
     color: 'yellow',
   },
   view_content: {
     width: '70%',
     height: '100%',
     padding: '2%', //10
+  },
+  view_empty: {
+    width: Response_Size('wd', 0, 100),
+    height: Response_Size('hg', 0, 90),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

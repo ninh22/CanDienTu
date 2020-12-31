@@ -1,24 +1,18 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState, useEffect} from 'react';
-import {
-  StyleSheet,
-  View,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {SCLAlert, SCLAlertButton} from 'react-native-scl-alert';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {Card, Button, CheckBox, Header} from 'react-native-elements';
-import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
+import {Button, CheckBox} from 'react-native-elements';
 import Input from '../Components/Input';
 import Response_Size from '../ScriptFile/ResponsiveSize_Script';
 import CardView from '../Components/CardView_Custom';
 import {RNToasty} from 'react-native-toasty';
 import ScalableText from 'react-native-text';
 import host from '../Server/host';
+import Regex from '../ScriptFile/Regex';
 
 const CheckBoxScreen = (boxs) => {
   return (
@@ -51,9 +45,11 @@ const Login_Screen = ({navigation}) => {
   const [showAlert, setShowAlert] = useState(false);
 
   const check_Acc = (content) => {
-    if (content == '') {
+    if (Regex(content, 'username') == false) {
       RNToasty.Error({
-        title: 'Tài khoản không được để trống',
+        title:
+          'Tài khoản cần ít nhất 3 kí tự, không chứa kí tự đặc biệt, ký từ đầu phải là chữ và không quá 10 kí tự',
+        duration: 1,
       });
       setCheckAcc(false);
       setStatusAcc(false);
@@ -63,9 +59,10 @@ const Login_Screen = ({navigation}) => {
     }
   };
   const check_Pass = (content) => {
-    if (content == '') {
+    if (Regex(content, 'password') == false) {
       RNToasty.Error({
-        title: 'Mật Khẩu không được để trống',
+        title: 'Mật khẩu cần ít nhất 8 kí tự và không chứa kí tự đặc biệt',
+        duration: 1,
       });
       setCheckPass(false);
       setStatusPass(false);
@@ -129,7 +126,7 @@ const Login_Screen = ({navigation}) => {
       title: 'Đăng nhập thành công',
     });
     switch (check) {
-      case 1:
+      case 0:
         navigation.replace('homeadminscreen', {id: id});
         break;
       default:
@@ -193,7 +190,7 @@ const Login_Screen = ({navigation}) => {
             _Login();
           }}
         />
-        <View
+        {/* <View
           style={{
             alignItems: 'center',
             justifyContent: 'center',
@@ -205,7 +202,7 @@ const Login_Screen = ({navigation}) => {
             }}>
             <ScalableText style={styles.txt}>Quên mật khẩu?</ScalableText>
           </TouchableOpacity>
-        </View>
+        </View> */}
         <SCLAlert
           theme="danger"
           show={showAlert}

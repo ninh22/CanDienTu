@@ -15,58 +15,27 @@ import HeaderCustom from '../../Components/Header_Custom';
 import Wait from '../../Components/Wait';
 import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
 import {RNToasty} from 'react-native-toasty';
-import {Avatar, ListItem, Button, Overlay} from 'react-native-elements';
-import ImagePicker from 'react-native-image-picker';
+import {Button, Overlay} from 'react-native-elements';
+import Regex from '../../ScriptFile/Regex';
 import host from '../../Server/host';
 
-const options = {
-  title: 'Chọn hình',
-  takePhotoButtonTitle: 'Chụp hình',
-  chooseFromLibraryButtonTitle: 'Chọn từ thư viện',
-  cancelButtonTitle: 'Thoát',
-  storageOptions: {
-    skipBackup: true,
-    path: 'images',
-  },
-};
-
 const AddAccount_Screen = ({navigation}) => {
-  const [visible, setVisible] = useState(true);
   const [visibleButtonLoading, setVisibleButtonLoading] = useState(false);
   const [visibleOverlay, setVisibleOverlay] = useState(false);
-  const [imageData, setImageData] = useState('');
-  const [imageName, setImageName] = useState('');
-  const [icon, setIcon] = useState('');
 
   const [titleAlert, setTitleAlert] = useState('Tạo tài khoản');
   const [visibleAlert, setVisibleAlert] = useState(false);
   const [waitDone, setWaitDone] = useState(false);
   const [error, setError] = useState(false);
 
-  const [userImg, setUserImg] = useState('');
-  const [userName, setUserName] = useState('');
-  const [userDate, setUserDate] = useState('');
-  const [userSex, setUserSex] = useState('Chọn khách hàng');
-  const [userNumber, setUserNumber] = useState('');
-  const [userAddress, setUserAddress] = useState('');
-  const [userWebsites, setUserWebsites] = useState('');
+  const [userIdGroup, setUserIdGroup] = useState('');
+  const [nameIdGroup, setNameIdGroup] = useState('Chọn khách hàng');
 
   const [userAcc, setUserAcc] = useState('');
   const [userPass, setUserPass] = useState('');
   const [userCheckPass, setUserCheckPass] = useState('');
-  const [userEmail, setUserEmail] = useState('');
 
-  const [checkName, setCheckName] = useState(true);
-  const [statusName, setStatusName] = useState(false);
-
-  const [checkDate, setCheckDate] = useState(true);
-  const [statusDate, setStatusDate] = useState(false);
-
-  const [checkNumber, setCheckNumber] = useState(true);
-  const [statusNumber, setStatusNumber] = useState(false);
-
-  const [checkAddress, setCheckAddress] = useState(true);
-  const [statusAddress, setStatusAddress] = useState(false);
+  const [statusIdGroup, setStatusIdGroup] = useState(false);
 
   const [checkAcc, setCheckAcc] = useState(true);
   const [statusAcc, setStatusAcc] = useState(false);
@@ -77,101 +46,16 @@ const AddAccount_Screen = ({navigation}) => {
   const [checkCheckPass, setCheckCheckPass] = useState(true);
   const [statusCheckPass, setStatusCheckPass] = useState(false);
 
-  const [checkEmail, setCheckEmail] = useState(true);
-  const [statusEmail, setStatusEmail] = useState(false);
-
-  const [checkWebsites, setCheckWebsites] = useState(true);
-  const [statusWebsites, setStatusWebsites] = useState(false);
-
   const [listItemDropDown, setListItemDropDown] = useState(null);
-
-  const _PickImage = () => {
-    ImagePicker.showImagePicker(options, (response) => {
-      // console.log('Response = ', response);
-
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-      } else {
-        const source = {uri: response.uri};
-        // console.log(source);
-
-        // You can also display the image using data:
-        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-        setUserImg(source.uri);
-        setImageData(response.data);
-        setImageName(response.fileName);
-      }
-    });
-  };
-  const image_Null = () => {
-    if (imageData == '') {
-      return require('../../Images/icons8_person_96.png');
-    } else {
-      return {
-        uri: userImg,
-      };
-    }
-  };
 
   const check_Content = (content, keyCheck) => {
     switch (keyCheck) {
-      case 'Họ và tên':
-        if (content == '') {
-          RNToasty.Error({
-            title: 'Tài khoản không được để trống',
-          });
-          setCheckName(false);
-          setStatusName(false);
-        } else {
-          setCheckName(true);
-          setStatusName(true);
-        }
-        break;
-      case 'Ngày sinh':
-        if (content == '') {
-          RNToasty.Error({
-            title: 'Ngày sinh không được để trống',
-          });
-          setCheckDate(false);
-          setStatusDate(false);
-        } else {
-          setCheckDate(true);
-          setStatusDate(true);
-        }
-        break;
-      case 'Số điện thoại':
-        if (content == '') {
-          RNToasty.Error({
-            title: 'Số điện thoại không được để trống',
-          });
-          setCheckNumber(false);
-          setStatusNumber(false);
-        } else {
-          setCheckNumber(true);
-          setStatusNumber(true);
-        }
-        break;
-      case 'Địa chỉ':
-        if (content == '') {
-          RNToasty.Error({
-            title: 'Địa chỉ không được để trống',
-          });
-          setCheckAddress(false);
-          setStatusAddress(false);
-        } else {
-          setCheckAddress(true);
-          setStatusAddress(true);
-        }
-        break;
       case 'Tên tài khoản':
-        if (content == '') {
+        if (Regex(content, 'username') == false) {
           RNToasty.Error({
-            title: 'Tên tài khoản không được để trống',
+            title:
+              'Tài khoản cần ít nhất 3 kí tự, không chứa kí tự đặc biệt, ký từ đầu phải là chữ và không quá 10 kí tự',
+            duration: 1,
           });
           setCheckAcc(false);
           setStatusAcc(false);
@@ -181,20 +65,26 @@ const AddAccount_Screen = ({navigation}) => {
         }
         break;
       case 'Mật khẩu':
-        if (content == '') {
+        if (Regex(content, 'password') == false) {
           RNToasty.Error({
-            title: 'Mật khẩu không được để trống',
+            title: 'Mật khẩu cần ít nhất 8 kí tự và không chứa kí tự đặc biệt',
+            duration: 1,
           });
           setCheckPass(false);
           setStatusPass(false);
         } else if (userCheckPass !== '' && content !== userCheckPass) {
           RNToasty.Error({
             title: 'Mật khẩu phải giống nhau',
+            duration: 1,
           });
           setCheckCheckPass(false);
           setStatusCheckPass(false);
+          setCheckPass(true);
+          setStatusPass(true);
         } else if (userCheckPass == '') {
           setStatusCheckPass(false);
+          setCheckPass(true);
+          setStatusPass(true);
         } else {
           setCheckPass(true);
           setStatusPass(true);
@@ -203,9 +93,10 @@ const AddAccount_Screen = ({navigation}) => {
         }
         break;
       case 'Nhập lại mật khẩu':
-        if (content !== userPass) {
+        if (content !== userPass || content == '' || userPass == '') {
           RNToasty.Error({
             title: 'Mật khẩu phải giống nhau',
+            duration: 1,
           });
           setCheckCheckPass(false);
           setStatusCheckPass(false);
@@ -216,41 +107,12 @@ const AddAccount_Screen = ({navigation}) => {
           setStatusPass(true);
         }
         break;
-      case 'Email':
-        if (content == '') {
-          RNToasty.Error({
-            title: 'Email không được để trống',
-          });
-          setCheckEmail(false);
-          setStatusEmail(false);
-        } else {
-          setCheckEmail(true);
-          setStatusEmail(true);
-        }
-        break;
-      case 'Websites':
-        if (content == '') {
-          RNToasty.Error({
-            title: 'Websites không được để trống',
-          });
-          setCheckWebsites(false);
-          setStatusWebsites(false);
-        } else {
-          setCheckWebsites(true);
-          setStatusWebsites(true);
-        }
-        break;
     }
   };
 
   const visible_Button = () => {
-    return statusDate && statusAcc && statusPass && statusCheckPass
-      ? // statusName &&
-        // statusEmail &&
-        // statusNumber &&
-        // statusAddress &&
-        // statusWebsites
-        false
+    return statusIdGroup && statusAcc && statusPass && statusCheckPass
+      ? false
       : true;
   };
 
@@ -268,30 +130,11 @@ const AddAccount_Screen = ({navigation}) => {
         setListItemDropDown(responseJson);
         setVisibleButtonLoading(false);
         setVisibleOverlay(!visibleOverlay);
-        // if (responseJson == 'successed') {
-        //   Alert.alert(
-        //     'Thông báo',
-        //     'Thêm thành công!'
-        //     [
-        //       {
-        //         text: 'Xác nhận',
-        //         style: 'cancel',
-        //       },
-        //     ],
-        //   );
-        // }
       })
       .catch((error) => {
-        // console.error(error);
         RNToasty.Error({
           title: 'Lỗi',
         });
-        // Alert.alert('Thông báo', 'Thêm thất bại!', [
-        //   {
-        //     text: 'Xác nhận',
-        //     style: 'cancel',
-        //   },
-        // ]);
       });
   };
 
@@ -305,54 +148,25 @@ const AddAccount_Screen = ({navigation}) => {
       body: JSON.stringify({
         username: userAcc,
         password: userCheckPass,
-        idusergroup: userDate,
+        idusergroup: userIdGroup,
       }),
     })
       .then((response) => response.text())
       .then((responseJson) => {
-        // console.log(responseJson);
         if (responseJson == 'successed') {
           setWaitDone(true);
           setError(false);
-          // RNToasty.Success({
-          //   title: 'Thêm tài khoản thành công',
-          // });
         } else if (responseJson == 'failed') {
           setTitleAlert('Tên tài khoản đã tồn tại, vui lòng chọn tên khác!');
           setWaitDone(true);
           setError(true);
           setCheckAcc(false);
           setStatusAcc(false);
-          // RNToasty.Success({
-          //   title: 'Thêm tài khoản thành công',
-          // });
         }
-        // if (responseJson == 'successed') {
-        //   Alert.alert(
-        //     'Thông báo',
-        //     'Thêm thành công!'
-        //     [
-        //       {
-        //         text: 'Xác nhận',
-        //         style: 'cancel',
-        //       },
-        //     ],
-        //   );
-        // }
       })
       .catch((error) => {
-        // console.error(error);
         setWaitDone(true);
         setError(true);
-        // RNToasty.Error({
-        //   title: 'Thêm thất bại',
-        // });
-        // Alert.alert('Thông báo', 'Thêm thất bại!', [
-        //   {
-        //     text: 'Xác nhận',
-        //     style: 'cancel',
-        //   },
-        // ]);
       });
   };
 
@@ -367,8 +181,8 @@ const AddAccount_Screen = ({navigation}) => {
   };
 
   const check = () => {
-    if (userDate !== '') {
-      setStatusDate(true);
+    if (userIdGroup !== '') {
+      setStatusIdGroup(true);
     }
   };
 
@@ -385,132 +199,8 @@ const AddAccount_Screen = ({navigation}) => {
             width: '100%',
             height: '100%',
           }}>
-          {/* <View backgroundColor="#309045" style={styles.view_avatar}>
-            <Avatar
-              rounded
-              size="xlarge"
-              showAccessory={true}
-              accessory={{
-                name: imageData ? 'pencil' : 'plus',
-                type: 'material-community',
-                style: {},
-              }}
-              onAccessoryPress={() => _PickImage()}
-              source={image_Null()}
-            />
-          </View> */}
           <View style={{padding: '3%'}}>
-            {/* <View
-            // style={styles.view_card}
-            >
-              <View style={styles.card_title}>
-                <ScalableText style={styles.text_card}>
-                  THÔNG TIN KHÁCH HÀNG
-                </ScalableText>
-              </View>
-              <View
-                style={[
-                  styles.view_card,
-                  {
-                    padding: '3%',
-                  },
-                ]}>
-                <View>
-                  <ScalableText style={styles.text_input}>
-                    Họ và tên
-                  </ScalableText>
-                  <Input
-                    heightParent={40}
-                    heightI={18}
-                    placeHolder="Nhập họ và tên"
-                    type={1}
-                    value={userName}
-                    check={checkName}
-                    keyCheck="Họ và tên"
-                    codeCheck={check_Content}
-                    onChangeText={setUserName}
-                  />
-                </View>
-                <View>
-                  <ScalableText style={styles.text_input}>
-                    Ngày sinh
-                  </ScalableText>
-                  <Input
-                    heightParent={40}
-                    heightI={18}
-                    date={userDate}
-                    setDate={setUserDate}
-                    type={0}
-                    keyCheck="Ngày sinh"
-                    check={checkDate}
-                    codeCheck={check_Content}
-                  />
-                </View>
-                <View>
-                  <ScalableText style={styles.text_input}>
-                    Giới tính
-                  </ScalableText>
-                  <Input
-                    heightParent={40}
-                    heightI={18}
-                    type={2}
-                    dropDown_TextSelected={userSex}
-                    setDropDown_TextSelected={setUserSex}
-                    dropDown_List={listItemDropDown}
-                  />
-                </View>
-                <View>
-                  <ScalableText style={styles.text_input}>
-                    Số điện thoại
-                  </ScalableText>
-                  <Input
-                    heightParent={40}
-                    heightI={18}
-                    placeHolder="Nhập số điện thoại"
-                    type={1}
-                    keyboardType="phone-pad"
-                    value={userNumber}
-                    check={checkNumber}
-                    keyCheck="Số điện thoại"
-                    codeCheck={check_Content}
-                    onChangeText={setUserNumber}
-                  />
-                </View>
-                <View>
-                  <ScalableText style={styles.text_input}>Địa chỉ</ScalableText>
-                  <Input
-                    heightParent={40}
-                    heightI={18}
-                    placeHolder="Nhập địa chỉ"
-                    type={1}
-                    value={userAddress}
-                    check={checkAddress}
-                    keyCheck="Địa chỉ"
-                    codeCheck={check_Content}
-                    onChangeText={setUserAddress}
-                  />
-                </View>
-                <View>
-                  <ScalableText style={styles.text_input}>
-                    Websites
-                  </ScalableText>
-                  <Input
-                    heightParent={40}
-                    heightI={18}
-                    placeHolder="Nhập websites"
-                    type={1}
-                    value={userWebsites}
-                    check={checkWebsites}
-                    keyCheck="Websites"
-                    codeCheck={check_Content}
-                    onChangeText={setUserWebsites}
-                  />
-                </View>
-              </View>
-            </View> */}
-            <View
-            // style={styles.view_card}
-            >
+            <View>
               <View style={styles.card_title}>
                 <ScalableText style={styles.text_card}>
                   THÔNG TIN TÀI KHOẢN
@@ -540,10 +230,9 @@ const AddAccount_Screen = ({navigation}) => {
                       loading={visibleButtonLoading}
                       loadingProps={{color: '#309045'}}
                       titleStyle={{color: '#309045'}}
-                      title={userSex}
+                      title={nameIdGroup}
                       type="outline"
                       onPress={() => {
-                        // setVisibleOverlay(!visibleOverlay);
                         getDataUserGroup();
                       }}
                     />
@@ -623,9 +312,7 @@ const AddAccount_Screen = ({navigation}) => {
           elevation: 0,
           padding: 0,
           backgroundColor: 'transparent',
-        }}
-        // onBackdropPress={() => setVisibleOverlay(!visibleOverlay)}
-      >
+        }}>
         <View
           style={{
             borderTopLeftRadius: 10,
@@ -658,8 +345,8 @@ const AddAccount_Screen = ({navigation}) => {
             renderItem={({item}) => (
               <TouchableOpacity
                 onPress={() => {
-                  setUserSex(item.name);
-                  setUserDate(item.id);
+                  setNameIdGroup(item.name);
+                  setUserIdGroup(item.id);
                   setVisibleOverlay(!visibleOverlay);
                 }}
                 style={[
@@ -763,9 +450,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
     padding: '3%',
-    // borderTopLeftRadius: 15,
-    // borderTopRightRadius: 15,
-    // backgroundColor: '#309045',
   },
   text_card: {fontSize: 20, color: '#309045', fontWeight: 'bold'},
   text_input: {

@@ -1,98 +1,23 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unreachable */
 /* eslint-disable react-native/no-inline-styles */
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   View,
   ScrollView,
   TouchableOpacity,
   Image,
-  FlatList,
   Dimensions,
 } from 'react-native';
 import Response_Size from '../ScriptFile/ResponsiveSize_Script';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper-hooks';
 import ScalableText from 'react-native-text';
 import CallButton from '../Components/CallButton';
 
-const Home_Screen = ({ navigation, route }) => {
-  const DATA = [
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'Cân xe tải',
-      seri_car: '92C-04610',
-      stuff: 'Xi măng',
-      money: '65,000',
-      img:
-        'https://candientuquochung.com/wp-content/uploads/2020/09/candientuquochung3.gif',
-    },
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28bb',
-      title: 'Cân đồng hồ điện tửCân đồng hồ điện tử',
-      seri_car: '92C-04610',
-      stuff: 'Xi măng',
-      money: '65,000',
-      img:
-        'https://candientuquochung.com/wp-content/uploads/2020/09/candongho-qhs.gif',
-    },
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28bc',
-      title: 'Cân bàn nhỏ',
-      seri_car: '92C-04610',
-      stuff: 'Xi măng',
-      money: '65,000',
-      img:
-        'https://candientuquochung.com/wp-content/uploads/2020/09/canbannho.gif',
-    },
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28bd',
-      title: 'Cân sàn',
-      seri_car: '92C-04610',
-      stuff: 'Xi măng',
-      money: '65,000',
-      img:
-        'https://candientuquochung.com/wp-content/uploads/2020/09/canbantan.gif',
-    },
-  ];
-
-  const DATA2 = [
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'Dịch vụ sửa cân ô tô',
-      seri_car: '92C-04610',
-      stuff: 'Xi măng',
-      money: '65,000',
-      img: 'https://candientuquochung.com/wp-content/uploads/2020/04/pm.jpg',
-    },
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28bb',
-      title: 'Dịch vụ sửa cân bànDịch vụ sửa cân bàn',
-      seri_car: '92C-04610',
-      stuff: 'Xi măng',
-      money: '65,000',
-      img: 'https://candientuquochung.com/wp-content/uploads/2020/04/pm.jpg',
-    },
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28bc',
-      title: 'Dịch vụ sửa cân kỹ thuật',
-      seri_car: '92C-04610',
-      stuff: 'Xi măng',
-      money: '65,000',
-      img: 'https://candientuquochung.com/wp-content/uploads/2020/04/pm.jpg',
-    },
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28bd',
-      title: 'Dịch vụ sửa cân treo',
-      seri_car: '92C-04610',
-      stuff: 'Xi măng',
-      money: '65,000',
-      img: 'https://candientuquochung.com/wp-content/uploads/2020/04/pm.jpg',
-    },
-  ];
-
+const Home_Screen = ({navigation}) => {
   const listItem_Service = [
     {
       title: 'DỊCH VỤ KHÁCH HÀNG 24/7',
@@ -112,56 +37,26 @@ const Home_Screen = ({ navigation, route }) => {
     return (
       <View style={styles.view_card}>
         <View style={styles.card_title}>
-          <ScalableText style={{ color: '#309045', fontSize: 20 }}>
+          <ScalableText style={{color: '#309045', fontSize: 20}}>
             {items.title}
           </ScalableText>
           <TouchableOpacity
-            style={{ flexDirection: 'row', alignItems: 'center' }}
+            style={{flexDirection: 'row', alignItems: 'center'}}
             onPress={() =>
               navigation.navigate('product', {
                 product: items.title,
               })
             }>
-            <ScalableText style={{ color: '#A5A5A5', fontSize: 15 }}>
+            <ScalableText style={{color: '#A5A5A5', fontSize: 15}}>
               Xem thêm
             </ScalableText>
             <Icon name="chevron-forward" size={25} color="#A5A5A5" />
           </TouchableOpacity>
         </View>
-        <View style={styles.view_list}>
-          {items.data}
-          {/* <FlatList
-            data={items.data}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            horizontal={true}
-          /> */}
-        </View>
+        <View style={styles.view_list}>{items.data}</View>
       </View>
     );
   };
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.view_item}
-      onPress={() => {
-        navigation.navigate(
-          'productdetail',
-          // , {
-          //   item: item,
-          // }
-        );
-      }}>
-      <View style={styles.item_view_img}>
-        <Image source={{ uri: item.img }} style={styles.item_img} />
-      </View>
-      <View style={styles.item_view_title}>
-        <ScalableText style={styles.item_title} numberOfLines={2}>
-          {item.title}
-        </ScalableText>
-      </View>
-    </TouchableOpacity>
-  );
 
   const _renderList = () => {
     let listData = [
@@ -206,7 +101,7 @@ const Home_Screen = ({ navigation, route }) => {
           alignItems: 'center',
         }}
         key={idx}>
-        <Image source={item.img} style={styles.img} />
+        <Image source={item.img} style={styles.img} resizeMode="stretch" />
         <View style={styles.img_view_title}>
           <ScalableText
             style={[
@@ -237,25 +132,21 @@ const Home_Screen = ({ navigation, route }) => {
     <SafeAreaView>
       <ScrollView>
         <View style={styles.parent}>
-          {/* <View style={styles.view_img}>
-            <Swiper
-              height={200}
-              autoplay={true}
-              loop={true}
-              paginationSelectedColor={'#CCFF66'}
-              showPagination={true}>
-              {_renderList()}
-            </Swiper>
-          </View> */}
-          <View style={{justifyContent:"center",alignItems:"center",backgroundColor:"white",marginBottom:5}}>
-            <Image resizeMode={"center"}
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'white',
+              marginBottom: 5,
+            }}>
+            <Image
+              resizeMode={'center'}
               source={require('../Images/logo2.png')}
-              style={{height:200,width:200}}></Image>
+              style={{height: 200, width: 200}}></Image>
           </View>
 
           <ListItem
             title="SẢN PHẨM"
-            // data={DATA}
             data={
               <Swiper
                 height="100%" //200
@@ -269,12 +160,11 @@ const Home_Screen = ({ navigation, route }) => {
           />
           <ListItem
             title="DỊCH VỤ"
-            // data={DATA2}
             data={
               <View
                 style={[
                   styles.view_img,
-                  { height: '100%', justifyContent: 'space-between' },
+                  {height: '100%', justifyContent: 'space-between'},
                 ]}
                 backgroundColor="#1F502A">
                 <View style={styles.ServiceView_1}>
@@ -309,11 +199,12 @@ const Home_Screen = ({ navigation, route }) => {
                 />
                 <View style={styles.ServiceView_2}>
                   {listItem_Service.map((l, i) => (
-                    <View style={styles.ServiceView_Item}>
+                    <View style={styles.ServiceView_Item} key={i}>
                       <View style={styles.ServiceView_Image}>
                         <Image
                           source={l.image}
-                          style={{ width: '100%', height: '100%' }}
+                          style={{width: '100%', height: '100%'}}
+                          resizeMode="stretch"
                         />
                       </View>
                       <ScalableText
@@ -332,14 +223,15 @@ const Home_Screen = ({ navigation, route }) => {
               </View>
             }
           />
-          <View style={{marginBottom:10}}>
+          <View style={{marginBottom: 10}}>
             <View style={styles.view_img} backgroundColor="#309045">
               <Image
+                resizeMode="stretch"
                 source={{
                   uri:
                     'https://cdn.pixabay.com/photo/2020/05/18/13/19/landscape-5186249_960_720.jpg',
                 }}
-                style={[styles.img, { opacity: 0.7 }]}></Image>
+                style={[styles.img, {opacity: 0.7}]}></Image>
               <View style={styles.img_view_title}>
                 <ScalableText
                   style={[
@@ -351,7 +243,7 @@ const Home_Screen = ({ navigation, route }) => {
                     },
                   ]}>
                   CÂN ĐIỆN TỬ QUỐC HƯNG
-              </ScalableText>
+                </ScalableText>
                 <ScalableText
                   style={[
                     styles.img_title,
@@ -361,7 +253,7 @@ const Home_Screen = ({ navigation, route }) => {
                   ]}>
                   Cung cấp đa dạng và phù hợp với hoạt động kinh doanh của khách
                   hàng
-              </ScalableText>
+                </ScalableText>
               </View>
             </View>
           </View>
@@ -431,29 +323,6 @@ const styles = StyleSheet.create({
     elevation: 5,
     backgroundColor: 'white',
   },
-  item_view_img: {
-    height: '80%',
-  },
-  item_img: {
-    height: '100%',
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-  },
-  item_view_title: {
-    height: '20%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-    padding: '2%',
-  },
-  item_title: {
-    color: '#309045',
-    fontSize: 17,
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
   ServiceView_1: {
     height: '49.5%',
     alignItems: 'center',
@@ -473,8 +342,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   ServiceView_Image: {
-    width: 50,
-    height: 50,
+    width: '35%',//50
+    height: '35%',//50
     borderRadius: 30,
     padding: '5%',
     borderWidth: 1,

@@ -16,7 +16,7 @@ const CardView = ({title, content}) => {
         }}>
         <View style={styles.parent}>
           <View style={styles.img_view}>
-            <Image source={require('../Images/logo1.png')} style={styles.img} />
+            <Image source={require('../Images/logo1.png')} style={styles.img} resizeMode="stretch" />
           </View>
           <Card
             containerStyle={{

@@ -21,32 +21,13 @@ const ButtonAbsolute = () => {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        // console.log(responseJson);//Test
         setNumber(responseJson[0].value);
       })
       .catch((error) => {
-        // console.error(error);//Test
         RNToasty.Warn({
           title: 'Lỗi',
         });
-        // Alert.alert('Thông báo', 'Lỗi', [
-        //   {
-        //     text: 'Xác nhận',
-        //     style: 'cancel',
-        //   },
-        // ]);
       });
-    // return fetch(host.getNumber)
-    //   .then((response) => response.json())
-    //   .then((json) => {
-    //     //   console.log(json[0].value);
-    //     setNumber(json[0].value);
-    //   })
-    //   .catch((error) => {
-    //     RNToasty.Warn({
-    //       title: 'Lỗi',
-    //     });
-    //   });
   };
   useEffect(() => {
     _getNumberFromApi();
