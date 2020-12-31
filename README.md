@@ -1,4 +1,4 @@
 # AppCanDienTu
 AppCanDienTu
-Admin: {acc: 'admin12', pass: 'abc123'};
-User: {acc: 'user12', pass: 'abc456'};
+Admin: {acc: 'admin1', pass: 'abc123456'},
+User: {acc: 'user89', pass: 'abc123456'},
