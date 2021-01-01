@@ -3,7 +3,7 @@ export const DATA = [
   {
     id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
     title: 'Cân xe tải',
-    TypeID: '1',
+    TypeID: '0',
     seri_car: '92C-04610',
     stuff: 'Xi măng',
     money: '65,000',
@@ -65,7 +65,7 @@ export const DATA = [
     title: 'Cân động vật',
     seri_car: '92C-04610',
     stuff: 'Xi măng',
-    TypeID: '2',
+    TypeID: '1',
     money: '65,000',
     img:
       'https://candientuquochung.com/wp-content/uploads/2019/03/can-dong-vat-candientuquochung-300x300.jpg',
@@ -149,7 +149,7 @@ export const LuuDATA = [
   {
     id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
     title: 'Cân xe tải',
-    TypeID: '1',
+    TypeID: '0',
     seri_car: '92C-04610',
     stuff: 'Xi măng',
     money: '65,000',
@@ -211,7 +211,7 @@ export const LuuDATA = [
     title: 'Cân động vật',
     seri_car: '92C-04610',
     stuff: 'Xi măng',
-    TypeID: '2',
+    TypeID: '1',
     money: '65,000',
     img:
       'https://candientuquochung.com/wp-content/uploads/2019/03/can-dong-vat-candientuquochung-300x300.jpg',
@@ -491,7 +491,7 @@ export const DATA2 = [
     title: 'Dịch vụ sửa cân ô tô',
     seri_car: '92C-04610',
     stuff: 'Xi măng',
-    TypeID: '1',
+    TypeID: '0',
     money: '65,000',
     img: 'https://candientuquochung.com/wp-content/uploads/2020/04/pm.jpg',
     subtitle:

@@ -96,12 +96,12 @@ const Home_Screen = ({navigation}) => {
         style={{
           width: Dimensions.get('window').width,
           height: '100%',
-          backgroundColor: '#309045',
+          backgroundColor: 'rgba(0,0,0,0.1)',
           justifyContent: 'center',
           alignItems: 'center',
         }}
         key={idx}>
-        <Image source={item.img} style={styles.img} resizeMode="stretch" />
+        <Image source={item.img} style={styles.img} resizeMode="cover" />
         <View style={styles.img_view_title}>
           <ScalableText
             style={[
@@ -149,9 +149,10 @@ const Home_Screen = ({navigation}) => {
             title="SẢN PHẨM"
             data={
               <Swiper
-                height="100%" //200
+                height={"100%"} //200
                 autoplay={true}
                 loop={true}
+                autoplayTimeout={4}
                 paginationSelectedColor={'#CCFF66'}
                 showPagination={true}>
                 {_renderList()}

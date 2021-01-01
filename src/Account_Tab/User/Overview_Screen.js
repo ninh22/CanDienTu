@@ -105,8 +105,8 @@ const Overview_Screen = ({navigation, route}) => {
       }}>
       <View style={styles.view_img}>
         <Image
-          source={require('../../Images/icons8-note-96.png')}
-          resizeMode="stretch"
+          source={{uri:"https://candientuquochung.com/wp-content/uploads/2019/04/qhs.jpg"}}
+          resizeMode="cover"
           style={styles.img}
         />
       </View>
@@ -231,7 +231,6 @@ const styles = StyleSheet.create({
   view_img: {
     width: '30%',
     height: '100%',
-    backgroundColor: '#309045',
     borderTopLeftRadius: 10,
     borderBottomLeftRadius: 10,
   },
@@ -239,6 +238,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     color: 'yellow',
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+    
   },
   view_content: {
     width: '70%',

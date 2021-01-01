@@ -97,9 +97,9 @@ const Result_Screen = ({navigation, route}) => {
       }}>
       <View style={styles.view_img}>
         <Image
-          source={require('../Images/icons8-note-96.png')}
+          source={{uri:"https://candientuquochung.com/wp-content/uploads/2019/04/qhs.jpg"}}
           style={styles.img}
-          resizeMode="stretch"
+          resizeMode="cover"
         />
       </View>
       <View style={[styles.view_content, {width: '70%'}]}>
@@ -231,6 +231,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     color: 'yellow',
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
   },
   view_content: {
     width: '70%',

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Loading_Screen from '../../Components/Loading_Screen';
@@ -287,7 +288,6 @@ const HomeUser_Screen = ({navigation, route}) => {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        // console.log(responseJson);
         setDataDiagramMap(responseJson);
       })
       .catch((error) => {
