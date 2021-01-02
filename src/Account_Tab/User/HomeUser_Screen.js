@@ -18,7 +18,7 @@ import Input from '../../Components/Input';
 import GetDate from '../../ScriptFile/GetDate';
 import _removeData from '../../Components/Logout';
 import {RNToasty} from 'react-native-toasty';
-import {LineChart} from 'react-native-chart-kit';
+import {LineChart, ProgressChart} from 'react-native-chart-kit';
 import Money from '../../ScriptFile/Money';
 
 import host from '../../Server/host';
@@ -113,6 +113,7 @@ const HomeUser_Screen = ({navigation, route}) => {
   const [idGroup, setIdGroup] = useState(null);
 
   const [dataDiagramMap, setDataDiagramMap] = useState([]);
+  const [dataDiagramProgress, setDataDiagramProgress] = useState([]);
 
   const [money, setMoney] = useState('');
   const [total, setTotal] = useState('');
@@ -161,6 +162,9 @@ const HomeUser_Screen = ({navigation, route}) => {
       await _getUserOverviewFromAPI();
       if (dataDiagramMap == '') {
         await _getUserDiagramMapFromAPI();
+      }
+      if (dataDiagramProgress == '') {
+        await _getUserDiagramProgressFromAPI();
       }
       setVisible(false);
     } catch (error) {
@@ -217,18 +221,9 @@ const HomeUser_Screen = ({navigation, route}) => {
       },
     ],
   };
-  const lbl = [
-    {lb: 'Swim', val: 0.4},
-    {lb: 'Bike', val: 0.6},
-    {lb: 'Run', val: 0.8},
-    {lb: 'Read', val: 0.9},
-    {lb: 'Write', val: 1},
-  ];
   const dataProgress = {
-    // labels: ['Swim', 'Bike', 'Run'], // optional
-    labels: lbl.map((l, i) => l.lb),
-    data: [[0.4], [0.3]],
-    barColors: ['#dfe4ea', '#ced6e0', '#a4b0be'],
+    labels: dataDiagramProgress.map((l, i) => l.name), // optional
+    data: dataDiagramProgress.map((l, i) => parseFloat(l.val)),
   };
   const chartConfig = {
     backgroundGradientFrom: '#f2e8cf',
@@ -295,12 +290,28 @@ const HomeUser_Screen = ({navigation, route}) => {
         RNToasty.Warn({
           title: 'Lỗi',
         });
-        // Alert.alert('Thông báo', 'Lỗi', [
-        //   {
-        //     text: 'Xác nhận',
-        //     style: 'cancel',
-        //   },
-        // ]);
+      });
+  };
+  const _getUserDiagramProgressFromAPI = () => {
+    return fetch(host.userDiagramProgress, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        idusergroup: idGroup,
+      }),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        setDataDiagramProgress(responseJson);
+      })
+      .catch((error) => {
+        // console.error(error);
+        RNToasty.Warn({
+          title: 'Lỗi',
+        });
       });
   };
   return (
@@ -363,62 +374,31 @@ const HomeUser_Screen = ({navigation, route}) => {
                 />
               }
             />
-            {/* <ItemViews
-              title="Hàng hoá"
+            <ItemViews
+              title="Hàng hoá 7 ngày qua"
               code={
-                <VictoryContainer width={470} height={400}>
-                  <VictoryLegend
-                    x={125}
-                    y={10}
-                    title="Legend"
-                    centerTitle
-                    orientation="horizontal"
-                    gutter={40}
-                    colorScale="green"
-                    style={{border: {stroke: 'green'}, title: {fontSize: 20}}}
-                    data={[{name: 'One'}, {name: 'Two'}, {name: 'Three'}, {name: 'Three'}, {name: 'Three'}]}
-                  />
-                  <VictoryPie
-                    colorScale="green"
-                    data={[
-                      {x: 'Cats', y: 10},
-                      {x: 'Dogs', y: 40},
-                      {x: 'Birds', y: 50},
-                    ]}
-                    width={400}
-                    height={300}
-                    // innerRadius={50}
-                    labelRadius={100}
-                    // radius={({datum}) => 50 + datum.y * 20}
-                    // innerRadius={50}
-                    style={{
-                      labels: {fill: 'black', fontSize: 20, fontWeight: 'bold'},
-                    }}
-                  />
-                </VictoryContainer>
-
-                // <StackedBarChart
-                //   data={dataProgress}
-                //   width={Response_Size('wd', 1, 91, 93)}
-                //   height={220}
-                //   strokeWidth={16}
-                //   radius={32}
-                //   chartConfig={{
-                //     backgroundGradientFrom: '#309045',
-                //     backgroundGradientTo: '#309045',
-                //     decimalPlaces: 2,
-                //     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                //     style: {
-                //       borderRadius: 16,
-                //     },
-                //   }}
-                //   style={{
-                //     borderRadius: 16,
-                //   }}
-                //   hideLegend={false}
-                // />
+                <ProgressChart
+                  data={dataProgress}
+                  width={Response_Size('wd', 1, 91, 93)}
+                  height={220}
+                  strokeWidth={16}
+                  radius={32}
+                  chartConfig={{
+                    backgroundGradientFrom: '#309045',
+                    backgroundGradientTo: '#309045',
+                    decimalPlaces: 2,
+                    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                    style: {
+                      borderRadius: 16,
+                    },
+                  }}
+                  style={{
+                    borderRadius: 16,
+                  }}
+                  hideLegend={false}
+                />
               }
-            /> */}
+            />
             <ItemViews
               title="Tùy chọn"
               code={
