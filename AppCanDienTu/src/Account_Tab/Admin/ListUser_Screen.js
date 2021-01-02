@@ -12,6 +12,7 @@ import {
   getUserAction,
   loadMoreUserAction,
   deleteUserAction,
+  reduceNumAccAction,
 } from '../../Redux/index';
 import host from '../../Server/host';
 
@@ -48,6 +49,7 @@ const ListUser_Screen = ({navigation, route}) => {
   const getUser = (item) => dispatch(getUserAction(item));
   const loadMoreUser = (item) => dispatch(loadMoreUserAction(item));
   const deleteUser = (item) => dispatch(deleteUserAction(item));
+  const reduceNumAcc = () => dispatch(reduceNumAccAction());
   const _searchUserFromAPI = () => {
     return fetch(host.searchUsers, {
       method: 'POST',
@@ -128,6 +130,7 @@ const ListUser_Screen = ({navigation, route}) => {
           setNoDataContent(null);
           setLoadingDone(true);
           setError(false);
+          reduceNumAcc();
         }
       })
       .catch((error) => {

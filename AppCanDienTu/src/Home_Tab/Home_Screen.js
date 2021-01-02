@@ -343,8 +343,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   ServiceView_Image: {
-    width: '35%',//50
-    height: '35%',//50
+    width: 37,//40
+    height: 37,//40
     borderRadius: 30,
     padding: '5%',
     borderWidth: 1,

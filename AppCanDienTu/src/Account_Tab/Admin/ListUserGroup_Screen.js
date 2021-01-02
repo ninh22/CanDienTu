@@ -8,7 +8,11 @@ import {
   Image,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {getUserGroupAction, loadMoreUserGroupAction} from '../../Redux/index';
+import {
+  getUserGroupAction,
+  loadMoreUserGroupAction,
+  getNumAccAction,
+} from '../../Redux/index';
 import host from '../../Server/host';
 
 import {RNToasty} from 'react-native-toasty';
@@ -32,6 +36,7 @@ const ListUserGroup_Screen = ({navigation}) => {
   const dispatch = useDispatch();
   const getUserGroup = (item) => dispatch(getUserGroupAction(item));
   const loadMoreUserGroup = (item) => dispatch(loadMoreUserGroupAction(item));
+  const getnullNumAcc = (item) => dispatch(getNumAccAction(item));
   const _searchUserGroupFromAPI = () => {
     return fetch(host.searchUsersGroup, {
       method: 'POST',
@@ -97,6 +102,7 @@ const ListUserGroup_Screen = ({navigation}) => {
     <TouchableOpacity
       style={styles.parent_item}
       onPress={() => {
+        getnullNumAcc(null);
         navigation.navigate('usergroupinfoscreen', {
           index: index,
         });

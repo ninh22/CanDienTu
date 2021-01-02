@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React, {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {getUserAction} from '../../Redux/index';
+import {getUserAction, getNumAccAction} from '../../Redux/index';
 import {StyleSheet, ScrollView, View} from 'react-native';
 import {Avatar, ListItem} from 'react-native-elements';
 import DataNull from '../../ScriptFile/DataNull';
@@ -42,8 +42,10 @@ const UserGroupInfo_Screen = ({navigation, route}) => {
   const [count, setCount] = useState(null);
   let index = route.params.index;
   let item = useSelector((state) => state.userGroupReducer[index]);
+  let numAcc = useSelector((state) => state.numAccReducer);
   const dispatch = useDispatch();
   const nullItem = (item) => dispatch(getUserAction(item));
+  const getnumAcc = (item) => dispatch(getNumAccAction(item));
   const _getUserGroupFromAPI = () => {
     return fetch(host.countUsersOfUsersGroup, {
       method: 'POST',
@@ -57,7 +59,8 @@ const UserGroupInfo_Screen = ({navigation, route}) => {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        setCount(responseJson);
+        // setCount(responseJson);
+        getnumAcc(responseJson);
       })
       .catch((error) => {
         RNToasty.Warn({
@@ -67,7 +70,7 @@ const UserGroupInfo_Screen = ({navigation, route}) => {
   };
   const getData = async () => {
     await _getUserGroupFromAPI();
-    if (count !== null) setVisible(false);
+    if (numAcc !== null) setVisible(false);
   };
   useEffect(() => {
     getData();
@@ -87,7 +90,7 @@ const UserGroupInfo_Screen = ({navigation, route}) => {
     },
     {
       title: 'Số lượng tài khoản',
-      content: count,
+      content: numAcc,
       show: true,
       onPress: () => {
         nullItem(null);
@@ -103,7 +106,7 @@ const UserGroupInfo_Screen = ({navigation, route}) => {
         <ScrollView>
           <View style={styles.parent}>
             <HeaderCustom
-              title="Thông tin Công ty"
+              title="Thông tin khách hàng"
               navigationHeader={navigation}
             />
             <View style={{width: '100%', height: '100%'}}>

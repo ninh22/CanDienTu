@@ -8,3 +8,7 @@ export {
   getUserGroupAction,
   loadMoreUserGroupAction,
 } from './UserGroup/UserGroupAction';
+export {
+  getNumAccAction,
+  reduceNumAccAction,
+} from './NumberAccount/NumAccAction';
