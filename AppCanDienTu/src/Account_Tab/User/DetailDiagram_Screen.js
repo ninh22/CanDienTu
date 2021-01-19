@@ -58,7 +58,6 @@ const DetailDiagram_Screen = ({navigation, route}) => {
   const [search, setSearch] = useState('');
   const [month, setMonth] = useState(false);
   const [type, setType] = useState('Days');
-  const [titleTotal, setTitleTotal] = useState('Tổng Thu');
 
   const [IsFocused, setIsFocused] = useState(true);
   const handleFocus = () => {
@@ -77,9 +76,6 @@ const DetailDiagram_Screen = ({navigation, route}) => {
     // if (dataDiagram == '') {
     //   await _searchDiagramCustomFromAPI();
     // }
-    if (data.title !== 'Doanh Thu 7 Ngày Qua') {
-      setTitleTotal('Trọng Lượng Hàng');
-    }
     if (dataDiagram == '') {
       await _searchDiagramCustomFromAPI();
     }
