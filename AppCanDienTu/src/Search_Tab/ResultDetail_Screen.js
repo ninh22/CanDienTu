@@ -1,12 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  Image,
-} from 'react-native';
+import {StyleSheet, View, ScrollView, Image} from 'react-native';
 import DateTime from '../ScriptFile/DateTime';
 import HeaderCustom from '../Components/Header_Custom';
 import {ListItem} from 'react-native-elements';
@@ -81,17 +76,17 @@ const Components = ({navigationComponents, dataRoute}) => {
     },
     {
       title: 'Trọng lượng toàn bộ',
-      content: dataRoute.net_weight,
+      content: Money(dataRoute.net_weight),
       weight: true,
     },
     {
       title: 'Trọng lượng xe',
-      content: dataRoute.weight_1,
+      content: Money(dataRoute.weight_1),
       weight: true,
     },
     {
       title: 'Trọng lượng hàng hoá',
-      content: dataRoute.weight_2,
+      content: Money(dataRoute.weight_2),
       weight: true,
     },
     {

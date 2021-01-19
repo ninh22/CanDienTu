@@ -75,10 +75,6 @@ const listStackPerson = [
     name: 'loginscreen',
     component: Login_Screen,
   },
-  {
-    name: 'checkstatusaccscreen',
-    component: CheckStatusAcc_Screen,
-  },
   // Admin
   {
     name: 'homeadminscreen',
@@ -107,17 +103,39 @@ function LoginStackScreen() {
   );
 }
 
-const HomePersonStack = createStackNavigator();
+const AdminHomePersonStack = createStackNavigator();
 
-function HomePersonStackScreen() {
+function AdminHomePersonStackScreen() {
   return (
-    <HomePersonStack.Navigator
+    <AdminHomePersonStack.Navigator
       headerMode="none"
-      initialRouteName="checkstatusaccscreen">
+      initialRouteName="homeadminscreen">
       {listStackPerson.map((l, i) => (
-        <HomePersonStack.Screen key={i} name={l.name} component={l.component} />
+        <AdminHomePersonStack.Screen
+          key={i}
+          name={l.name}
+          component={l.component}
+        />
       ))}
-    </HomePersonStack.Navigator>
+    </AdminHomePersonStack.Navigator>
+  );
+}
+
+const UserHomePersonStack = createStackNavigator();
+
+function UserHomePersonStackScreen() {
+  return (
+    <UserHomePersonStack.Navigator
+      headerMode="none"
+      initialRouteName="homeuserscreen">
+      {listStackPerson.map((l, i) => (
+        <UserHomePersonStack.Screen
+          key={i}
+          name={l.name}
+          component={l.component}
+        />
+      ))}
+    </UserHomePersonStack.Navigator>
   );
 }
 
@@ -155,11 +173,11 @@ const TabScreen = () => {
   );
 };
 
-const TabAccount = createBottomTabNavigator();
+const TabAdmin = createBottomTabNavigator();
 
-const TabAccountScreen = () => {
+const TabAdminScreen = () => {
   return (
-    <TabAccount.Navigator
+    <TabAdmin.Navigator
       initialRouteName="Tài khoản"
       screenOptions={({route}) => ({
         tabBarIcon: ({focused, color, size}) => {
@@ -182,10 +200,47 @@ const TabAccountScreen = () => {
         inactiveTintColor: 'gray',
         keyboardHidesTabBar: true,
       }}>
-      <TabAccount.Screen name="Trang chủ" component={HomeStackScreen} />
-      <TabAccount.Screen name="Tra cứu" component={SearchStackScreen} />
-      <TabAccount.Screen name="Tài khoản" component={HomePersonStackScreen} />
-    </TabAccount.Navigator>
+      <TabAdmin.Screen name="Trang chủ" component={HomeStackScreen} />
+      <TabAdmin.Screen name="Tra cứu" component={SearchStackScreen} />
+      <TabAdmin.Screen
+        name="Tài khoản"
+        component={AdminHomePersonStackScreen}
+      />
+    </TabAdmin.Navigator>
+  );
+};
+
+const TabUser = createBottomTabNavigator();
+
+const TabUserScreen = () => {
+  return (
+    <TabUser.Navigator
+      initialRouteName="Tài khoản"
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
+          let iconName;
+          if (route.name === 'Trang chủ') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Tra cứu') {
+            iconName = focused ? 'md-search-sharp' : 'md-search-outline';
+          } else if (route.name === 'Tài khoản') {
+            iconName = focused
+              ? 'md-person-circle'
+              : 'md-person-circle-outline';
+          }
+          // You can return any component that you like here!
+          return <Icon name={iconName} size={size} color={color} />;
+        },
+      })}
+      tabBarOptions={{
+        activeTintColor: '#309045',
+        inactiveTintColor: 'gray',
+        keyboardHidesTabBar: true,
+      }}>
+      <TabUser.Screen name="Trang chủ" component={HomeStackScreen} />
+      <TabUser.Screen name="Tra cứu" component={SearchStackScreen} />
+      <TabUser.Screen name="Tài khoản" component={UserHomePersonStackScreen} />
+    </TabUser.Navigator>
   );
 };
 
@@ -212,6 +267,10 @@ const listStack = [
   {
     name: 'userchangepasswordscreen',
     component: UserChangePassword_Screen,
+  },
+  {
+    name: 'checkstatusaccscreen',
+    component: CheckStatusAcc_Screen,
   },
   // Admin_UserGroup
   {
@@ -267,12 +326,21 @@ const Stack = createStackNavigator();
 
 const App = () => {
   const [checkLogin, setCheckLogin] = useState(null);
+  const [checkAdmin, setCheckAdmin] = useState(null);
   const _retrieveData = async () => {
     try {
       let value = await AsyncStorage.getItem('@Key');
       value = await JSON.parse(value);
       if (value !== null) {
         setCheckLogin(true);
+        switch (value.idGroup) {
+          case 0:
+            setCheckAdmin(true);
+            break;
+          default:
+            setCheckAdmin(false);
+            break;
+        }
       } else {
         setCheckLogin(false);
       }
@@ -295,7 +363,11 @@ const App = () => {
         <NavigationContainer>
           <Stack.Navigator headerMode="none" initialRouteName="tab">
             {checkLogin ? (
-              <Stack.Screen name="tab" component={TabAccountScreen} />
+              checkAdmin ? (
+                <Stack.Screen name="tab" component={TabAdminScreen} />
+              ) : (
+                <Stack.Screen name="tab" component={TabUserScreen} />
+              )
             ) : (
               <Stack.Screen name="tab" component={TabScreen} />
             )}

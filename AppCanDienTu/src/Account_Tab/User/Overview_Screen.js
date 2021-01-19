@@ -105,7 +105,10 @@ const Overview_Screen = ({navigation, route}) => {
       }}>
       <View style={styles.view_img}>
         <Image
-          source={{uri:"https://candientuquochung.com/wp-content/uploads/2019/04/qhs.jpg"}}
+          source={{
+            uri:
+              'https://candientuquochung.com/wp-content/uploads/2019/04/qhs.jpg',
+          }}
           resizeMode="cover"
           style={styles.img}
         />
@@ -114,7 +117,10 @@ const Overview_Screen = ({navigation, route}) => {
         <TextS text={DataNull(item.customer_name)} />
         <TextS text={DataNull(item.truct_no)} style={{color: 'gray'}} />
         <TextS text={DataNull(item.items_name)} style={{color: 'gray'}} />
-        <TextS text={Money(item.price_total) + ' đồng'} style={{color: 'red'}} />
+        <TextS
+          text={Money(item.price_total) + ' đồng'}
+          style={{color: 'red'}}
+        />
         <View
           style={{
             width: '100%',
@@ -154,17 +160,17 @@ const Overview_Screen = ({navigation, route}) => {
               keyExtractor={(item) => item.id}
               extraData={listItem}
               ListEmptyComponent={
-                <View
-                  style={{
-                    width: Response_Size('wd', 0, 100),
-                    height: Response_Size('hg', 0, 90),
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
+                <View style={styles.view_empty}>
                   {noDataContent ? (
-                    <ScalableText style={{fontSize: 17, marginBottom: '3%'}}>
-                      Không có dữ liệu
-                    </ScalableText>
+                    <View style={styles.view_empty}>
+                      <View style={{width: '20%', height: '20%'}}>
+                        <Image
+                          source={require('../../Images/icons8-empty-box-96.png')}
+                          style={{height: '100%', width: '100%'}}
+                        />
+                      </View>
+                      <ScalableText>Không có dữ liệu</ScalableText>
+                    </View>
                   ) : (
                     <Image
                       style={{
@@ -237,15 +243,19 @@ const styles = StyleSheet.create({
   img: {
     width: '100%',
     height: '100%',
-    color: 'yellow',
     borderTopLeftRadius: 10,
     borderBottomLeftRadius: 10,
-    
   },
   view_content: {
     width: '70%',
     height: '100%',
     padding: '2%', //10
+  },
+  view_empty: {
+    width: Response_Size('wd', 0, 100),
+    height: Response_Size('hg', 0, 90),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

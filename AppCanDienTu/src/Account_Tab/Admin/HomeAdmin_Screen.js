@@ -15,7 +15,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
 import ScalableText from 'react-native-text';
-import _removeData from '../../Components/Logout';
+import _removeData from '../../ScriptFile/Logout';
 
 const Item = ({onPress, title, nameIcon, typeIcon}) => {
   const {} = styles;

@@ -10,13 +10,14 @@ import {
 } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Loading_Screen from '../../Components/Loading_Screen';
 import Response_Size from '../../ScriptFile/ResponsiveSize_Script';
 import ScalableText from 'react-native-text';
 import Input from '../../Components/Input';
 import GetDate from '../../ScriptFile/GetDate';
-import _removeData from '../../Components/Logout';
+import _removeData from '../../ScriptFile/Logout';
 import {RNToasty} from 'react-native-toasty';
 import {LineChart, ProgressChart} from 'react-native-chart-kit';
 import Money from '../../ScriptFile/Money';
@@ -61,7 +62,7 @@ const ItemView = ({items, loading, navigation, data}) => {
           }
           style={{
             width: '100%',
-            height: Response_Size('hg', 1, 40, 35),
+            height: Response_Size('hg', 1, 40, 45),
             alignItems: 'center',
             justifyContent: 'center',
             padding: '1%',
@@ -72,8 +73,9 @@ const ItemView = ({items, loading, navigation, data}) => {
           {loading ? (
             <ActivityIndicator size="large" color="#fff" />
           ) : (
-            <View>
-              <ScalableText style={[styles.item_txt, {marginBottom: '1%'}]}>
+            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+              <FontAwesome5 name={l.nameIcon} size={30} color="#fff" />
+              <ScalableText style={[styles.item_txt, {marginVertical: '1.5%'}]}>
                 {l.title}
               </ScalableText>
               <ScalableText style={styles.item_txt}>{l.number}</ScalableText>
@@ -85,23 +87,28 @@ const ItemView = ({items, loading, navigation, data}) => {
   );
 };
 
-const ItemViews = ({code, title}) => {
+const ItemViews = ({code, title, navigation, data}) => {
   return (
     <View>
       <View style={styles.card_title}>
         <ScalableText style={styles.text_card}>{title}</ScalableText>
       </View>
-      <View
+      <TouchableOpacity
+        disabled={navigation ? false : true}
+        onPress={() =>
+          navigation.navigate('detaildiagramscreen', {
+            dataDiagram: {title: title, idGroup: data},
+          })
+        }
         style={[
           styles.item,
           {
             width: Response_Size('wd', 0, 91), //98%
             height: 'auto',
-            justifyContent: 'flex-start',
           },
         ]}>
         {code}
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -111,11 +118,13 @@ const HomeUser_Screen = ({navigation, route}) => {
   const [visibleLoading, setVisibleLoading] = useState(false);
   const [id, setId] = useState(null);
   const [idGroup, setIdGroup] = useState(null);
+  const [idWeightAppType, setIdWeightAppType] = useState(null);
 
   const [dataDiagramMap, setDataDiagramMap] = useState([]);
   const [dataDiagramProgress, setDataDiagramProgress] = useState([]);
 
   const [money, setMoney] = useState('');
+  const [weight, setWeight] = useState('');
   const [total, setTotal] = useState('');
   const listItemDropDown = [
     {
@@ -144,20 +153,38 @@ const HomeUser_Screen = ({navigation, route}) => {
     _retrieveData();
     // console.log(idGroup);
   });
-
-  const _retrieveData = async () => {
-    try {
-      let value = await AsyncStorage.getItem('@Key');
-      value = await JSON.parse(value);
-      // console.warn(value);
-      if (value !== null) {
-        setId(value.id);
-        setIdGroup(value.idGroup);
+  const setIDData = (val) => {
+    if (id == null && idGroup == null) {
+      if (val !== null) {
+        setId(val.id);
+        setIdGroup(val.idGroup);
         // We have data!!
         // console.log(value);idGroup
       } else {
         setId(route.params.id);
         setIdGroup(route.params.idGroup);
+      }
+    }
+  };
+  const _retrieveData = async () => {
+    try {
+      let value = await AsyncStorage.getItem('@Key');
+      value = await JSON.parse(value);
+      setIDData(value);
+      // console.warn(value);
+      // if (id == null && idGroup == null) {
+      //   if (value !== null) {
+      //     setId(value.id);
+      //     setIdGroup(value.idGroup);
+      //     // We have data!!
+      //     // console.log(value);idGroup
+      //   } else {
+      //     setId(route.params.id);
+      //     setIdGroup(route.params.idGroup);
+      //   }
+      // }
+      if (idWeightAppType == null && idGroup !== null) {
+        await _getWeightAppTypeFromAPI();
       }
       await _getUserOverviewFromAPI();
       if (dataDiagramMap == '') {
@@ -171,17 +198,38 @@ const HomeUser_Screen = ({navigation, route}) => {
       // Error retrieving data
     }
   };
-  const listItem = [
-    {
-      title: 'Doanh thu',
-      number: money + ' VNĐ',
-    },
-    {
-      title: 'Tổng phiếu',
-      number: total,
-      end: true,
-    },
-  ];
+  const listItem = idWeightAppType
+    ? [
+        {
+          title: 'Doanh Thu',
+          number: Money(money) + ' VNĐ',
+          nameIcon: 'coins',
+        },
+        {
+          title: 'Trọng Lượng Hàng',
+          number: Money(weight) + ' KG',
+          nameIcon: 'weight-hanging',
+        },
+        {
+          title: 'Tổng Phiếu',
+          number: total,
+          nameIcon: 'clipboard-list',
+          end: true,
+        },
+      ]
+    : [
+        {
+          title: 'Doanh thu',
+          number: Money(money) + ' VNĐ',
+          nameIcon: 'coins',
+        },
+        {
+          title: 'Tổng phiếu',
+          number: total,
+          nameIcon: 'clipboard-list',
+          end: true,
+        },
+      ];
   const listOption1 = [
     {
       nameIcon: 'reader',
@@ -237,6 +285,35 @@ const HomeUser_Screen = ({navigation, route}) => {
       stroke: '#000',
     },
   };
+  const _getWeightAppTypeFromAPI = () => {
+    return fetch(host.weightAppType, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: idGroup,
+      }),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        // console.log(responseJson);
+        setIdWeightAppType(responseJson);
+      })
+      .catch((error) => {
+        // console.error(error);//Test
+        RNToasty.Warn({
+          title: 'Lỗi',
+        });
+        // Alert.alert('Thông báo', 'Lỗi', [
+        //   {
+        //     text: 'Xác nhận',
+        //     style: 'cancel',
+        //   },
+        // ]);
+      });
+  };
   const _getUserOverviewFromAPI = () => {
     return fetch(host.userOverview, {
       method: 'POST',
@@ -254,6 +331,7 @@ const HomeUser_Screen = ({navigation, route}) => {
       .then((responseJson) => {
         // console.log(responseJson, id, idGroup);
         setMoney(responseJson.money);
+        setWeight(responseJson.weight);
         setTotal(responseJson.countResult);
         setVisibleLoading(false);
       })
@@ -353,7 +431,9 @@ const HomeUser_Screen = ({navigation, route}) => {
               }
             />
             <ItemViews
-              title="Biểu đồ doanh thu 7 ngày qua"
+              title="Doanh Thu 7 Ngày Qua"
+              navigation={navigation}
+              data={idGroup}
               code={
                 <LineChart
                   data={data}
@@ -374,33 +454,37 @@ const HomeUser_Screen = ({navigation, route}) => {
                 />
               }
             />
+            {idWeightAppType ? (
+              <ItemViews
+                title="Hàng Hoá 7 Ngày Qua"
+                navigation={navigation}
+                data={idGroup}
+                code={
+                  <ProgressChart
+                    data={dataProgress}
+                    width={Response_Size('wd', 1, 91, 93)}
+                    height={220}
+                    strokeWidth={16}
+                    radius={32}
+                    chartConfig={{
+                      backgroundGradientFrom: '#309045',
+                      backgroundGradientTo: '#309045',
+                      decimalPlaces: 2,
+                      color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                      style: {
+                        borderRadius: 10,
+                      },
+                    }}
+                    style={{
+                      borderRadius: 10,
+                    }}
+                    hideLegend={false}
+                  />
+                }
+              />
+            ) : null}
             <ItemViews
-              title="Hàng hoá 7 ngày qua"
-              code={
-                <ProgressChart
-                  data={dataProgress}
-                  width={Response_Size('wd', 1, 91, 93)}
-                  height={220}
-                  strokeWidth={16}
-                  radius={32}
-                  chartConfig={{
-                    backgroundGradientFrom: '#309045',
-                    backgroundGradientTo: '#309045',
-                    decimalPlaces: 2,
-                    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                    style: {
-                      borderRadius: 16,
-                    },
-                  }}
-                  style={{
-                    borderRadius: 16,
-                  }}
-                  hideLegend={false}
-                />
-              }
-            />
-            <ItemViews
-              title="Tùy chọn"
+              title="Tùy Chọn"
               code={
                 <View
                   style={{
