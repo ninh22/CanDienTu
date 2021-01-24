@@ -19,9 +19,76 @@ import {Avatar, ListItem, Button, Overlay} from 'react-native-elements';
 import host from '../../Server/host';
 import Regex from '../../ScriptFile/Regex';
 
+const CustomRenderItem = ({item, onPress}) => {
+  const {btn_Custom, view_item, txt_item} = styles;
+  return (
+    <TouchableOpacity onPress={onPress} style={[styles.btn, btn_Custom]}>
+      <View
+        style={[
+          view_item,
+          {
+            width: '20%',
+            alignItems: 'center',
+          },
+        ]}>
+        <MaterialCommunityIcons name="weight" size={30} color="#309045" />
+      </View>
+      <View
+        style={[
+          view_item,
+          {
+            width: '80%',
+            alignItems: 'flex-start',
+          },
+        ]}>
+        <ScalableText numberOfLines={2} style={txt_item}>
+          {item.name}
+        </ScalableText>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+const OverlayCustom = ({visible, setVisible, data, onPress, idCustom}) => {
+  const {
+    overlayStyle,
+    view_titleOverlay,
+    txt_titleOverlay,
+    view_FlatList,
+    view_exitButton,
+    touchable_exitButton,
+  } = styles;
+  return (
+    <Overlay isVisible={visible} overlayStyle={overlayStyle}>
+      <View style={view_titleOverlay}>
+        <ScalableText style={txt_titleOverlay}>Chọn kiểu cân</ScalableText>
+      </View>
+      <View style={view_FlatList}>
+        <FlatList
+          data={data}
+          ListHeaderComponent={<View style={{marginBottom: '3%'}} />}
+          ListFooterComponent={<View style={{marginTop: '3%'}} />}
+          renderItem={onPress}
+          keyExtractor={idCustom}
+        />
+      </View>
+      <View style={view_exitButton}>
+        <TouchableOpacity
+          onPress={() => setVisible(!visible)}
+          style={touchable_exitButton}>
+          <Icon name="close" size={30} color="#309045" />
+        </TouchableOpacity>
+      </View>
+    </Overlay>
+  );
+};
+
 const AddUserGroup_Screen = ({navigation}) => {
   const [visibleButtonLoading, setVisibleButtonLoading] = useState(false);
+  const [visibleButtonLoading2, setVisibleButtonLoading2] = useState(false);
+
   const [visibleOverlay, setVisibleOverlay] = useState(false);
+  const [visibleOverlay2, setVisibleOverlay2] = useState(false);
   const [visibleAlert, setVisibleAlert] = useState(false);
   const [waitDone, setWaitDone] = useState(false);
   const [error, setError] = useState(false);
@@ -29,9 +96,11 @@ const AddUserGroup_Screen = ({navigation}) => {
   const [userName, setUserName] = useState('');
   const [userDate, setUserDate] = useState('');
   const [typeName, setTypeName] = useState('Chọn kiểu cân');
+  const [typeName2, setTypeName2] = useState('Chọn loại cân');
   const [userNumber, setUserNumber] = useState('');
   const [userAddress, setUserAddress] = useState('');
   const [iDType, setIDType] = useState('');
+  const [iDType2, setIDType2] = useState('');
 
   const [checkName, setCheckName] = useState(true);
   const [statusName, setStatusName] = useState(false);
@@ -46,8 +115,10 @@ const AddUserGroup_Screen = ({navigation}) => {
   const [statusAddress, setStatusAddress] = useState(false);
 
   const [statusType, setStatusType] = useState(false);
+  const [statusType2, setStatusType2] = useState(false);
 
   const [listItemDropDown, setListItemDropDown] = useState(null);
+  const [listItemDropDown2, setListItemDropDown2] = useState(null);
 
   const check_Content = (content, keyCheck) => {
     switch (keyCheck) {
@@ -112,7 +183,8 @@ const AddUserGroup_Screen = ({navigation}) => {
       statusDate &&
       statusNumber &&
       statusAddress &&
-      statusType
+      statusType &&
+      statusType2
       ? false
       : true;
   };
@@ -130,6 +202,7 @@ const AddUserGroup_Screen = ({navigation}) => {
         address: userAddress,
         enddate: userDate,
         idweight_apptype: iDType,
+        idapp_types: iDType2,
       }),
     })
       .then((response) => response.text())
@@ -145,8 +218,8 @@ const AddUserGroup_Screen = ({navigation}) => {
       });
   };
 
-  const _getAllAppTypeFromAPI = () => {
-    return fetch(host.getAllAppType, {
+  const _getAllWeightAppTypeFromAPI = () => {
+    return fetch(host.getAllWeightAppType, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -168,19 +241,53 @@ const AddUserGroup_Screen = ({navigation}) => {
       });
   };
 
+  const _getAllAppTypesFromAPI = () => {
+    return fetch(host.getAllAppTypes, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        setListItemDropDown2(responseJson);
+        setVisibleButtonLoading2(false);
+        setVisibleOverlay2(!visibleOverlay2);
+      })
+      .catch((error) => {
+        // console.error(error);
+        RNToasty.Error({
+          title: 'Lỗi',
+        });
+      });
+  };
+
   const getDataUserGroup = async () => {
-    setVisibleButtonLoading(true);
     if (listItemDropDown == null || listItemDropDown == '') {
-      await _getAllAppTypeFromAPI();
+      await _getAllWeightAppTypeFromAPI();
     } else {
       setVisibleButtonLoading(false);
       setVisibleOverlay(!visibleOverlay);
     }
   };
 
+  const getDataUserGroup2 = async () => {
+    if (listItemDropDown2 == null || listItemDropDown2 == '') {
+      await _getAllAppTypesFromAPI();
+    } else {
+      setVisibleButtonLoading2(false);
+      setVisibleOverlay2(!visibleOverlay2);
+    }
+  };
+
   const check = () => {
     if (iDType !== '') {
       setStatusType(true);
+    }
+    if (iDType2 !== '') {
+      setStatusType2(true);
     }
   };
 
@@ -295,7 +402,32 @@ const AddUserGroup_Screen = ({navigation}) => {
                     title={typeName}
                     type="outline"
                     onPress={() => {
+                      setVisibleButtonLoading(true);
                       getDataUserGroup();
+                    }}
+                  />
+                </View>
+                <View>
+                  <ScalableText style={styles.text_input}>
+                    Loại cân
+                  </ScalableText>
+                  <Button
+                    buttonStyle={[
+                      styles.btn,
+                      {
+                        backgroundColor: '#fff',
+                        borderColor: '#309045',
+                        borderWidth: 1,
+                      },
+                    ]}
+                    loading={visibleButtonLoading2}
+                    loadingProps={{color: '#309045'}}
+                    titleStyle={{color: '#309045'}}
+                    title={typeName2}
+                    type="outline"
+                    onPress={() => {
+                      setVisibleButtonLoading2(true);
+                      getDataUserGroup2();
                     }}
                   />
                 </View>
@@ -316,118 +448,38 @@ const AddUserGroup_Screen = ({navigation}) => {
             </View>
           </View>
         </View>
-
-        <Overlay
-          isVisible={visibleOverlay}
-          overlayStyle={{
-            width: '80%',
-            height: '90%',
-            borderRadius: 10,
-            elevation: 0,
-            padding: 0,
-            backgroundColor: 'transparent',
-          }}>
-          <View
-            style={{
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
-              elevation: 2,
-              width: '100%',
-              height: '10%',
-              backgroundColor: '#309045',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <ScalableText
-              style={{color: '#fff', fontWeight: 'bold', fontSize: 17}}>
-              Chọn kiểu cân
-            </ScalableText>
-          </View>
-          <View
-            style={{
-              height: '77%',
-              paddingHorizontal: '3%',
-              backgroundColor: '#fff',
-              borderBottomLeftRadius: 10,
-              borderBottomRightRadius: 10,
-              elevation: 2,
-            }}>
-            <FlatList
-              data={listItemDropDown}
-              ListHeaderComponent={<View style={{marginBottom: '3%'}} />}
-              ListFooterComponent={<View style={{marginTop: '3%'}} />}
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    setTypeName(item.name);
-                    setIDType(item.id);
-                    setVisibleOverlay(!visibleOverlay);
-                  }}
-                  style={[
-                    styles.btn,
-                    {
-                      backgroundColor: '#fff',
-                      flexDirection: 'row',
-                      padding: '1%',
-                      borderWidth: 1,
-                      borderColor: '#309045',
-                      marginVertical: '1%',
-                    },
-                  ]}>
-                  <View
-                    style={{
-                      width: '20%',
-                      height: '100%',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}>
-                    <MaterialCommunityIcons
-                      name="weight"
-                      size={30}
-                      color="#309045"
-                    />
-                  </View>
-                  <View
-                    style={{
-                      width: '80%',
-                      height: '100%',
-                      alignItems: 'flex-start',
-                      justifyContent: 'center',
-                    }}>
-                    <ScalableText
-                      numberOfLines={2}
-                      style={{color: '#309045', fontWeight: 'bold'}}>
-                      {item.name}
-                    </ScalableText>
-                  </View>
-                </TouchableOpacity>
-              )}
-              keyExtractor={(item) => item.id}
+        <OverlayCustom
+          visible={visibleOverlay}
+          setVisible={setVisibleOverlay}
+          data={listItemDropDown}
+          onPress={({item}) => (
+            <CustomRenderItem
+              item={item}
+              onPress={() => {
+                setTypeName(item.name);
+                setIDType(item.id);
+                setVisibleOverlay(!visibleOverlay);
+              }}
             />
-          </View>
-          <View
-            style={{
-              width: '100%',
-              height: '13%',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-            }}>
-            <TouchableOpacity
-              onPress={() => setVisibleOverlay(!visibleOverlay)}
-              style={{
-                width: 50,
-                height: 50,
-                borderRadius: 30,
-                elevation: 2,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: '#fff',
-                padding: '1%',
-              }}>
-              <Icon name="close" size={30} color="#309045" />
-            </TouchableOpacity>
-          </View>
-        </Overlay>
+          )}
+          idCustom={(item) => item.id}
+        />
+        <OverlayCustom
+          visible={visibleOverlay2}
+          setVisible={setVisibleOverlay2}
+          data={listItemDropDown2}
+          onPress={({item}) => (
+            <CustomRenderItem
+              item={item}
+              onPress={() => {
+                setTypeName2(item.name);
+                setIDType2(item.idapp_types);
+                setVisibleOverlay2(!visibleOverlay2);
+              }}
+            />
+          )}
+          idCustom={(item) => item.idapp_types}
+        />
         <Wait
           show={visibleAlert}
           setShow={setVisibleAlert}
@@ -458,6 +510,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#309045',
     borderRadius: 10,
   },
+  btn_Custom: {
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    padding: '1%',
+    borderWidth: 1,
+    borderColor: '#309045',
+    marginVertical: '1%',
+  },
   view_card: {
     width: '100%',
     backgroundColor: '#fff',
@@ -475,6 +535,57 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: 'bold',
     marginVertical: '2%',
+  },
+  view_item: {
+    height: '100%',
+    justifyContent: 'center',
+  },
+  txt_item: {
+    color: '#309045',
+    fontWeight: 'bold',
+  },
+  overlayStyle: {
+    width: '80%',
+    height: '90%',
+    borderRadius: 10,
+    elevation: 0,
+    padding: 0,
+    backgroundColor: 'transparent',
+  },
+  view_titleOverlay: {
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    elevation: 2,
+    width: '100%',
+    height: '10%',
+    backgroundColor: '#309045',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  txt_titleOverlay: {color: '#fff', fontWeight: 'bold', fontSize: 17},
+  view_FlatList: {
+    height: '77%',
+    paddingHorizontal: '3%',
+    backgroundColor: '#fff',
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    elevation: 2,
+  },
+  view_exitButton: {
+    width: '100%',
+    height: '13%',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  touchable_exitButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 30,
+    elevation: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+    padding: '1%',
   },
 });
 

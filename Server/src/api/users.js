@@ -1,372 +1,35 @@
-var express = require("express");
-var cors = require("cors");
-var app = express();
-var fs = require("fs");
-var server = require("http").createServer(app);
-var mysql = require("mysql");
-var bodyParser = require("body-parser");
-var md5 = require("md5");
-var moment = require("moment");
-app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-server.listen(process.env.PORT);
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "can15657_canquochung",
-  password: "@Quochung1234",
-  database: "can15657_canquochung",
-});
-// Admin
-// Đăng nhập
-app.post("/Login", function (req, res) {
-  var username = req.body.username;
-  var password = req.body.password;
-  password = md5(password + "@haiviet");
-  con.connect(function (err) {
-    con.query(
-      "SELECT * FROM `tbusers` WHERE username = '" +
-        username +
-        "' AND password = '" +
-        password +
-        "'",
-      function (err, result) {
-        if (err) throw err;
-        res.json(result);
-      }
-    );
-  });
-});
-// check user save
-app.post("/CheckStatusUser", function (req, res) {
+var { router, con, moment } = require("../setting_require/require_Modules");
+
+// Check loại users
+router.post("/WeightAppType", async function (req, res) {
+  // var id = 3;
   var id = req.body.id;
   con.connect(function (err) {
     con.query(
-      "SELECT * FROM `tbusers` WHERE id = " + id,
+      "SELECT idweight_apptype FROM `tbusers_group` WHERE id = " + id,
       function (err, result) {
         if (err) throw err;
-        res.json(result);
-      }
-    );
-  });
-});
-// Tìm kiếm usersGroup
-app.post("/SearchUsersGroup", async function (req, res) {
-  var name = req.body.name;
-  var page = req.body.page;
-  var check = "notfull";
-  var maxpage = null;
-  var limit = req.body.limit;
-  var offset = null;
-  var count = null;
-  con.connect(function (err) {
-    con.query(
-      "SELECT COUNT(*) FROM `tbusers_group` WHERE enable = 1 AND name LIKE '%" +
-        name +
-        "%'",
-      async function (err, result) {
-        if (err) throw err;
-        count = await result[0]["COUNT(*)"];
-        maxpage = Math.ceil(count / limit);
-        offset = (page - 1) * limit;
-        var sql =
-          "SELECT * FROM `tbusers_group` WHERE enable = 1 AND name LIKE '%" +
-          name +
-          "%' ORDER BY id DESC LIMIT " +
-          limit +
-          " OFFSET " +
-          offset;
-        if (page < maxpage) {
-          //res.json({count: count, maxpage: maxpage, offset: offset});
-          con.query(sql, async function (err, result) {
+        con.query(
+          "SELECT name FROM `tbweight_apptype` WHERE id = " +
+            result[0].idweight_apptype,
+          function (err, result) {
             if (err) throw err;
-            res.json({ check: check, data: result });
-          });
-        } else if (page == maxpage) {
-          check = "full";
-          con.query(sql, async function (err, result) {
-            if (err) throw err;
-            res.json({ check: check, data: result });
-          });
-        } else if (page > maxpage) {
-          check = "maxfull";
-          res.json({ check: check, data: null });
-        }
-      }
-    );
-  });
-});
-// Đếm users thuộc usersGroup
-app.post("/CountUsersOfUsersGroup", async function (req, res) {
-  var idusergroup = req.body.idusergroup;
-  con.connect(function (err) {
-    con.query(
-      "SELECT COUNT(username) FROM `tbusers` WHERE idusergroup = " +
-        idusergroup,
-      async function (err, result) {
-        if (err) throw err;
-        res.json(result[0]["COUNT(username)"]);
-      }
-    );
-  });
-});
-// Tìm kiếm users
-app.post("/SearchUsers", async function (req, res) {
-  var idusergroup = req.body.idusergroup;
-  var username = req.body.username;
-  var page = req.body.page;
-  var check = "notfull";
-  var maxpage = null;
-  var limit = req.body.limit;
-  var offset = null;
-  var count = null;
-  con.connect(function (err) {
-    con.query(
-      "SELECT COUNT(*) FROM `tbusers` WHERE idusergroup = " +
-        idusergroup +
-        " AND username LIKE '%" +
-        username +
-        "%'",
-      async function (err, result) {
-        if (err) throw err;
-        count = await result[0]["COUNT(*)"];
-        maxpage = Math.ceil(count / limit);
-        offset = (page - 1) * limit;
-        var sql =
-          "SELECT * FROM `tbusers` WHERE idusergroup = " +
-          idusergroup +
-          " AND username LIKE '%" +
-          username +
-          "%' ORDER BY id DESC LIMIT " +
-          limit +
-          " OFFSET " +
-          offset;
-        if (page < maxpage) {
-          //res.json({count: count, maxpage: maxpage, offset: offset});
-          con.query(sql, async function (err, result) {
-            if (err) throw err;
-            res.json({ check: check, data: result });
-          });
-        } else if (page == maxpage) {
-          check = "full";
-          con.query(sql, async function (err, result) {
-            if (err) throw err;
-            res.json({ check: check, data: result });
-          });
-        } else if (page > maxpage) {
-          check = "maxfull";
-          res.json({ check: check, data: null });
-        }
-      }
-    );
-  });
-});
-// Xoá users
-app.post("/DeleteUsers", async function (req, res) {
-  var id = req.body.id;
-  try {
-    con.connect(function (err) {
-      con.query(
-        "DELETE FROM `tbusers` WHERE `id` = " + id,
-        async function (err, result) {
-          if (err) throw err;
-          res.json("successed");
-        }
-      );
-    });
-  } catch (e) {
-    next(e);
-  }
-});
-
-// Thêm users
-const AddUsersGroup = async (req, res, next) => {
-  var enable = 1;
-  var name = req.body.name;
-  var address = req.body.address;
-  var phonenumber = req.body.phonenumber;
-  var lastid = 1;
-  var enddate = req.body.enddate;
-  var idweight_apptype = req.body.idweight_apptype;
-  enddate += " 23:59:59";
-  try {
-    con.connect(function (err) {
-      var sql =
-        'INSERT INTO `tbusers_group`(`name`, `address`, `phonenumber`, `lastid`, `enddate`, `idweight_apptype`, `enable`) VALUES ("' +
-        name +
-        '", "' +
-        address +
-        '","' +
-        phonenumber +
-        '","' +
-        lastid +
-        '","' +
-        enddate +
-        '","' +
-        idweight_apptype +
-        '",' +
-        enable +
-        ")";
-      con.query(sql, async function (err, result) {
-        if (err) throw err;
-        res.send("successed");
-      });
-    });
-  } catch (e) {
-    next(e);
-  }
-};
-app.post("/AddUsersGroup", AddUsersGroup);
-
-// Thêm Tài khoản
-const AddAccount = async (req, res, next) => {
-  var username = req.body.username;
-  var password = req.body.password;
-  var idusergroup = req.body.idusergroup;
-  var iduserrole = 3;
-  password = md5(password + "@haiviet");
-  try {
-    con.connect(function (err) {
-      con.query(
-        "SELECT * FROM `tbusers` WHERE username = '" + username + "'",
-        function (err, result) {
-          if (err) throw err;
-          switch (true) {
-            case result[0] == undefined:
-              var sql =
-                'INSERT INTO `tbusers`(`username`, `password`, `idusergroup`, `iduserrole`) VALUES ("' +
-                username +
-                '","' +
-                password +
-                '","' +
-                idusergroup +
-                '","' +
-                iduserrole +
-                '")';
-              con.query(sql, async function (err, result) {
-                if (err) throw err;
-                res.send("successed");
-              });
-              break;
-            case result[0] !== undefined:
-              res.send("failed");
-              break;
+            switch (result[0].name) {
+              case "Cân dịch vụ":
+                res.json(false);
+                break;
+              case "Cân doanh nghiệp":
+                res.json(true);
+                break;
+            }
           }
-        }
-      );
-    });
-  } catch (e) {
-    next(e);
-  }
-};
-app.post("/AddAccount", AddAccount);
-
-// Tìm kiếm phiếu cân
-app.post("/SearchPhieuCan", async function (req, res) {
-  var truct_no = req.body.truct_no;
-  var page = req.body.page;
-  var check = "notfull";
-  var maxpage = null;
-  var limit = req.body.limit;
-  var offset = null;
-  var count = null;
-  con.connect(function (err) {
-    con.query(
-      "SELECT COUNT(*) FROM `tbweight` WHERE enable = 1 AND truct_no LIKE '%" +
-        truct_no +
-        "%'",
-      async function (err, result) {
-        if (err) throw err;
-        count = await result[0]["COUNT(*)"];
-        maxpage = Math.ceil(count / limit);
-        offset = (page - 1) * limit;
-        var sql =
-          "SELECT * FROM `tbweight` WHERE enable = 1 AND truct_no LIKE '%" +
-          truct_no +
-          "%' ORDER BY date_in DESC LIMIT " +
-          limit +
-          " OFFSET " +
-          offset;
-        if (page < maxpage) {
-          //res.json({count: count, maxpage: maxpage, offset: offset});
-          con.query(sql, async function (err, result) {
-            if (err) throw err;
-            res.json({ check: check, data: result });
-          });
-        } else if (page == maxpage) {
-          check = "full";
-          con.query(sql, async function (err, result) {
-            if (err) throw err;
-            res.json({ check: check, data: result });
-          });
-        } else if (page > maxpage) {
-          check = "maxfull";
-          res.json({ check: check, data: null });
-        }
+        );
       }
     );
   });
 });
 
-// check Pass
-app.post("/CheckPass", function (req, res) {
-  var password = req.body.password;
-  password = md5(password + "@haiviet");
-  con.connect(function (err) {
-    con.query(
-      "SELECT * FROM `tbusers` WHERE password = '" + password + "'",
-      function (err, result) {
-        if (err) throw err;
-        res.json(result);
-      }
-    );
-  });
-});
-
-// change Pass
-app.post("/ChangePass", function (req, res) {
-  var password = req.body.password;
-  var id = req.body.id;
-  password = md5(password + "@haiviet");
-  con.connect(function (err) {
-    con.query(
-      "UPDATE `tbusers` SET password = '" + password + "' WHERE id = " + id,
-      function (err, result) {
-        if (err) throw err;
-        res.json("successed");
-      }
-    );
-  });
-});
-
-// Lấy all thông tin usersGroup
-app.post("/GetAllUsersGroup", async function (req, res) {
-  con.connect(function (err) {
-    con.query(
-      "SELECT * FROM `tbusers_group` WHERE enable = 1 ORDER BY id DESC",
-      async function (err, result) {
-        if (err) throw err;
-        res.json(result);
-      }
-    );
-  });
-});
-
-// Lấy all thông tin usersGroup
-app.post("/GetAllAppType", async function (req, res) {
-  con.connect(function (err) {
-    con.query(
-      "SELECT * FROM `tbweight_apptype` ORDER BY id DESC",
-      async function (err, result) {
-        if (err) throw err;
-        res.json(result);
-      }
-    );
-  });
-});
-
-// User
-app.post("/UserOverview", async function (req, res) {
+router.post("/UserOverview", async function (req, res) {
   var overview = req.body.overview;
   var idusergroup = req.body.idusergroup;
   var date_in = req.body.date_in;
@@ -447,9 +110,8 @@ app.post("/UserOverview", async function (req, res) {
   });
 });
 
-// User
 // Biểu đồ đường
-app.post("/UserDiagramMap", async function (req, res) {
+router.post("/UserDiagramMap", async function (req, res) {
   function dateDefault(props) {
     return moment().subtract(props, "days").format("YYYY-MM-DD");
   }
@@ -530,7 +192,7 @@ app.post("/UserDiagramMap", async function (req, res) {
   });
 });
 // Biểu đồ tròn
-app.post("/UserDiagramProgress", async function (req, res) {
+router.post("/UserDiagramProgress", async function (req, res) {
   function dateDefault(props) {
     return moment().subtract(props, "days").format("YYYY-MM-DD");
   }
@@ -640,7 +302,7 @@ app.post("/UserDiagramProgress", async function (req, res) {
   });
 });
 // Biểu đồ đường tìm kiếm
-app.post("/SearchDiagramMap", async function (req, res) {
+router.post("/SearchDiagramMap", async function (req, res) {
   function dateDefault(props) {
     return moment().subtract(props, "days").format("YYYY-MM-DD");
   }
@@ -870,7 +532,7 @@ app.post("/SearchDiagramMap", async function (req, res) {
   });
 });
 // Biểu đồ tròn tìm kiếm
-app.post("/SearchDiagramProgress", async function (req, res) {
+router.post("/SearchDiagramProgress", async function (req, res) {
   function dateDefault(props) {
     return moment().subtract(props, "days").format("YYYY-MM-DD");
   }
@@ -1098,42 +760,5 @@ app.post("/SearchDiagramProgress", async function (req, res) {
     }
   });
 });
-// Get số điện thoại
-app.post("/GetNumber", function (req, res) {
-  con.connect(function (err) {
-    con.query(
-      "SELECT value FROM `tbsettings` WHERE name = 'phonenumber'",
-      function (err, result) {
-        if (err) throw err;
-        res.json(result);
-      }
-    );
-  });
-});
-app.post("/WeightAppType", async function (req, res) {
-  // var id = 3;
-  var id = req.body.id;
-  con.connect(function (err) {
-    con.query(
-      "SELECT idweight_apptype FROM `tbusers_group` WHERE id = " + id,
-      function (err, result) {
-        if (err) throw err;
-        con.query(
-          "SELECT name FROM `tbweight_apptype` WHERE id = " +
-            result[0].idweight_apptype,
-          function (err, result) {
-            if (err) throw err;
-            switch (result[0].name) {
-              case "Cân dịch vụ":
-                res.json(false);
-                break;
-              case "Cân doanh nghiệp":
-                res.json(true);
-                break;
-            }
-          }
-        );
-      }
-    );
-  });
-});
+
+module.exports = router;
