@@ -17,6 +17,7 @@ import host from '../Server/host';
 import ScalableText from 'react-native-text';
 import {RNToasty} from 'react-native-toasty';
 import Money from '../ScriptFile/Money';
+import LicensePlatesCar from '../ScriptFile/LicensePlatesCar';
 
 const Result_Screen = ({navigation, route}) => {
   const [visible, setVisible] = useState(true);
@@ -45,7 +46,7 @@ const Result_Screen = ({navigation, route}) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        truct_no: searchValue,
+        truct_no: LicensePlatesCar('Input', searchValue),
         page: page,
         limit: limitItem,
       }),
@@ -97,16 +98,25 @@ const Result_Screen = ({navigation, route}) => {
       }}>
       <View style={styles.view_img}>
         <Image
-          source={{uri:"https://candientuquochung.com/wp-content/uploads/2019/04/qhs.jpg"}}
+          source={{
+            uri:
+              'https://candientuquochung.com/wp-content/uploads/2019/04/qhs.jpg',
+          }}
           style={styles.img}
           resizeMode="cover"
         />
       </View>
       <View style={[styles.view_content, {width: '70%'}]}>
         <TextS text={DataNull(item.customer_name)} />
-        <TextS text={DataNull(item.truct_no)} style={{color: 'gray'}} />
+        <TextS
+          text={DataNull(LicensePlatesCar('Output', item.truct_no))}
+          style={{color: 'gray'}}
+        />
         <TextS text={DataNull(item.items_name)} style={{color: 'gray'}} />
-        <TextS text={Money(item.price_total) + ' đồng'} style={{color: 'red'}} />
+        <TextS
+          text={Money(item.price_total) + ' Đồng'}
+          style={{color: 'red'}}
+        />
         <View
           style={{
             width: '100%',
@@ -130,7 +140,7 @@ const Result_Screen = ({navigation, route}) => {
             navigationHeader={navigation}
             title="Danh sách phiếu"
             visibleSearch={true}
-            searchPlaceHolder="Tìm phiếu"
+            searchPlaceHolder="Nhập 5 số cuối biển số xe"
             value={searchValue}
             onChangeText={setSearchValue}
             searchCode={() => {

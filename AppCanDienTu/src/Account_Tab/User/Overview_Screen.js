@@ -17,6 +17,7 @@ import host from '../../Server/host';
 import ScalableText from 'react-native-text';
 import {RNToasty} from 'react-native-toasty';
 import Money from '../../ScriptFile/Money';
+import LicensePlatesCar from '../../ScriptFile/LicensePlatesCar';
 
 const Overview_Screen = ({navigation, route}) => {
   const [visible, setVisible] = useState(true);
@@ -53,7 +54,7 @@ const Overview_Screen = ({navigation, route}) => {
         overview: true,
         idusergroup: data.idGroup,
         date_in: keyWordValue,
-        truct_no: searchValue,
+        truct_no: LicensePlatesCar('Input', searchValue),
         page: page,
         limit: limitItem,
       }),
@@ -115,7 +116,10 @@ const Overview_Screen = ({navigation, route}) => {
       </View>
       <View style={[styles.view_content, {width: '70%'}]}>
         <TextS text={DataNull(item.customer_name)} />
-        <TextS text={DataNull(item.truct_no)} style={{color: 'gray'}} />
+        <TextS
+          text={DataNull(LicensePlatesCar('Output', item.truct_no))}
+          style={{color: 'gray'}}
+        />
         <TextS text={DataNull(item.items_name)} style={{color: 'gray'}} />
         <TextS
           text={Money(item.price_total) + ' đồng'}
@@ -144,7 +148,7 @@ const Overview_Screen = ({navigation, route}) => {
             navigationHeader={navigation}
             title="Danh sách phiếu"
             visibleSearch={true}
-            searchPlaceHolder="Tìm phiếu"
+            searchPlaceHolder="Nhập 5 số cuối biển số xe"
             value={searchValue}
             onChangeText={setSearchValue}
             searchCode={() => {

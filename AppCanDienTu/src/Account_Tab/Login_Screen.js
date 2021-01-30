@@ -61,7 +61,7 @@ const Login_Screen = ({navigation}) => {
   const check_Pass = (content) => {
     if (Regex(content, 'password') == false) {
       RNToasty.Error({
-        title: 'Mật khẩu cần ít nhất 8 kí tự và không chứa kí tự đặc biệt',
+        title: 'Mật khẩu cần ít nhất 6 kí tự và không chứa kí tự đặc biệt',
         duration: 1,
       });
       setCheckPass(false);
@@ -93,18 +93,21 @@ const Login_Screen = ({navigation}) => {
           case responseJson == '':
             setShowAlert(true);
             break;
-          case responseJson !== '' && save == false:
-            navigationProps(responseJson[0].idusergroup, responseJson[0].id);
-            break;
-          case responseJson !== '' && save == true:
-            _storeData(
-              '@Key',
-              JSON.stringify({
-                id: responseJson[0].id,
-                idGroup: responseJson[0].idusergroup,
-              }),
+          case responseJson !== '':
+            navigationProps(
+              responseJson[0].name,
+              responseJson[0].id,
+              responseJson[0].idusergroup,
             );
-            navigationProps(responseJson[0].idusergroup, responseJson[0].id);
+            if (save == true) {
+              _storeData(
+                '@Key',
+                JSON.stringify({
+                  id: responseJson[0].id,
+                  idGroup: responseJson[0].idusergroup,
+                }),
+              );
+            }
             break;
         }
       })
@@ -121,16 +124,16 @@ const Login_Screen = ({navigation}) => {
         // ]);
       });
   };
-  const navigationProps = (check, id) => {
+  const navigationProps = (check, id, idGroup) => {
     RNToasty.Success({
       title: 'Đăng nhập thành công',
     });
     switch (check) {
-      case 0:
+      case 'Admin':
         navigation.replace('homeadminscreen', {id: id});
         break;
       default:
-        navigation.replace('homeuserscreen', {id: id, idGroup: check});
+        navigation.replace('homeuserscreen', {id: id, idGroup: idGroup});
         break;
     }
   };

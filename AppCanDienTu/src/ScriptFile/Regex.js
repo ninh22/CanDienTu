@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 const Regex = (input, type) => {
   const usernameCheck = /^[a-zA-Z][a-zA-Z0-9_-]{2,9}$/;
-  const passwordCheck = /^[a-zA-Z0-9_-]{8,}$/;
+  const passwordCheck = /^[a-zA-Z0-9_-]{6,}$/;
   const nameCheck = /^[a-zA-Z0-9 ]{2,}$/;
   const mailCheck = /\S+@\S+\.\S+/;
   const phoneNumberCheck = /^\d{10,11}$/g;

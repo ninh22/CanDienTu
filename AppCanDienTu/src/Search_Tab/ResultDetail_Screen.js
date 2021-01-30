@@ -10,6 +10,7 @@ import Loading_Screen from '../Components/Loading_Screen';
 import ScalableText from 'react-native-text';
 import Response_Size from '../ScriptFile/ResponsiveSize_Script';
 import Money from '../ScriptFile/Money';
+import LicensePlatesCar from '../ScriptFile/LicensePlatesCar';
 
 const List = ({lists}) => {
   return (
@@ -33,12 +34,14 @@ const List = ({lists}) => {
                   fontWeight: 'bold',
                   color: 'red',
                 }}>
-                {DataNull(l.content, l.money)} Đồng
+                {l.content} Đồng
               </ScalableText>
             ) : false || l.weight ? (
               <ScalableText
                 style={{width: '60%', textAlign: 'right', fontWeight: 'bold'}}>
-                {DataNull(l.content)} Kg
+                {DataNull(l.content) == '(trống)'
+                  ? '(trống)'
+                  : Money(l.content) + ' Kg'}
               </ScalableText>
             ) : (
               <ScalableText style={{width: '60%', textAlign: 'right'}}>
@@ -56,7 +59,7 @@ const Components = ({navigationComponents, dataRoute}) => {
   const listItem = [
     {
       title: 'Xe số',
-      content: dataRoute.truct_no,
+      content: LicensePlatesCar('Output', dataRoute.truct_no),
     },
     {
       title: 'Khách hàng',
@@ -76,17 +79,17 @@ const Components = ({navigationComponents, dataRoute}) => {
     },
     {
       title: 'Trọng lượng toàn bộ',
-      content: Money(dataRoute.net_weight),
+      content: dataRoute.net_weight,
       weight: true,
     },
     {
       title: 'Trọng lượng xe',
-      content: Money(dataRoute.weight_1),
+      content: dataRoute.weight_1,
       weight: true,
     },
     {
       title: 'Trọng lượng hàng hoá',
-      content: Money(dataRoute.weight_2),
+      content: dataRoute.weight_2,
       weight: true,
     },
     {

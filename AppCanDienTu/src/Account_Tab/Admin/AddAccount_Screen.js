@@ -67,7 +67,7 @@ const AddAccount_Screen = ({navigation}) => {
       case 'Mật khẩu':
         if (Regex(content, 'password') == false) {
           RNToasty.Error({
-            title: 'Mật khẩu cần ít nhất 8 kí tự và không chứa kí tự đặc biệt',
+            title: 'Mật khẩu cần ít nhất 6 kí tự và không chứa kí tự đặc biệt',
             duration: 1,
           });
           setCheckPass(false);
