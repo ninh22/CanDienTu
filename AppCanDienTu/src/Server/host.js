@@ -10,7 +10,6 @@ const type_API = {
 const host = {
   // Home
   getNumber: type_API.home + 'GetNumber',
-  getInfo: type_API.home + 'GetInfo',
   // Weight
   SearchPhieuCan: type_API.weight + 'SearchPhieuCan',
   // Account

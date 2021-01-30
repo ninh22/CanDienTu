@@ -12,5 +12,4 @@ router.post("/GetNumber", function (req, res) {
     );
   });
 });
-
 module.exports = router;

@@ -32,12 +32,12 @@ const CheckBoxScreen = (boxs) => {
 };
 
 const Login_Screen = ({navigation}) => {
-  const [account, setAccount] = useState('');
-  const [password, setPassword] = useState('');
+  const [account, setAccount] = useState('admin');
+  const [password, setPassword] = useState('123456');
   const [checkAcc, setCheckAcc] = useState(true);
   const [checkPass, setCheckPass] = useState(true);
-  const [statusAcc, setStatusAcc] = useState(false);
-  const [statusPass, setStatusPass] = useState(false);
+  const [statusAcc, setStatusAcc] = useState(true);
+  const [statusPass, setStatusPass] = useState(true);
 
   const [save, setSave] = useState(false);
   const [hide, setHide] = useState(true);
@@ -61,7 +61,7 @@ const Login_Screen = ({navigation}) => {
   const check_Pass = (content) => {
     if (Regex(content, 'password') == false) {
       RNToasty.Error({
-        title: 'Mật khẩu cần ít nhất 6 kí tự và không chứa kí tự đặc biệt',
+        title: 'Mật khẩu cần ít nhất 8 kí tự và không chứa kí tự đặc biệt',
         duration: 1,
       });
       setCheckPass(false);
@@ -93,21 +93,18 @@ const Login_Screen = ({navigation}) => {
           case responseJson == '':
             setShowAlert(true);
             break;
-          case responseJson !== '':
-            navigationProps(
-              responseJson[0].name,
-              responseJson[0].id,
-              responseJson[0].idusergroup,
+          case responseJson !== '' && save == false:
+            navigationProps(responseJson[0].idusergroup, responseJson[0].id);
+            break;
+          case responseJson !== '' && save == true:
+            _storeData(
+              '@Key',
+              JSON.stringify({
+                id: responseJson[0].id,
+                idGroup: responseJson[0].idusergroup,
+              }),
             );
-            if (save == true) {
-              _storeData(
-                '@Key',
-                JSON.stringify({
-                  id: responseJson[0].id,
-                  idGroup: responseJson[0].idusergroup,
-                }),
-              );
-            }
+            navigationProps(responseJson[0].idusergroup, responseJson[0].id);
             break;
         }
       })
@@ -124,16 +121,16 @@ const Login_Screen = ({navigation}) => {
         // ]);
       });
   };
-  const navigationProps = (check, id, idGroup) => {
+  const navigationProps = (check, id) => {
     RNToasty.Success({
       title: 'Đăng nhập thành công',
     });
     switch (check) {
-      case 'Admin':
+      case 0:
         navigation.replace('homeadminscreen', {id: id});
         break;
       default:
-        navigation.replace('homeuserscreen', {id: id, idGroup: idGroup});
+        navigation.replace('homeuserscreen', {id: id, idGroup: check});
         break;
     }
   };
@@ -190,7 +187,8 @@ const Login_Screen = ({navigation}) => {
           title="Đăng nhập"
           disabled={visible_Button()}
           onPress={() => {
-            _Login();
+            navigation.replace('homeadminscreen', {id: 0});
+            //_Login();
           }}
         />
         {/* <View

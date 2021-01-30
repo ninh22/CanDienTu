@@ -42,8 +42,8 @@ const CheckStatusAcc_Screen = ({navigation}) => {
         if (responseJson == '') {
           setShow(true);
         } else {
-          switch (responseJson[0].name) {
-            case 'Admin':
+          switch (idGroup) {
+            case 0:
               navigation.replace('homeadminscreen');
               break;
             default:
@@ -57,6 +57,12 @@ const CheckStatusAcc_Screen = ({navigation}) => {
         RNToasty.Error({
           title: 'Lỗi',
         });
+        // Alert.alert('Thông báo', 'Lỗi', [
+        //   {
+        //     text: 'Xác nhận',
+        //     style: 'cancel',
+        //   },
+        // ]);
       });
   };
   return (

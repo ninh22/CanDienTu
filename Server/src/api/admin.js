@@ -179,7 +179,7 @@ const AddAccount = async (req, res, next) => {
   var username = req.body.username;
   var password = req.body.password;
   var idusergroup = req.body.idusergroup;
-  var iduserrole = 5;
+  var iduserrole = 3;
   password = md5(password + "@haiviet");
   try {
     con.connect(function (err) {
