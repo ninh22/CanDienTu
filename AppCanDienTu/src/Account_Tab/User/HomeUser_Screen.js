@@ -49,17 +49,13 @@ const Item = ({items}) => {
   );
 };
 
-const ItemView = ({items, loading, navigation, data}) => {
+const ItemView = ({items, loading, navigation}) => {
   return (
     <View>
       {items.map((l, i) => (
         <TouchableOpacity
           key={i}
-          onPress={() =>
-            navigation.navigate('overviewscreen', {
-              data: data,
-            })
-          }
+          onPress={() => navigation.navigate(l.nameScreen, l.data)}
           style={{
             width: '100%',
             height: Response_Size('hg', 1, 40, 45),
@@ -204,30 +200,56 @@ const HomeUser_Screen = ({navigation, route}) => {
           title: 'Doanh Thu',
           number: Money(money) + ' VNĐ',
           nameIcon: 'coins',
+          nameScreen: 'detaildiagramscreen',
+          data: {
+            dataDiagram: {title: 'Doanh Thu 7 Ngày Qua', idGroup: idGroup},
+          },
         },
         {
           title: 'Trọng Lượng Hàng',
           number: Money(weight) + ' KG',
           nameIcon: 'weight-hanging',
+          nameScreen: 'detaildiagramscreen',
+          data: {
+            dataDiagram: {title: 'Hàng Hoá 7 Ngày Qua', idGroup: idGroup},
+          },
         },
         {
           title: 'Tổng Phiếu',
           number: total,
           nameIcon: 'clipboard-list',
-          end: true,
+          nameScreen: 'overviewscreen',
+          data: {
+            data: {
+              date_in: keyWordValue,
+              idGroup: idGroup,
+              title: keyWords,
+            },
+          },
         },
       ]
     : [
         {
-          title: 'Doanh thu',
+          title: 'Doanh Thu',
           number: Money(money) + ' VNĐ',
           nameIcon: 'coins',
+          nameScreen: 'detaildiagramscreen',
+          data: {
+            dataDiagram: {title: 'Doanh Thu 7 Ngày Qua', idGroup: idGroup},
+          },
         },
         {
-          title: 'Tổng phiếu',
+          title: 'Tổng Phiếu',
           number: total,
           nameIcon: 'clipboard-list',
-          end: true,
+          nameScreen: 'overviewscreen',
+          data: {
+            data: {
+              date_in: keyWordValue,
+              idGroup: idGroup,
+              title: keyWords,
+            },
+          },
         },
       ];
   const listOption1 = [
@@ -421,11 +443,6 @@ const HomeUser_Screen = ({navigation, route}) => {
                     items={listItem}
                     loading={visibleLoading}
                     navigation={navigation}
-                    data={{
-                      date_in: keyWordValue,
-                      idGroup: idGroup,
-                      title: keyWords,
-                    }}
                   />
                 </View>
               }

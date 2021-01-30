@@ -1,18 +1,18 @@
 /* eslint-disable prettier/prettier */
 import 'react-native-gesture-handler';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, Text, Animated } from 'react-native';
-import { Provider } from 'react-redux';
+
+import {Provider} from 'react-redux';
 import store from './src/Redux/store';
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
-import RNBootSplash, { hide } from 'react-native-bootsplash';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import RNBootSplash from 'react-native-bootsplash';
+import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 
 // Home_Tab
 import Home_Screen from './src/Home_Tab/Home_Screen';
@@ -29,7 +29,7 @@ import Login_Screen from './src/Account_Tab/Login_Screen';
 import CheckStatusAcc_Screen from './src/Account_Tab/CheckStatusAcc_Screen';
 import UserChangePassword_Screen from './src/Account_Tab/UserChangePassword_Screen';
 // Admin
-import HomeAdmin_Screen from './src/Account_Tab/Admin/Screen_HomeAdmin/HomeAdmin_Screen';
+import HomeAdmin_Screen from './src/Account_Tab/Admin/HomeAdmin_Screen';
 import Add_Screen from './src/Account_Tab/Admin/Add_Screen';
 // Admin_UserGroup
 import ListUserGroup_Screen from './src/Account_Tab/Admin/ListUserGroup_Screen';
@@ -47,12 +47,7 @@ import TongQuanUser from './src/TongQuan/TongQuanThongKeUser';
 import UserInfo_Screen from './src/Account_Tab/User/UserInfo_Screen';
 import Overview_Screen from './src/Account_Tab/User/Overview_Screen';
 import DetailDiagram_Screen from './src/Account_Tab/User/DetailDiagram_Screen';
-// Nhân viên
-import Screen_ListNhanVien from './src/Account_Tab/Admin/QuanLyNhanVien/ScreenListNhanVien/Screen_ListNhanVien';
-import Screen_ThemNhanVien from './src/Account_Tab/Admin/QuanLyNhanVien/ScreenThemNhanVien/Screen_ThemNhanVien';
-// Quản lý sản phẩm 
-import ScreenListSanPham from './src/Account_Tab/Admin/QuanLySanPham/Screen_ListSanPham/Screen_QuanLySanPham';
-import ScreenThemSanPham from './src/Account_Tab/Admin/QuanLySanPham/Screen_ThemSanPham/Screen_ThemSanPham';
+
 console.disableYellowBox = true; // Hide Warning
 
 const HomeStack = createStackNavigator();
@@ -132,87 +127,24 @@ const TabScreen = () => {
   return (
     <Tab.Navigator
       initialRouteName="Trang chủ"
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
           let iconName;
           if (route.name === 'Trang chủ') {
             iconName = focused ? 'home' : 'home-outline';
-            if (focused) {
-              return (
-                  <View style={{
-                      width: 120,
-                      backgroundColor: 'rgba(168,230,207,0.9)',
-                      borderRadius: 60,
-                      paddingHorizontal: 10,
-                      paddingVertical: 4,
-                      flexDirection: "row",
-                      alignItems: "center"
-                    }}>
-                    <Icon name={iconName} size={size} color={color} />
-                    <Text style={{ flex: 1, textAlign: "center", fontWeight: "bold" }}>{route.name}</Text>
-                  </View>
-              );
-            }
           } else if (route.name === 'Tra cứu') {
             iconName = focused ? 'md-search-sharp' : 'md-search-outline';
-         
-            if (focused) {
-              return (
-                
-                  <View style={
-                    {
-                      width: 120,
-                      backgroundColor: 'rgba(168,230,207,0.9)',
-                      borderRadius: 60,
-                      paddingHorizontal: 10,
-                      paddingVertical: 4,
-                      flexDirection: "row",
-                      alignItems: "center"
-                    }}>
-                    <Icon name={iconName} size={size} color={color} />
-                    <Text style={{ flex: 1, textAlign: "center", fontWeight: "bold" }}>{route.name}</Text>
-                  </View>
-               
-              );
-            }
           } else if (route.name === 'Tài khoản') {
             iconName = focused
               ? 'md-person-circle'
               : 'md-person-circle-outline';
-           
-            if (focused) {
-              return (
-                
-                  <View style={
-                    {
-                      width: 120,
-                      backgroundColor: 'rgba(168,230,207,0.9)',
-                      borderRadius: 60,
-                      paddingHorizontal: 10,
-                      paddingVertical: 4,
-                      flexDirection: "row",
-                      alignItems: "center"
-                    }}>
-                    <Icon name={iconName} size={size} color={color} />
-                    <Text style={{ flex: 1, textAlign: "center", fontWeight: "bold" }}>{route.name}</Text>
-                  </View>
-                
-              );
-            }
           }
-          return (
-            <Icon name={iconName} size={size} color={color} />
-          );
           // You can return any component that you like here!
-
+          return <Icon name={iconName} size={size} color={color} />;
         },
-        tabBarLabel: () => {
-          return null
-        }
       })}
       tabBarOptions={{
-
-        activeTintColor: 'white',
+        activeTintColor: '#309045',
         inactiveTintColor: 'gray',
         keyboardHidesTabBar: true,
       }}>
@@ -229,8 +161,8 @@ const TabAccountScreen = () => {
   return (
     <TabAccount.Navigator
       initialRouteName="Tài khoản"
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
           let iconName;
           if (route.name === 'Trang chủ') {
             iconName = focused ? 'home' : 'home-outline';
@@ -329,22 +261,6 @@ const listStack = [
     name: 'detaildiagramscreen',
     component: DetailDiagram_Screen,
   },
-  {
-    name:'screenlistnhanvien',
-    component:Screen_ListNhanVien,
-  },
-  {
-    name:'screenthemnhanvien',
-    component:Screen_ThemNhanVien,
-  },
-  {
-    name:'screenListSanPham',
-    component:ScreenListSanPham,
-  },
-  {
-    name:'screenThemSanPham',
-    component:ScreenThemSanPham,
-  }
 ];
 
 const Stack = createStackNavigator();
@@ -370,7 +286,7 @@ const App = () => {
   };
   useEffect(() => {
     init().finally(() => {
-      RNBootSplash.hide({ duration: 1000 });
+      RNBootSplash.hide({duration: 1000});
     });
   });
   return (
@@ -381,8 +297,8 @@ const App = () => {
             {checkLogin ? (
               <Stack.Screen name="tab" component={TabAccountScreen} />
             ) : (
-                <Stack.Screen name="tab" component={TabScreen} />
-              )}
+              <Stack.Screen name="tab" component={TabScreen} />
+            )}
             {listStack.map((l, i) => (
               <Stack.Screen key={i} name={l.name} component={l.component} />
             ))}

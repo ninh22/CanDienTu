@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Card, Button} from 'react-native-elements';
 import Input from '../Components/Input';
@@ -16,7 +16,7 @@ const Search_Screen = ({navigation}) => {
   const checkText = (content) => {
     if (Regex(content, 'licensePlates') == false) {
       RNToasty.Error({
-        title: 'Nội dung không chứa các ký tự đặc biệt',
+        title: 'Nội dung không được để trống và không chứa các ký tự đặc biệt',
         duration: 1,
       });
       setCheck(false);
@@ -32,7 +32,7 @@ const Search_Screen = ({navigation}) => {
         <Input
           heightParent={40}
           heightI={18}
-          placeHolder="Nhập biển số xe"
+          placeHolder="Nhập 5 số cuối biển số xe"
           nameIcon="car"
           value={text}
           check={check}

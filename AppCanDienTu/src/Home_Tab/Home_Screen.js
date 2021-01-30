@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unreachable */
 /* eslint-disable react-native/no-inline-styles */
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -10,6 +10,8 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
+import host from '../Server/host';
+import {RNToasty} from 'react-native-toasty';
 import Response_Size from '../ScriptFile/ResponsiveSize_Script';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
@@ -18,6 +20,7 @@ import ScalableText from 'react-native-text';
 import CallButton from '../Components/CallButton';
 
 const Home_Screen = ({navigation}) => {
+  const [info, setInfo] = useState('');
   const listItem_Service = [
     {
       title: 'DỊCH VỤ KHÁCH HÀNG 24/7',
@@ -136,20 +139,20 @@ const Home_Screen = ({navigation}) => {
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              backgroundColor: 'white',
+              backgroundColor: '#fff',
               marginBottom: 5,
             }}>
             <Image
               resizeMode={'center'}
               source={require('../Images/logo2.png')}
-              style={{height: 200, width: 200}}></Image>
+              style={{height: 250, width: 400}}></Image>
           </View>
 
           <ListItem
             title="SẢN PHẨM"
             data={
               <Swiper
-                height={"100%"} //200
+                height={'100%'} //200
                 autoplay={true}
                 loop={true}
                 autoplayTimeout={4}
@@ -243,7 +246,7 @@ const Home_Screen = ({navigation}) => {
                       marginBottom: '1%',
                     },
                   ]}>
-                  CÂN ĐIỆN TỬ QUỐC HƯNG
+                  Cân điện tử Quốc Hưng
                 </ScalableText>
                 <ScalableText
                   style={[
@@ -252,15 +255,31 @@ const Home_Screen = ({navigation}) => {
                       fontSize: 15,
                     },
                   ]}>
-                  Cung cấp đa dạng và phù hợp với hoạt động kinh doanh của khách
-                  hàng
+                  Đ/c: 78 Mười Tháng Ba, Tp. Buôn Ma Thuột, T. Đăk Lăk
+                </ScalableText>
+                <ScalableText
+                  style={[
+                    styles.img_title,
+                    {
+                      fontSize: 15,
+                    },
+                  ]}>
+                  Tel: 02623 821 888
+                </ScalableText>
+                <ScalableText
+                  style={[
+                    styles.img_title,
+                    {
+                      fontSize: 15,
+                    },
+                  ]}>
+                  Hotline: 09819 12347
                 </ScalableText>
               </View>
             </View>
           </View>
         </View>
       </ScrollView>
-      <CallButton />
     </SafeAreaView>
   );
 };
@@ -343,8 +362,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   ServiceView_Image: {
-    width: 37,//40
-    height: 37,//40
+    width: 37, //40
+    height: 37, //40
     borderRadius: 30,
     padding: '5%',
     borderWidth: 1,
