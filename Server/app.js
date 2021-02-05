@@ -19,15 +19,7 @@ var con = mysql.createConnection({
 });
 
 // Import API
-var { admin, users, account, weight, home } = require("./src/api/index");
+var api = require("./src/api");
 
-// Home
-app.use("/Home", home);
-// Weight
-app.use("/Weight", weight);
-// Account
-app.use("/Account", account);
-// Admin
-app.use("/Admin", admin);
-// User
-app.use("/Users", users);
+// API
+app.use(api);
