@@ -12,3 +12,8 @@ export {
   getNumAccAction,
   reduceNumAccAction,
 } from './NumberAccount/NumAccAction';
+export {
+  getNhanVienAction,
+  deleteNhanVienAction,
+  editNhanVienAction,
+} from './NhanVien/NhanVienAction';

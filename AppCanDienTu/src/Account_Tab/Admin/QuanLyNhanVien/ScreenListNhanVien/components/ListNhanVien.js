@@ -13,7 +13,7 @@ function ListNhanVien() {
     useEffect(() => {
         getListNhanVien();
     }, []);
-
+    
     const getListNhanVien = async () => {
         return fetch(host.getAllNhanVien, {
             method: 'POST',
@@ -25,7 +25,6 @@ function ListNhanVien() {
                 page: pagenumber,
                 limit: numberlimit,
             })
-
         })
             .then((response) => response.json())
             .then((responseJson) => {

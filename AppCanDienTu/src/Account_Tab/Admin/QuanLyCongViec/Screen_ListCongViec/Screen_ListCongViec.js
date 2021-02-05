@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Dimensions, StyleSheet, FlatList, TouchableOpacity, SafeAreaView, Image, Text } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import {connect} from 'react-redux';
 import HeaderCongViec from './component/Header_CongViec';
 import ListDateOnMonth from './component/ListDateOnMonth';
+import ListCongViec from './component/ListCongViec';
+
 const size = Dimensions.get('window');
 function ScreenListCongViec(props) {
     const { navigation } = props;
@@ -12,13 +14,13 @@ function ScreenListCongViec(props) {
             <View style={styles.content}>
                 <ListDateOnMonth />
                 <View style={styles.view_listcongviec}>
-        
+                <ListCongViec />
                 </View>
             </View>
         </SafeAreaView>
     );
 }
-export default ScreenListCongViec;
+export default connect()(ScreenListCongViec);
 const styles = StyleSheet.create({
     container: {
         flex: 1,

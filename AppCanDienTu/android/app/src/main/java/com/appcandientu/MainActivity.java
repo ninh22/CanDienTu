@@ -1,4 +1,4 @@
-package com.appcandientu;
+package com.appcandientuQuocHung;
 
 import com.facebook.react.ReactActivity;
 

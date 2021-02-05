@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Dimensions, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import { View, Dimensions, Text, TouchableOpacity, StyleSheet, TextInput, Image } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 const size = Dimensions.get("window");
 
@@ -14,7 +14,7 @@ function BottomSheetThemLoaiNV(props) {
                     <Text style={{ fontSize: 11, color: "gray" }}>{title}</Text>
                 </View>
                 <TouchableOpacity style={styles.buttonclick} onPress={onPress}>
-                    <Text style={{ color: "green", fontSize: 15 }}>X</Text>
+                    <Image resizeMode={'cover'} style={styles.image_close} source={require('../../../../../Images/Icons/icons_closebottom.png')}></Image>
                 </TouchableOpacity>
             </View>
             <View style={{ padding: 16 }}>
@@ -47,7 +47,8 @@ const styles = StyleSheet.create({
         height: "100%",
         width: 80,
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "flex-end",
+        paddingRight: 15,
     },
     view_title: {
         fontSize: 15,
@@ -71,5 +72,10 @@ const styles = StyleSheet.create({
         marginTop: 20,
         borderRadius: 5,
         backgroundColor: "rgba(168,230,207,0.5)",
+    },
+    image_close: {
+        width: 20,
+        height: 20,
+        tintColor:'gray'
     }
 });

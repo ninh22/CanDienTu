@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Dimensions, Image } from 'react-native';
 import { View, StyleSheet, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import RBSheet from "react-native-raw-bottom-sheet";
+import BottomDetailNv from './Item_BottomDetailNv';
+
+
 const size = Dimensions.get("screen");
 function ItemNhanVien(props) {
     const { item } = props.item;
+    const refRBSheetDetailNV = useRef("ChiTietNhanVien");
     return (
-        <View style={style_nhanvien.view_container}>
+        <TouchableOpacity style={style_nhanvien.view_container} onPress={() => refRBSheetDetailNV.current.open()}>
             <View style={style_nhanvien.image_avata}>
                 <Text style={{ fontWeight: "bold", fontSize: 17 }}>{item.ten_NV.substr(0, 1).toUpperCase()}</Text>
             </View>
@@ -21,13 +26,20 @@ function ItemNhanVien(props) {
                     <Text>{item.diachi_NV}</Text>
                 </View>
             </View>
-            <View style={style_nhanvien.view_menu}>
-                <TouchableOpacity onPress={() => alert("thông tin")}>
-                    <Image style={style_nhanvien.image_menu} source={require('../../../../../Images/Icons/icons_menu.png')}></Image>
-                </TouchableOpacity>
-            </View>
-
-        </View>
+            {/*bottom thông tin nhân viên */}
+            <RBSheet
+                height={size.height * 0.7}
+                ref={refRBSheetDetailNV}
+                customStyles={{
+                    container: {
+                        borderTopLeftRadius: 10,
+                        borderTopRightRadius: 10,
+                    }
+                }}
+                closeOnPressMask={true}>
+                <BottomDetailNv onPress={()=>refRBSheetDetailNV.current.close()}/>
+            </RBSheet>
+        </TouchableOpacity>
     );
 }
 export default ItemNhanVien;
@@ -72,5 +84,5 @@ const style_nhanvien = StyleSheet.create({
         marginLeft: 10,
     },
     image_menu: { height: 20, width: 20 },
-    title_tennhanvien:{ fontSize: 17, fontWeight: "bold", marginBottom: 10 },
+    title_tennhanvien: { fontSize: 17, fontWeight: "bold", marginBottom: 10 },
 });
