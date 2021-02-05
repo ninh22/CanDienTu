@@ -3,7 +3,7 @@ import { View, Dimensions, Text, TouchableOpacity, StyleSheet } from 'react-nati
 import { FlatList } from 'react-native-gesture-handler';
 const size = Dimensions.get("window");
 
-function BottomSheet(props) {
+function BottomSheetLoaiNV(props) {
     const { onPress, title, key, data, getfunction } = props;
     const [checkvitri, setcheckvitri] = useState('');
     const [namelocation, setNameLoaction] = useState('');
@@ -33,16 +33,16 @@ function BottomSheet(props) {
                         return (
                             <TouchableOpacity onPress={() => {
 
-                                setcheckvitri(item.item.code);
-                                setNameLoaction(item.item.name);
+                                setcheckvitri(item.item.id_loaiNV);
+                                setNameLoaction(item.item.ten_loaiNV);
 
                             }}>
-                                <View style={[styles.view_item, { backgroundColor: checkvitri == item.item.code ? 'rgba(168,230,207,0.2)' : null }]}>
+                                <View style={[styles.view_item, { backgroundColor: checkvitri == item.item.id_loaiNV ? 'rgba(168,230,207,0.2)' : null }]}>
                                     <Text style={{
-                                        color:checkvitri == item.item.code ? 'green' : 'black',
+                                        color:checkvitri == item.item.id_loaiNV ? 'green' : 'black',
                                         fontSize:15,
-                                        fontWeight:checkvitri == item.item.code ? 'bold' : 'normal',
-                                         }}>{item.item.name}</Text>
+                                        fontWeight:checkvitri == item.item.id_loaiNV ? 'bold' : 'normal',
+                                         }}>{item.item.ten_loaiNV}</Text>
                                 </View>
                             </TouchableOpacity>
                         );
@@ -55,7 +55,7 @@ function BottomSheet(props) {
     );
 
 }
-export default BottomSheet;
+export default BottomSheetLoaiNV;
 const styles = StyleSheet.create({
     view_header: {
         height: 40,

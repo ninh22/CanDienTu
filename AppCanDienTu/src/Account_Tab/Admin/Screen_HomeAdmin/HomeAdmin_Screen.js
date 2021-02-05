@@ -20,7 +20,7 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import ScalableText from 'react-native-text';
 import _removeData from '../../../ScriptFile/Logout';
 import { ProgressCircle } from 'react-native-svg-charts';
-import ViewCongViecHomNay from '../QuanLyCongViec/CongViecHomNay';
+import ViewCongViecHomNay from '../QuanLyCongViec/CongViecHomNay/CongViecHomNay';
 import AnimatedHeader from './components/AnimatedHeader';
 import { SafeAreaView } from 'react-native';
 const size = Dimensions.get("window");
@@ -63,7 +63,7 @@ const HomeAdmin_Screen = ({ navigation, route }) => {
   };
   return (
     <SafeAreaView>
-      <StatusBar barStyle = "light-content" hidden = {false} backgroundColor = "#309045"/>
+      <StatusBar barStyle="light-content" hidden={false} backgroundColor="#309045" />
       <AnimatedHeader animatedValue={offset} />
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -112,7 +112,7 @@ const HomeAdmin_Screen = ({ navigation, route }) => {
                   title="Công việc"
                   typeIcon={false}
                   nameIcon="ios-git-branch"
-                  onPress={() => navigation.navigate('addscreen')}
+                  onPress={() => navigation.navigate('screenListCongViec')}
                 />
                 <Item
                   title="Sản phẩm"
@@ -203,19 +203,21 @@ const HomeAdmin_Screen = ({ navigation, route }) => {
             />
           </View>
           <View style={{ borderTopWidth: 1, borderColor: "#f4f4f8", marginBottom: 20, marginHorizontal: size.width * 0.1 }}></View>
-          <View style={{ flexDirection: "row", flex: 1, marginBottom: 20,paddingHorizontal:5 }}>
+          <View style={{ flexDirection: "row", flex: 1, marginBottom: 20, paddingHorizontal: 5 }}>
             <View style={styles.view_title}>
               <Image
                 source={require('../../../Images/Icons/icons_git.png')}
                 resizeMode="cover"
                 style={{ height: 25, width: 25 }}
               />
-              <Text style={{ fontSize: 17, fontWeight: "bold", marginLeft: 10, color: "#343d46" }}>Công việc mới</Text>
+              <Text style={{ fontSize: 17, fontWeight: "bold", marginLeft: 10, color: "#343d46" }}>Công việc hôm nay</Text>
             </View>
-            <View style={{ flex: 1,flexDirection:"row",justifyContent:"flex-end" }}>
-              <View style={[styles.view_title,{paddingHorizontal:10}]}>
-                <Text>Xem thêm {">>"}</Text>
-              </View>
+            <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end" }}>
+              <TouchableOpacity onPress={()=>navigation.navigate('screenListCongViec')}>
+                <View style={[styles.view_title, { paddingHorizontal: 10 }]}>
+                  <Text style={{color:'green',fontWeight:'bold'}}>Xem thêm {">"}</Text>
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
           <ViewCongViecHomNay />
@@ -297,6 +299,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     padding: 5,
     borderRadius: 5,
+    paddingHorizontal:10,
   }
 
 });

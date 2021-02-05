@@ -6,6 +6,7 @@ const type_API = {
   account: https + 'Account/',
   admin: https + 'Admin/',
   users: https + 'Users/',
+  nhanvien:https+'NhanVien',
 };
 const host = {
   // Home
@@ -23,11 +24,16 @@ const host = {
   getAllUsersGroup: type_API.admin + 'GetAllUsersGroup',
   getAllWeightAppType: type_API.admin + 'GetAllWeightAppType',
   getAllAppTypes: type_API.admin + 'GetAllAppTypes',
+ 
   countUsersOfUsersGroup: type_API.admin + 'CountUsersOfUsersGroup',
   searchUsers: type_API.admin + 'SearchUsers',
   deleteUsers: type_API.admin + 'DeleteUsers',
   addUsersGroup: type_API.admin + 'AddUsersGroup',
   addAccount: type_API.admin + 'AddAccount',
+  // Nhan vien
+  getAllNhanVien:type_API.nhanvien+'/DanhSachNhanVien',
+  getAllLoaiNhanVien:type_API.nhanvien+'/DanhSachLoaiNhanVien',
+  addNhanVien:type_API.nhanvien+'/ThemNhanVienMoi',
   // Users
   weightAppType: type_API.users + 'WeightAppType',
   userOverview: type_API.users + 'UserOverview',
@@ -35,6 +41,7 @@ const host = {
   userDiagramProgress: type_API.users + 'UserDiagramProgress',
   searchDiagramMap: type_API.users + 'SearchDiagramMap',
   searchDiagramProgress: type_API.users + 'SearchDiagramProgress',
+
 };
 
 export default host;

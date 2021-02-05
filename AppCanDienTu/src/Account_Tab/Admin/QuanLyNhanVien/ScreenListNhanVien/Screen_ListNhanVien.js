@@ -3,6 +3,7 @@ import { Dimensions } from 'react-native';
 import { View, StyleSheet, SafeAreaView, Image, TextInput, StatusBar, TouchableOpacity, Text, FlatList } from 'react-native';
 import HeaderNhanVien from './components/Header_NhanVien';
 import ListNhanVien from '../ScreenListNhanVien/components/ListNhanVien';
+
 const size = Dimensions.get("window");
 function ScreenListNhanVien(props) {
     const { navigation } = props;

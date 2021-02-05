@@ -1,17 +1,60 @@
 import React, { useState, useEffect } from 'react';
 import { Dimensions } from 'react-native';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import ItemNhanVien from './Item_NhanVien';
+import host from '../../../../../Server/host';
 const size = Dimensions.get("screen");
-const DATA_NHANVIEN = [
-    { id_NV: 0, ten_NV: "Nguyễn Hữu Hai", ngaysinh_NV: "01/04/2000", soCMND_NV: "241856547", sdt_NV: "0346508759", diachi_NV: "Eakar,DakLak", email_NV: "huuhai880@gmail.com", ngayvaolam_NV: "01/04/1989", id_loaiNV: "0" },
-    { id_NV: 1, ten_NV: "Nguyễn Hữu Hai", ngaysinh_NV: "01/04/2000", soCMND_NV: "241856547", sdt_NV: "0346508759", diachi_NV: "Eakar,DakLak", email_NV: "huuhai880@gmail.com", ngayvaolam_NV: "01/04/1989", id_loaiNV: "0" },
-    { id_NV: 2, ten_NV: "Phạm văn A", ngaysinh_NV: "01/04/2000", soCMND_NV: "241856547", sdt_NV: "0346508759", diachi_NV: "Eakar,DakLak", email_NV: "huuhai880@gmail.com", ngayvaolam_NV: "01/04/1989", id_loaiNV: "0" },
-    { id_NV: 3, ten_NV: "Trần Thị B", ngaysinh_NV: "01/04/2000", soCMND_NV: "241856547", sdt_NV: "0346508759", diachi_NV: "Eakar,DakLak", email_NV: "huuhai880@gmail.com", ngayvaolam_NV: "01/04/1989", id_loaiNV: "0" },
-];
-
 function ListNhanVien() {
+    const [DATA_NHANVIEN, setDATA_NHANVIEN] = useState([]);
+    const [pagenumber, setPageNumber] = useState(1);
+    const [numberlimit, setNumberLimit] = useState(10);
+    const [visibleLoadMore, setvisibleLoadMore] = useState(false)
+    useEffect(() => {
+        getListNhanVien();
+    }, []);
+
+    const getListNhanVien = async () => {
+        return fetch(host.getAllNhanVien, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                page: pagenumber,
+                limit: numberlimit,
+            })
+
+        })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                switch (responseJson.check) {
+                    case 'notfull':
+                        DATA_NHANVIEN == null ? setDATA_NHANVIEN(...responseJson.data) : setDATA_NHANVIEN(DATA_NHANVIEN.concat(responseJson.data));
+                        setvisibleLoadMore(false);
+                        break;
+                    case 'full':
+                        DATA_NHANVIEN == null ? setDATA_NHANVIEN(...responseJson.data) : setDATA_NHANVIEN(DATA_NHANVIEN.concat(responseJson.data));
+                        setvisibleLoadMore(false);
+                        break;
+                    case 'maxfull':
+                        setvisibleLoadMore(false);
+                        break;
+                    default:
+                        setDATA_NHANVIEN([]);
+                        setvisibleLoadMore(false);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+    function handleLoadMore() {
+        setPageNumber(parseInt(pagenumber + 1));
+        getListNhanVien();
+        setvisibleLoadMore(true);
+    }
     return (
         <View style={styles.container}>
             <FlatList
@@ -22,7 +65,31 @@ function ListNhanVien() {
                         <ItemNhanVien item={item}></ItemNhanVien>
                     )
                 }}
-                keyExtractor={item => item.id}
+                keyExtractor={(item, index) => index.toString()}
+                onEndReached={() => handleLoadMore()}
+                onEndReachedThreshold={1}
+                ListFooterComponent={
+                    <View style={{ padding: '1%' }}>
+                        {visibleLoadMore ? (
+                            <View
+                                style={{
+                                    width: '100%',
+                                    height: 40,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}>
+                                <Image
+                                    style={{
+                                        width: 40,
+                                        height: 40,
+                                    }}
+                                    source={require('../../../../../Images/loading/Spin-1s-200px.gif')}
+                                />
+                            </View>
+                        ) : null}
+                    </View>
+
+                }
             />
         </View>
     );

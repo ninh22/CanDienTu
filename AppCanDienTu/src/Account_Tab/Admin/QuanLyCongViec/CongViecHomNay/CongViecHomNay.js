@@ -5,9 +5,9 @@ import { FlatList } from 'react-native-gesture-handler';
 import ItemCongViec from './component/Item_ListCongviec';
 const size=Dimensions.get("screen");
 const DATA_CONGVIEC=[
-    {id:1,Ten:"Công việc một",loaicongviec:"rgba(168,230,207,0.7)"},
-    {id:2,Ten:"Tên công việc hai",loaicongviec:"rgba(255,249,170,0.7)"},
-    {id:3,Ten:"Tên công việc ba",loaicongviec:"rgba(255,117,109,0.7)"},
+    {id:1,Ten:"Công việc một",loaicongviec:"rgba(168,230,207,0.2)",color:'rgb(168,230,207)',status:1},
+    {id:2,Ten:"Tên công việc hai",loaicongviec:"rgba(255,127,80,0.2)",color:'rgb(255,127,80)',status:0},
+    {id:3,Ten:"Tên công việc ba",loaicongviec:"rgba(132,193,255,0.2)",color:'rgb(132,193,255)',status:0},
 ];
 
 function CongViecHomNay() {
