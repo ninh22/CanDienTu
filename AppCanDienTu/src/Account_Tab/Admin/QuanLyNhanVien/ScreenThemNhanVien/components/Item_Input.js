@@ -2,25 +2,29 @@ import React from 'react';
 import { View, StyleSheet, SafeAreaView, Image, TextInput, StatusBar, TouchableOpacity, Text, FlatList } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 function ItemInput(props) {
-    const { title, placeholder, dropdown, readOnly,onPress } = props;
+    const { title, placeholder, dropdown, readOnly, onPress, onchange, value } = props;
 
     return (
         <View style={styles.container}>
             <Text style={styles.view_title}>{title}</Text>
             <View style={styles.view_input}>
                 {dropdown == true ?
-                    <TouchableOpacity onPress={onPress} style={{flex:1}}>
+                    <TouchableOpacity onPress={onPress} style={{ flex: 1 }}>
                         <TextInput
+                            value={value}
                             editable={readOnly}
-                            style={{ flex: 1 }}
+                            style={{ flex: 1, color: 'black' }}
                             placeholder={placeholder}
+
                         ></TextInput>
                     </TouchableOpacity>
                     :
                     <TextInput
+                        value={value}
                         editable={readOnly}
                         style={{ flex: 1 }}
                         placeholder={placeholder}
+                        onChangeText={onchange}
                     ></TextInput>}
 
                 {dropdown == true ? <Image style={styles.image_dropdown} source={require('../../../../../Images/Icons/icons_sortdown.png')}></Image> :

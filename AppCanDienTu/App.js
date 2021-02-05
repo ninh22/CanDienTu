@@ -53,6 +53,10 @@ import Screen_ThemNhanVien from './src/Account_Tab/Admin/QuanLyNhanVien/ScreenTh
 // Quản lý sản phẩm 
 import ScreenListSanPham from './src/Account_Tab/Admin/QuanLySanPham/Screen_ListSanPham/Screen_QuanLySanPham';
 import ScreenThemSanPham from './src/Account_Tab/Admin/QuanLySanPham/Screen_ThemSanPham/Screen_ThemSanPham';
+
+// Quản lý công việc
+
+import ScreenListCongViec from './src/Account_Tab/Admin/QuanLyCongViec/Screen_ListCongViec/Screen_ListCongViec';
 console.disableYellowBox = true; // Hide Warning
 
 const HomeStack = createStackNavigator();
@@ -344,6 +348,10 @@ const listStack = [
   {
     name:'screenThemSanPham',
     component:ScreenThemSanPham,
+  },
+  {
+    name:'screenListCongViec',
+    component:ScreenListCongViec
   }
 ];
 

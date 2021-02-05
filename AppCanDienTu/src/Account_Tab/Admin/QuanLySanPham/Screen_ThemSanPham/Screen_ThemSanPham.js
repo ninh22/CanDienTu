@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Dimensions, StyleSheet, FlatList, TouchableOpacity, SafeAreaView, Image, Text } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
