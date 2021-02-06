@@ -16,4 +16,5 @@ export {
   getNhanVienAction,
   deleteNhanVienAction,
   editNhanVienAction,
+  loadmoreNhanVienAction,
 } from './NhanVien/NhanVienAction';

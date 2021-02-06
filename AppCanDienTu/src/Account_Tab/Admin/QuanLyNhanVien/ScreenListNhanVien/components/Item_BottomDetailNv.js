@@ -4,7 +4,7 @@ import { View, Dimensions, StyleSheet, TouchableOpacity, Text } from 'react-nati
 import { ScrollView } from 'react-native-gesture-handler';
 const size = Dimensions.get('window');
 function BottomDetailNv(props) {
-    const { onPress } = props;
+    const { onPress,item } = props;
     return (
         <View style={styles.container}>
             <View style={styles.view_header}>
@@ -24,9 +24,9 @@ function BottomDetailNv(props) {
                     <ScrollView>
                         <View style={styles.view_detail}>
                             <View style={styles.view_avatar}>
-                                <Text>N</Text>
+                                <Text>{item.ten_NV.substr(0, 1).toUpperCase()}</Text>
                             </View>
-                            <Text style={styles.title_name}>Nguyễn Văn A</Text>
+                            <Text style={styles.title_name}>{item.ten_NV}</Text>
                         </View>
                     </ScrollView>
                 </View>
