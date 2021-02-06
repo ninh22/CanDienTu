@@ -18,8 +18,11 @@ import ScalableText from 'react-native-text';
 import {RNToasty} from 'react-native-toasty';
 import Money from '../ScriptFile/Money';
 import LicensePlatesCar from '../ScriptFile/LicensePlatesCar';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const Result_Screen = ({navigation, route}) => {
+  const {view_notes, txt_notes} = styles;
+
   const [visible, setVisible] = useState(true);
   const [visibleLoadMore, setVisibleLoadMore] = useState(false);
 
@@ -105,6 +108,12 @@ const Result_Screen = ({navigation, route}) => {
           style={styles.img}
           resizeMode="cover"
         />
+        {item.notes == 'phieu sai' ? (
+          <View style={view_notes}>
+            <Icon name="information-circle" size={20} color="#fff" />
+            <TextS text="phiếu sai" style={txt_notes} />
+          </View>
+        ) : null}
       </View>
       <View style={[styles.view_content, {width: '70%'}]}>
         <TextS text={DataNull(item.customer_name)} />
@@ -253,6 +262,23 @@ const styles = StyleSheet.create({
     height: Response_Size('hg', 0, 90),
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  view_notes: {
+    width: '100%',
+    backgroundColor: 'red',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '1%',
+    position: 'absolute',
+    zIndex: 1,
+    top: 0,
+    borderTopLeftRadius: 10,
+  },
+  txt_notes: {
+    color: 'white',
+    fontWeight: 'bold',
+    marginLeft: '1%',
   },
 });
 
