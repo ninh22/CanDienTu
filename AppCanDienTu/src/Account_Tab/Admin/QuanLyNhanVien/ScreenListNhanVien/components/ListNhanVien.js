@@ -5,6 +5,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { useSelector, useDispatch } from 'react-redux';
 import ItemNhanVien from './Item_NhanVien';
 import host from '../../../../../Server/host';
+
 import {
     getNhanVienAction,
     loadmoreNhanVienAction
@@ -22,6 +23,7 @@ function ListNhanVien() {
         getListNhanVien();
     }, []);
    
+
     const getListNhanVien = async () => {
         return fetch(host.getAllNhanVien, {
             method: 'POST',
@@ -38,6 +40,7 @@ function ListNhanVien() {
             .then((responseJson) => {
                 switch (responseJson.check) {
                     case 'notfull':
+
                         if (DATA_NHANVIEN.length==0) {
                             getNhanVien(responseJson.data);
                         } else {
@@ -51,6 +54,7 @@ function ListNhanVien() {
                         } else {
                             loadNhanVienAction(responseJson.data);
                         }
+
                         setvisibleLoadMore(false);
                         break;
                     case 'maxfull':
@@ -63,6 +67,8 @@ function ListNhanVien() {
             .catch((err) => {
                 console.log(err);
             });
+
+
 
     }
     function handleLoadMore() {
@@ -80,7 +86,9 @@ function ListNhanVien() {
                         <ItemNhanVien item={item}></ItemNhanVien>
                     )
                 }}
+
                 keyExtractor={(item, index) => item.id_NV}
+
                 onEndReached={() => handleLoadMore()}
                 onEndReachedThreshold={1}
                 ListFooterComponent={

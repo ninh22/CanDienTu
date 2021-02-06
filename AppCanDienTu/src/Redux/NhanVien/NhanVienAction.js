@@ -1,3 +1,4 @@
+
 import { GET_NHANVIEN, EDIT_NHANVIEN, DELETE_NHANVIEN,LOADMORE_NHANVIEN } from './NhanVienActionTypes';
 
 
@@ -27,3 +28,4 @@ export const loadmoreNhanVienAction = (parameter) => {
     payload: parameter,
   };
 };
+

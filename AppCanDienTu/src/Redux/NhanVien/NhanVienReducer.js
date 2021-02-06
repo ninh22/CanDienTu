@@ -1,3 +1,4 @@
+
 import { GET_NHANVIEN, EDIT_NHANVIEN, DELETE_NHANVIEN, LOADMORE_NHANVIEN } from './NhanVienActionTypes';
 
 //initializing state
@@ -18,9 +19,12 @@ const nhanvienReducer = (state = initialState, action) => {
       console.log(state)
       return (state = state.concat(action.payload));
       break;
+
     default:
       return state;
   }
 };
 
+
 export default nhanvienReducer;
+

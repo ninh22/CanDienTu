@@ -24,9 +24,11 @@ function BottomDetailNv(props) {
                     <ScrollView>
                         <View style={styles.view_detail}>
                             <View style={styles.view_avatar}>
+
                                 <Text>{item.ten_NV.substr(0, 1).toUpperCase()}</Text>
                             </View>
                             <Text style={styles.title_name}>{item.ten_NV}</Text>
+
                         </View>
                     </ScrollView>
                 </View>

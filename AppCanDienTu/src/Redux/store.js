@@ -10,8 +10,10 @@ const rootReducer = combineReducers({
   userGroupReducer: userGroupReducer,
   userReducer: userReducer,
   numAccReducer: numAccReducer,
+
   nhanvienReducer: nhanvienReducer,
   WorkReducer: WorkReducer,
+
 });
 
 const store = createStore(rootReducer);
