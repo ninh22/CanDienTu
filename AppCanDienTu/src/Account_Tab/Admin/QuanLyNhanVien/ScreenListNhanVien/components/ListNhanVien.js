@@ -2,18 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { Dimensions } from 'react-native';
 import { View, StyleSheet, Image } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
+import { useSelector, useDispatch } from 'react-redux';
 import ItemNhanVien from './Item_NhanVien';
 import host from '../../../../../Server/host';
+
+import {
+    getNhanVienAction,
+    loadmoreNhanVienAction
+} from '../../../../../Redux/index';
 const size = Dimensions.get("screen");
 function ListNhanVien() {
-    const [DATA_NHANVIEN, setDATA_NHANVIEN] = useState([]);
     const [pagenumber, setPageNumber] = useState(1);
     const [numberlimit, setNumberLimit] = useState(10);
-    const [visibleLoadMore, setvisibleLoadMore] = useState(false)
+    const [visibleLoadMore, setvisibleLoadMore] = useState(false);
+    const dispatch = useDispatch();
+    let DATA_NHANVIEN = useSelector((state) => state.nhanvienReducer);
+    const getNhanVien = (item) => dispatch(getNhanVienAction(item));
+    const loadNhanVienAction = (item) => dispatch(loadmoreNhanVienAction(item));
     useEffect(() => {
         getListNhanVien();
     }, []);
-    
+   
+
     const getListNhanVien = async () => {
         return fetch(host.getAllNhanVien, {
             method: 'POST',
@@ -30,24 +40,36 @@ function ListNhanVien() {
             .then((responseJson) => {
                 switch (responseJson.check) {
                     case 'notfull':
-                        DATA_NHANVIEN == null ? setDATA_NHANVIEN(...responseJson.data) : setDATA_NHANVIEN(DATA_NHANVIEN.concat(responseJson.data));
+
+                        if (DATA_NHANVIEN.length==0) {
+                            getNhanVien(responseJson.data);
+                        } else {
+                            loadNhanVienAction(responseJson.data);
+                        }
                         setvisibleLoadMore(false);
                         break;
                     case 'full':
-                        DATA_NHANVIEN == null ? setDATA_NHANVIEN(...responseJson.data) : setDATA_NHANVIEN(DATA_NHANVIEN.concat(responseJson.data));
+                        if (DATA_NHANVIEN.length==0) {
+                            getNhanVien(responseJson.data);
+                        } else {
+                            loadNhanVienAction(responseJson.data);
+                        }
+
                         setvisibleLoadMore(false);
                         break;
                     case 'maxfull':
                         setvisibleLoadMore(false);
                         break;
                     default:
-                        setDATA_NHANVIEN([]);
                         setvisibleLoadMore(false);
                 }
             })
             .catch((err) => {
                 console.log(err);
             });
+
+
+
     }
     function handleLoadMore() {
         setPageNumber(parseInt(pagenumber + 1));
@@ -64,7 +86,9 @@ function ListNhanVien() {
                         <ItemNhanVien item={item}></ItemNhanVien>
                     )
                 }}
-                keyExtractor={(item, index) => index.toString()}
+
+                keyExtractor={(item, index) => item.id_NV}
+
                 onEndReached={() => handleLoadMore()}
                 onEndReachedThreshold={1}
                 ListFooterComponent={
@@ -93,6 +117,7 @@ function ListNhanVien() {
         </View>
     );
 }
+export default ListNhanVien;
 const styles = StyleSheet.create({
     container: {
         width: "100%",
@@ -100,5 +125,3 @@ const styles = StyleSheet.create({
     },
 
 });
-
-export default ListNhanVien;

@@ -6,7 +6,9 @@ const type_API = {
   account: https + 'Account/',
   admin: https + 'Admin/',
   users: https + 'Users/',
-  nhanvien:https+'NhanVien',
+
+  nhanvien:https+'NhanVien/',
+
 };
 const host = {
   // Home
@@ -31,9 +33,11 @@ const host = {
   addUsersGroup: type_API.admin + 'AddUsersGroup',
   addAccount: type_API.admin + 'AddAccount',
   // Nhan vien
-  getAllNhanVien:type_API.nhanvien+'/DanhSachNhanVien',
-  getAllLoaiNhanVien:type_API.nhanvien+'/DanhSachLoaiNhanVien',
-  addNhanVien:type_API.nhanvien+'/ThemNhanVienMoi',
+
+  getAllNhanVien:type_API.nhanvien+'DanhSachNhanVien',
+  getAllLoaiNhanVien:type_API.nhanvien+'DanhSachLoaiNhanVien',
+  addNhanVien:type_API.nhanvien+'ThemNhanVienMoi',
+
   // Users
   weightAppType: type_API.users + 'WeightAppType',
   userOverview: type_API.users + 'UserOverview',

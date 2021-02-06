@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import {createStore, combineReducers} from 'redux';
+import { createStore, combineReducers } from 'redux';
 
 import userReducer from './User/UserReducer';
 import userGroupReducer from './UserGroup/UserGroupReducer';
@@ -10,8 +10,10 @@ const rootReducer = combineReducers({
   userGroupReducer: userGroupReducer,
   userReducer: userReducer,
   numAccReducer: numAccReducer,
-  nhanvienReducer:nhanvienReducer,
-  WorkReducer:WorkReducer,
+
+  nhanvienReducer: nhanvienReducer,
+  WorkReducer: WorkReducer,
+
 });
 
 const store = createStore(rootReducer);

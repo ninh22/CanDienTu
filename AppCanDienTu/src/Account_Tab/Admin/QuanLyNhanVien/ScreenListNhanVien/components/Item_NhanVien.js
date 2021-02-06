@@ -37,7 +37,9 @@ function ItemNhanVien(props) {
                     }
                 }}
                 closeOnPressMask={true}>
-                <BottomDetailNv onPress={()=>refRBSheetDetailNV.current.close()}/>
+
+                <BottomDetailNv item={item} onPress={()=>refRBSheetDetailNV.current.close()}/>
+
             </RBSheet>
         </TouchableOpacity>
     );
